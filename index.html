@@ -14,12 +14,13 @@
     h1{margin:0;font-size:27px;letter-spacing:-.02em}.actualizado{margin:6px 0 0;color:#c9ddd1;font-size:12px}
     .refresh{border:1px solid #5f9278;border-radius:8px;background:#1d503a;color:#fff;padding:9px 13px;cursor:pointer}
     main{max-width:1800px;margin:auto;padding:16px}
-    .resumen{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+    .resumen{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:10px;margin-bottom:12px}
     .card{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:13px 15px;text-align:left;color:var(--texto)}
     button.card{cursor:pointer}.card-control:hover{border-color:#bd756c;box-shadow:0 3px 12px #70211618}
     .card span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
     .card strong{display:block;margin-top:4px;font-size:25px}
     #acopladosFalta{font-family:Consolas,monospace;font-size:20px;letter-spacing:.04em}
+    .totales-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}.totales-grid div{text-align:center;border-right:1px solid var(--borde)}.totales-grid div:last-child{border-right:0}.totales-grid b,.totales-grid small{display:block}.totales-grid b{color:#b42318;font-size:21px}.totales-grid small{color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}
     .card.alerta{border-left:5px solid #c8392b;background:#fff4f2}
     .card.alerta span,.card.alerta strong{color:#a42a20}
     .card.correcto{border-left:5px solid #2a8a57;background:#f3fbf6}
@@ -62,6 +63,9 @@
       <button class="card card-control" id="cardCapacitacion" onclick="abrirControl('capacitacion')"><span>Capacitación UPM no aprobada</span><strong id="controlCapacitacion">—</strong></button>
       <button class="card card-control" id="cardInstructivo" onclick="abrirControl('instructivo')"><span>Instructivo - o FALTA</span><strong id="controlInstructivo">—</strong></button>
       <button class="card card-control" id="cardTarjeta" onclick="abrirControl('tarjeta')"><span>Tarjeta verde UPM no vigente</span><strong id="controlTarjeta">—</strong></button>
+      <button class="card card-control" id="cardEmpresasInfraccion" onclick="abrirInfracciones('empresa')"><span>Empresas con infracciones</span><strong id="totalEmpresasInfraccion">—</strong></button>
+      <button class="card card-control" id="cardMatriculasInfraccion" onclick="abrirInfracciones('matricula')"><span>Matrículas con infracciones</span><strong id="totalMatriculasInfraccion">—</strong></button>
+      <button class="card card-control" id="cardConductoresInfraccion" onclick="abrirInfracciones('conductor')"><span>Conductores con infracciones</span><strong id="totalConductoresInfraccion">—</strong></button>
     </section>
     <div class="tabla-wrap">
       <table>
@@ -128,6 +132,32 @@
       $("modalDocumentos").innerHTML=lista.length?lista.map(r=>"<article class='documento vencida control-item'><b>"+esc(r.chofer)+"</b><small>Matrícula: "+esc(r.matricula)+" · Valor: "+esc(r[config[1]])+"</small></article>").join(""):"<article class='documento vigente control-item'><b>Sin observaciones</b><small>Todos los registros cumplen.</small></article>";
       $("modalFondo").classList.add("abierto");
     }
+    function obtenerInfracciones(tipo){
+      const mapa=new Map();
+      for(const r of registros){
+        if(tipo==="conductor"&&limpio(r.chofer).toUpperCase()==="SIN CHOFER")continue;
+        const config=tipo==="empresa"
+          ?[limpio(r.empresa),"Matrícula "+limpio(r.matricula),[["APPLUS",r.applus_date],["SOA",r.soa_date]]]
+          :tipo==="matricula"
+          ?[limpio(r.matricula),limpio(r.empresa),[["BPS",r.bps_date],["DGI",r.dgi_date],["BSE Accidentes",r.bse_acc_date]]]
+          :[limpio(r.chofer),"Matrícula "+limpio(r.matricula),[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card]]];
+        const vencidos=config[2].filter(([,valor])=>claseVencimiento(valor)==="vencida");
+        if(!vencidos.length)continue;
+        if(!mapa.has(config[0]))mapa.set(config[0],{titulo:config[0],detalles:new Set()});
+        vencidos.forEach(([nombre,valor])=>mapa.get(config[0]).detalles.add(nombre+": "+fechaCorta(valor)+" · "+config[1]));
+      }
+      return [...mapa.values()];
+    }
+    function abrirInfracciones(tipo){
+      const titulos={empresa:"Empresas con infracciones",matricula:"Matrículas con infracciones",conductor:"Conductores con infracciones"};
+      const lista=obtenerInfracciones(tipo);
+      $("modalTitulo").textContent=titulos[tipo];$("modalSubtitulo").textContent=lista.length+" registros en rojo";
+      $("modalDocumentos").innerHTML=lista.length?lista.map(item=>"<article class='documento vencida control-item'><b>"+esc(item.titulo)+"</b><small>"+[...item.detalles].map(esc).join("<br>")+"</small></article>").join(""):"<article class='documento vigente control-item'><b>Sin infracciones</b><small>No hay registros en rojo.</small></article>";
+      $("modalFondo").classList.add("abierto");
+    }
+    function actualizarInfracciones(tipo,idValor,idCard){
+      const cantidad=obtenerInfracciones(tipo).length;$(idValor).textContent=cantidad;$(idCard).className="card card-control "+(cantidad?"alerta":"correcto");
+    }
     function resumen(){
       $("total").textContent=registros.length;
       const matriculasSinAcoplado=[...new Set(registros.filter(r=>limpio(r.acoplados).toUpperCase().includes("FALTA")).map(r=>limpio(r.matricula)))];
@@ -136,6 +166,9 @@
       actualizarControl("capacitacion");
       actualizarControl("instructivo");
       actualizarControl("tarjeta");
+      actualizarInfracciones("empresa","totalEmpresasInfraccion","cardEmpresasInfraccion");
+      actualizarInfracciones("matricula","totalMatriculasInfraccion","cardMatriculasInfraccion");
+      actualizarInfracciones("conductor","totalConductoresInfraccion","cardConductoresInfraccion");
     }
     function render(){
       const lista=registros;
