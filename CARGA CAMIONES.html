@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#123c2b">
+  <title>Hoy - Carga de Camiones</title>
+  <style>
+    :root{--verde:#123c2b;--verde2:#1d6042;--fondo:#f2f5f3;--borde:#d8e1dc;--texto:#17221c;--muted:#68756e}
+    *{box-sizing:border-box}body{margin:0;background:var(--fondo);color:var(--texto);font-family:Arial,Helvetica,sans-serif}
+    header{background:var(--verde);color:#fff;border-bottom:5px solid #56a56f;padding:20px 24px}
+    .header-inner{max-width:1800px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .eyebrow{margin:0 0 5px;color:#9ed1ae;font-size:11px;font-weight:800;letter-spacing:.17em}
+    h1{margin:0;font-size:27px;letter-spacing:-.02em}.actualizado{margin:6px 0 0;color:#c9ddd1;font-size:12px}
+    .refresh{border:1px solid #5f9278;border-radius:8px;background:#1d503a;color:#fff;padding:9px 13px;cursor:pointer}
+    main{max-width:1800px;margin:auto;padding:16px}
+    .resumen{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+    .card{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:13px 15px;text-align:left;color:var(--texto)}
+    button.card{cursor:pointer}.card-control:hover{border-color:#bd756c;box-shadow:0 3px 12px #70211618}
+    .card span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+    .card strong{display:block;margin-top:4px;font-size:25px}
+    #acopladosFalta{font-family:Consolas,monospace;font-size:20px;letter-spacing:.04em}
+    .card.alerta{border-left:5px solid #c8392b;background:#fff4f2}
+    .card.alerta span,.card.alerta strong{color:#a42a20}
+    .card.correcto{border-left:5px solid #2a8a57;background:#f3fbf6}
+    .controles{display:flex;gap:9px;align-items:center;background:#fff;border:1px solid var(--borde);border-radius:10px 10px 0 0;padding:10px}
+    .buscar{flex:1;min-width:250px;border:1px solid #c5d1ca;border-radius:7px;padding:10px 12px}
+    select{min-width:180px;border:1px solid #c5d1ca;border-radius:7px;background:#fff;padding:10px;color:var(--texto)}
+    .resultados{color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}
+    .tabla-wrap{overflow-x:auto;overflow-y:visible;max-height:none;background:#fff;border:1px solid var(--borde);border-radius:10px}
+    table{width:100%;min-width:1550px;border-collapse:collapse;font-size:12px}
+    thead{position:sticky;top:0;z-index:2;background:#e7eee9}
+    th{text-align:left;padding:12px 11px;color:#54645b;font-size:10px;text-transform:uppercase;letter-spacing:.055em;border-bottom:1px solid #c6d2cb;white-space:nowrap}
+    td{padding:10px 11px;border-bottom:1px solid #edf1ef;vertical-align:top;line-height:1.35}
+    tbody tr:hover{background:#f5f9f6}.empresa{font-weight:700}.matricula{font-family:Consolas,monospace;font-weight:800;white-space:nowrap}
+    .estado{display:inline-block;border-radius:20px;background:#e4f3e9;color:#17623d;font-size:10px;font-weight:800;padding:4px 8px;text-transform:uppercase}
+    .estado.parado{background:#fde8e5;color:#a32b21}.comentario{color:#984b00;font-weight:700}.gps{min-width:300px;max-width:410px;color:#46544c}
+    .ok{color:#17623d;font-weight:800}.no{color:#aa2b20;font-weight:800}.vacio{color:#9aa39e}.mensaje{padding:38px;text-align:center;background:#fff;color:var(--muted)}
+    .fecha{font-weight:800;white-space:nowrap}.fecha.vigente{color:#17623d}.fecha.proxima{color:#a56400;background:#fff3d2}.fecha.vencida{color:#aa2b20;background:#fde9e6}.fecha.sin-dato{color:#929c96}
+    .alerta-texto{color:#b42318!important;background:#fff0ee;font-weight:900!important}
+    .abrir{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    .modal-fondo{display:none;position:fixed;inset:0;z-index:20;background:#07120cba;padding:18px;place-items:center}
+    .modal-fondo.abierto{display:grid}.modal{position:relative;width:min(650px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;padding:22px;box-shadow:0 24px 70px #0007}
+    .modal-cerrar{position:absolute;right:13px;top:9px;border:0;background:transparent;font-size:29px;color:#65736b;cursor:pointer}.modal h2{margin:0 35px 5px 0;font-size:21px}.modal-subtitulo{margin:0 0 18px;color:var(--muted);font-size:12px}
+    .documentos{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.documento{border:1px solid var(--borde);border-left:5px solid #2d8b59;border-radius:8px;padding:11px}.documento.proxima{border-left-color:#d58a16;background:#fffaf0}.documento.vencida{border-left-color:#bd3025;background:#fff3f1}.documento.sin-dato{border-left-color:#a3aca7}
+    .documento span,.documento b{display:block}.documento span{color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;margin-bottom:5px}.documento b{font-size:14px}
+    .control-item b,.control-item small{display:block}.control-item b{font-size:14px}.control-item small{margin-top:4px;color:var(--muted);font-size:11px}
+    .error{color:#a62920}.error button{margin-left:10px}footer{text-align:center;color:var(--muted);font-size:11px;padding:15px}
+    @media(max-width:1100px){.resumen{grid-template-columns:repeat(2,1fr)}}@media(max-width:800px){header{padding:16px}.header-inner{align-items:flex-start}h1{font-size:22px}.refresh{padding:8px}.resumen{grid-template-columns:1fr 1fr}.tabla-wrap{max-height:none}.documentos{grid-template-columns:1fr}main{padding:9px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div><p class="eyebrow">CONTROL OPERATIVO</p><h1>Hoy - Carga de Camiones</h1><p class="actualizado" id="actualizado">Actualizado: —</p><p class="actualizado" id="actualizacionExcel">Última actualización Excel: —</p></div>
+    </div>
+  </header>
+  <main>
+    <section class="resumen">
+      <article class="card"><span>Total de camiones</span><strong id="total">—</strong></article>
+      <article class="card" id="cardAcoplados"><span>Camión sin acoplado</span><strong id="acopladosFalta">—</strong></article>
+      <button class="card card-control" id="cardCapacitacion" onclick="abrirControl('capacitacion')"><span>Capacitación UPM no aprobada</span><strong id="controlCapacitacion">—</strong></button>
+      <button class="card card-control" id="cardInstructivo" onclick="abrirControl('instructivo')"><span>Instructivo - o FALTA</span><strong id="controlInstructivo">—</strong></button>
+      <button class="card card-control" id="cardTarjeta" onclick="abrirControl('tarjeta')"><span>Tarjeta verde UPM no vigente</span><strong id="controlTarjeta">—</strong></button>
+    </section>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr>
+          <th>Empresa</th><th>Destino</th><th>Matrícula</th><th>Próximo destino</th><th>Ubicación</th><th>Comentarios</th><th>Ubicación GPS</th><th>Chofer</th><th>Cédula de identidad</th><th>Acoplados</th>
+        </tr></thead>
+        <tbody id="cuerpo"></tbody>
+      </table>
+      <div class="mensaje" id="mensaje">Cargando información…</div>
+    </div>
+  </main>
+  <div class="modal-fondo" id="modalFondo">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+      <button class="modal-cerrar" id="modalCerrar" aria-label="Cerrar">×</button>
+      <h2 id="modalTitulo"></h2><p class="modal-subtitulo" id="modalSubtitulo"></p><div class="documentos" id="modalDocumentos"></div>
+    </section>
+  </div>
+  <footer>Actualización automática cada 5 minutos</footer>
+  <script>
+    const JSON_URL="https://dl.dropbox.com/scl/fi/2vvziln8evbqwhbptvodg/HOY_Control.json?rlkey=l6ow7qdwawud2q6vso8mcfq5x&dl=1";
+    let registros=[],filtradosActuales=[];
+    const $=id=>document.getElementById(id);
+    const limpio=v=>v===null||v===undefined||String(v).trim()===""||String(v).trim().toLowerCase()==="nan"?"—":String(v).trim();
+    const esc=v=>limpio(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const fecha=v=>{if(!v)return"—";return new Intl.DateTimeFormat("es-UY",{timeZone:"America/Montevideo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(v)).replace(",","")};
+    const fechaCorta=v=>{const x=limpio(v);if(x==="—")return"—";const d=new Date(x+"T12:00:00");return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("es-UY",{day:"2-digit",month:"2-digit",year:"numeric"}).format(d)};
+    const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const dias=Math.ceil((d-Date.now())/86400000);return dias<0?"vencida":dias<=30?"proxima":"vigente"};
+    const algunoVencido=valores=>valores.some(v=>claseVencimiento(v)==="vencida");
+    const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
+    function abrirDetalle(indice,tipo){
+      const r=filtradosActuales[indice];if(!r)return;
+      let titulo="",subtitulo="",docs=[];
+      if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["BPS",r.bps_date],["DGI",r.dgi_date],["BSE Accidentes",r.bse_acc_date]]}
+      if(tipo==="matricula"){titulo=limpio(r.matricula);subtitulo="Documentación de la matrícula · "+limpio(r.empresa);docs=[["APPLUS",r.applus_date],["SOA",r.soa_date]]}
+      if(tipo==="chofer"){titulo=limpio(r.chofer);subtitulo="CI "+limpio(r.cedula_identidad)+" · "+limpio(r.empresa);docs=[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card],["Capacitación UPM",r.capacitacion_upm,"estado","APROBADO"],["Instructivo",r.instructivo,"estado","SI"],["Tarjeta verde UPM",r.tarjeta_verde_upm,"estado","VIGENTE"]]}
+      $("modalTitulo").textContent=titulo;$("modalSubtitulo").textContent=subtitulo;
+      $("modalDocumentos").innerHTML=docs.map(([nombre,valor,tipoDato,esperado])=>{
+        const esEstado=tipoDato==="estado";
+        const clase=esEstado?(limpio(valor).toUpperCase()===esperado?"vigente":"vencida"):claseVencimiento(valor);
+        const texto=esEstado?limpio(valor):fechaCorta(valor);
+        return "<article class='documento "+clase+"'><span>"+esc(nombre)+"</span><b>"+esc(texto)+"</b></article>";
+      }).join("");
+      $("modalFondo").classList.add("abierto");
+    }
+    function cerrarModal(){$("modalFondo").classList.remove("abierto")}
+    const claseEsperado=(valor,esperado)=>limpio(valor).toUpperCase()===esperado?"ok":"no";
+    function opciones(id,valores,texto){$(id).innerHTML='<option value="">'+texto+"</option>"+[...new Set(valores.filter(v=>v!=="—"))].sort((a,b)=>a.localeCompare(b)).map(v=>'<option value="'+esc(v)+'">'+esc(v)+"</option>").join("")}
+    function esAlertaControl(tipo,r){
+      if(limpio(r.chofer).toUpperCase()==="SIN CHOFER")return false;
+      if(tipo==="capacitacion")return limpio(r.capacitacion_upm).toUpperCase()!=="APROBADO";
+      if(tipo==="tarjeta")return limpio(r.tarjeta_verde_upm).toUpperCase()!=="VIGENTE";
+      const valor=limpio(r.instructivo).toUpperCase();
+      return valor==="—"||valor==="-"||valor.includes("FALTA");
+    }
+    function actualizarControl(nombre){
+      const cantidad=registros.filter(r=>esAlertaControl(nombre,r)).length;
+      const ids={capacitacion:["controlCapacitacion","cardCapacitacion"],instructivo:["controlInstructivo","cardInstructivo"],tarjeta:["controlTarjeta","cardTarjeta"]}[nombre];
+      $(ids[0]).textContent=cantidad;$(ids[1]).className="card card-control "+(cantidad?"alerta":"correcto");
+    }
+    function abrirControl(tipo){
+      const config={capacitacion:["Capacitación UPM no aprobada","capacitacion_upm"],instructivo:["Instructivo con - o FALTA","instructivo"],tarjeta:["Tarjeta verde UPM no vigente","tarjeta_verde_upm"]}[tipo];
+      const lista=registros.filter(r=>esAlertaControl(tipo,r));
+      $("modalTitulo").textContent=config[0];$("modalSubtitulo").textContent=lista.length+" camiones encontrados";
+      $("modalDocumentos").innerHTML=lista.length?lista.map(r=>"<article class='documento vencida control-item'><b>"+esc(r.chofer)+"</b><small>Matrícula: "+esc(r.matricula)+" · Valor: "+esc(r[config[1]])+"</small></article>").join(""):"<article class='documento vigente control-item'><b>Sin observaciones</b><small>Todos los registros cumplen.</small></article>";
+      $("modalFondo").classList.add("abierto");
+    }
+    function resumen(){
+      $("total").textContent=registros.length;
+      const matriculasSinAcoplado=[...new Set(registros.filter(r=>limpio(r.acoplados).toUpperCase().includes("FALTA")).map(r=>limpio(r.matricula)))];
+      $("acopladosFalta").textContent=matriculasSinAcoplado.length?matriculasSinAcoplado.join(" · "):"NINGUNO";
+      $("cardAcoplados").className="card "+(matriculasSinAcoplado.length?"alerta":"correcto");
+      actualizarControl("capacitacion");
+      actualizarControl("instructivo");
+      actualizarControl("tarjeta");
+    }
+    function render(){
+      const lista=registros;
+      filtradosActuales=lista;
+      $("cuerpo").innerHTML=lista.map((r,indice)=>{
+        const estado=limpio(r.ubicacion),estadoClase=estado.toUpperCase()==="PARADO"?"estado parado":"estado";
+        const empresaRoja=algunoVencido([r.applus_date,r.soa_date]);
+        const matriculaRoja=algunoVencido([r.bps_date,r.dgi_date,r.bse_acc_date]);
+        const choferRojo=algunoVencido([r.health_meat,r.identity_card,r.psychotechnician,r.upm,r.green_card]);
+        return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
+      }).join("");
+      $("mensaje").style.display=lista.length?"none":"block";
+      if(!lista.length)$("mensaje").textContent="No hay registros que coincidan con los filtros.";
+    }
+    async function cargar(){
+      try{
+        const respuesta=await fetch(JSON_URL+"&_="+Date.now(),{cache:"no-store"});
+        if(!respuesta.ok)throw new Error("HTTP "+respuesta.status);
+        const datos=await respuesta.json();
+        registros=Array.isArray(datos.registros)?datos.registros:[];
+        $("actualizado").textContent="Actualizado: "+fecha(datos.actualizado);
+        const ultimaExcel=datos.ultima_actualizacion_excel||(registros[0]&&registros[0].ultima_actualizacion_excel);
+        $("actualizacionExcel").textContent="Última actualización Excel: "+fecha(ultimaExcel);
+        resumen();render();
+      }catch(error){
+        $("mensaje").style.display="block";$("mensaje").className="mensaje error";
+        $("mensaje").innerHTML="No fue posible cargar HOY_Control.json. "+esc(error.message)+' <button onclick="cargar()">Reintentar</button>';
+      }
+    }
+    $("modalCerrar").addEventListener("click",cerrarModal);
+    $("modalFondo").addEventListener("click",e=>{if(e.target===$("modalFondo"))cerrarModal()});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")cerrarModal()});
+    cargar();setInterval(cargar,300000);
+  </script>
+</body>
+</html>
