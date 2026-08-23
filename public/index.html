@@ -34,8 +34,8 @@
     th{text-align:left;padding:12px 11px;color:#54645b;font-size:10px;text-transform:uppercase;letter-spacing:.055em;border-bottom:1px solid #c6d2cb;white-space:nowrap}
     td{padding:10px 11px;border-bottom:1px solid #edf1ef;vertical-align:top;line-height:1.35}
     tbody tr:hover{background:#f5f9f6}.empresa{font-weight:700}.matricula{font-family:Consolas,monospace;font-weight:800;white-space:nowrap}
-    .estado{display:inline-block;border-radius:20px;background:#e4f3e9;color:#17623d;font-size:10px;font-weight:800;padding:4px 8px;text-transform:uppercase}
-    .estado.parado{background:#fde8e5;color:#a32b21}.comentario{color:#984b00;font-weight:700}.gps{min-width:300px;max-width:410px;color:#46544c}
+    .estado{display:inline-block;border-radius:20px;font-size:10px;font-weight:800;padding:4px 8px;text-transform:uppercase}
+    .estado-vacio{background:#f8cbae;color:#522510}.estado-monte{background:#75db7a;color:#123c2b}.estado-salido-cargado{background:#64ffff;color:#153f43}.estado-descargando{background:#ff96ff;color:#542254}.comentario{color:#984b00;font-weight:700}.gps{min-width:300px;max-width:410px;color:#46544c}
     .ok{color:#17623d;font-weight:800}.no{color:#aa2b20;font-weight:800}.vacio{color:#9aa39e}.mensaje{padding:38px;text-align:center;background:#fff;color:var(--muted)}
     .fecha{font-weight:800;white-space:nowrap}.fecha.vigente{color:#17623d}.fecha.proxima{color:#a56400;background:#fff3d2}.fecha.vencida{color:#aa2b20;background:#fde9e6}.fecha.sin-dato{color:#929c96}
     .alerta-texto{color:#b42318!important;background:#fff0ee;font-weight:900!important}
@@ -70,7 +70,7 @@
     <div class="tabla-wrap">
       <table>
         <thead><tr>
-          <th>Empresa</th><th>Destino</th><th>Matrícula</th><th>Próximo destino</th><th>Ubicación</th><th>Comentarios</th><th>Ubicación GPS</th><th>Chofer</th><th>Cédula de identidad</th><th>Acoplados</th>
+          <th>Empresa</th><th>Destino</th><th>Matrícula</th><th>Próximo destino</th><th>Estado</th><th>Comentarios</th><th>Ubicación GPS</th><th>Chofer</th><th>Cédula de identidad</th><th>Acoplados</th>
         </tr></thead>
         <tbody id="cuerpo"></tbody>
       </table>
@@ -95,6 +95,31 @@
     const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const dias=Math.ceil((d-Date.now())/86400000);return dias<0?"vencida":dias<=30?"proxima":"vigente"};
     const algunoVencido=valores=>valores.some(v=>claseVencimiento(v)==="vencida");
     const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
+    const ESTADOS_STORAGE="hoy_control_estados_v1";
+    const LUGARES_DESCARGA=["PLANTA FAS","UPM PDT","JUANGO","POLO LOGISTICO","LA TABLADA"];
+    const normalizarTexto=v=>limpio(v)==="—"?"":String(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ").trim();
+    const normalizarEstado=v=>{const x=normalizarTexto(v);if(x==="MONTE")return"MONTE";if(x==="SALIDO CARGADO")return"SALIDO CARGADO";if(x==="DESCARGANDO")return"DESCARGANDO";return"VACÍO"};
+    function leerEstados(){try{const datos=JSON.parse(localStorage.getItem(ESTADOS_STORAGE)||"{}");return datos&&typeof datos==="object"?datos:{}}catch(error){return{}}}
+    function guardarEstados(estados){try{localStorage.setItem(ESTADOS_STORAGE,JSON.stringify(estados))}catch(error){}}
+    function palabrasDeDestinos(lista){
+      const palabras=new Set();
+      lista.forEach(r=>normalizarTexto(r.destino).split(" ").filter(p=>p.length>=4&&!/^\d+$/.test(p)).forEach(p=>palabras.add(p)));
+      return palabras;
+    }
+    function calcularEstado(r,palabrasMonte,estados){
+      const matricula=normalizarTexto(r.matricula),gps=normalizarTexto(r.ubicacion_gps);
+      const anterior=normalizarEstado(estados[matricula]||r.ubicacion);
+      const descargando=LUGARES_DESCARGA.some(lugar=>gps.includes(normalizarTexto(lugar)));
+      const monte=[...palabrasMonte].some(palabra=>(" "+gps+" ").includes(" "+palabra+" "));
+      let nuevo=anterior;
+      if(descargando)nuevo="DESCARGANDO";
+      else if(monte)nuevo="MONTE";
+      else if(anterior==="MONTE")nuevo="SALIDO CARGADO";
+      else if(anterior==="DESCARGANDO")nuevo="VACÍO";
+      if(matricula)estados[matricula]=nuevo;
+      return nuevo;
+    }
+    const claseEstado=estado=>"estado estado-"+normalizarTexto(estado).toLowerCase().replace(/\s+/g,"-");
     function abrirDetalle(indice,tipo){
       const r=filtradosActuales[indice];if(!r)return;
       let titulo="",subtitulo="",docs=[];
@@ -173,13 +198,15 @@
     function render(){
       const lista=registros;
       filtradosActuales=lista;
+      const estados=leerEstados(),palabrasMonte=palabrasDeDestinos(lista);
       $("cuerpo").innerHTML=lista.map((r,indice)=>{
-        const estado=limpio(r.ubicacion),estadoClase=estado.toUpperCase()==="PARADO"?"estado parado":"estado";
+        const estado=calcularEstado(r,palabrasMonte,estados),estadoClase=claseEstado(estado);
         const empresaRoja=algunoVencido([r.applus_date,r.soa_date]);
         const matriculaRoja=algunoVencido([r.bps_date,r.dgi_date,r.bse_acc_date]);
         const choferRojo=algunoVencido([r.health_meat,r.identity_card,r.psychotechnician,r.upm,r.green_card]);
         return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
       }).join("");
+      guardarEstados(estados);
       $("mensaje").style.display=lista.length?"none":"block";
       if(!lista.length)$("mensaje").textContent="No hay registros que coincidan con los filtros.";
     }
