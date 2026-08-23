@@ -112,7 +112,7 @@
   <footer>Actualización automática cada 5 minutos</footer>
   <script>
     const JSON_URL="https://dl.dropbox.com/scl/fi/2vvziln8evbqwhbptvodg/HOY_Control.json?rlkey=l6ow7qdwawud2q6vso8mcfq5x&dl=1";
-    let registros=[],filtradosActuales=[],ordenActual={columna:"empresa",direccion:"asc"};
+    let registros=[],filtradosActuales=[],ordenActual={columna:"matricula",direccion:"asc"};
     const $=id=>document.getElementById(id);
     const limpio=v=>v===null||v===undefined||String(v).trim()===""||String(v).trim().toLowerCase()==="nan"?"—":String(v).trim();
     const esc=v=>limpio(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
