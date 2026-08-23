@@ -98,7 +98,7 @@
     function abrirDetalle(indice,tipo){
       const r=filtradosActuales[indice];if(!r)return;
       let titulo="",subtitulo="",docs=[];
-      if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["BPS",r.bps_date],["DGI",r.dgi_date],["BSE Accidentes",r.bse_acc_date]]}
+      if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["BPS",r.bps_date],["DGI",r.dgi_date]]}
       if(tipo==="matricula"){titulo=limpio(r.matricula);subtitulo="Documentación de la matrícula · "+limpio(r.empresa);docs=[["APPLUS",r.applus_date],["SOA",r.soa_date]]}
       if(tipo==="chofer"){titulo=limpio(r.chofer);subtitulo="CI "+limpio(r.cedula_identidad)+" · "+limpio(r.empresa);docs=[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card],["Capacitación UPM",r.capacitacion_upm,"estado","APROBADO"],["Instructivo",r.instructivo,"estado","SI"],["Tarjeta verde UPM",r.tarjeta_verde_upm,"estado","VIGENTE"]]}
       $("modalTitulo").textContent=titulo;$("modalSubtitulo").textContent=subtitulo;
