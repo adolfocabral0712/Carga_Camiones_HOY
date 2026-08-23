@@ -15,6 +15,7 @@
     .refresh{border:1px solid #5f9278;border-radius:8px;background:#1d503a;color:#fff;padding:9px 13px;cursor:pointer}
     main{max-width:1800px;margin:auto;padding:16px}
     .resumen{display:grid;grid-template-columns:repeat(4,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+    .resumen-destinos{margin-bottom:12px;background:#fff;border:1px solid var(--borde);border-radius:10px;overflow:hidden}.resumen-destinos-titulo{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 14px;background:#e7eee9;border-bottom:1px solid #c6d2cb}.resumen-destinos-titulo h2{margin:0;font-size:14px}.resumen-destinos-controles{display:flex;align-items:center;gap:9px}.resumen-destinos-controles span{color:var(--muted);font-size:10px;font-weight:700;white-space:nowrap}#selectorTipoDestino{min-width:170px;padding:7px 9px;font-size:11px;font-weight:800}.resumen-destinos-wrap{overflow-x:auto}.tabla-destinos{width:100%;min-width:720px;border-collapse:collapse;font-size:11px}.tabla-destinos th,.tabla-destinos td{padding:8px 11px;border-bottom:1px solid #edf1ef;text-align:center}.tabla-destinos th:first-child,.tabla-destinos td:first-child{text-align:left}.tabla-destinos tbody tr:last-child td{border-bottom:0}.destino-nombre{font-weight:800;color:#24352c}.contador-estado{display:inline-block;min-width:30px;border-radius:16px;padding:4px 8px;font-weight:900}.contador-vacio{background:#f8cbae;color:#522510}.contador-monte{background:#75db7a;color:#123c2b}.contador-salido{background:#64ffff;color:#153f43}.contador-descargando{background:#ff96ff;color:#542254}.contador-total{background:#e2e8e4;color:#26372e}
     .card{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:13px 15px;text-align:left;color:var(--texto)}
     button.card{cursor:pointer}.card-control:hover{border-color:#bd756c;box-shadow:0 3px 12px #70211618}
     .card span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
@@ -67,6 +68,21 @@
       <button class="card card-control" id="cardEmpresasInfraccion" onclick="abrirInfracciones('empresa')"><span>Empresas con infracciones</span><strong id="totalEmpresasInfraccion">—</strong></button>
       <button class="card card-control" id="cardMatriculasInfraccion" onclick="abrirInfracciones('matricula')"><span>Matrículas con infracciones</span><strong id="totalMatriculasInfraccion">—</strong></button>
       <button class="card card-control" id="cardConductoresInfraccion" onclick="abrirInfracciones('conductor')"><span>Conductores con infracciones</span><strong id="totalConductoresInfraccion">—</strong></button>
+    </section>
+    <section class="resumen-destinos" aria-labelledby="tituloResumenDestinos">
+      <div class="resumen-destinos-titulo">
+        <h2 id="tituloResumenDestinos">Camiones por destino y estado</h2>
+        <div class="resumen-destinos-controles">
+          <select id="selectorTipoDestino" aria-label="Seleccionar columna para el resumen"><option value="destino">DESTINO</option><option value="proximo_destino">PRÓXIMO DESTINO</option></select>
+          <span id="cantidadDestinos">—</span>
+        </div>
+      </div>
+      <div class="resumen-destinos-wrap">
+        <table class="tabla-destinos">
+          <thead><tr><th id="encabezadoTipoDestino">Destino</th><th>Vacío</th><th>Monte</th><th>Salido cargado</th><th>Descargando</th><th>Total</th></tr></thead>
+          <tbody id="resumenDestinos"></tbody>
+        </table>
+      </div>
     </section>
     <div class="tabla-wrap">
       <table>
@@ -161,6 +177,23 @@
       else ordenActual={columna,direccion:"asc"};
       render();
     }
+    function renderResumenDestinos(lista){
+      const campo=$("selectorTipoDestino").value;
+      const etiqueta=campo==="proximo_destino"?"Próximo destino":"Destino";
+      const destinos=new Map();
+      lista.forEach(r=>{
+        const valor=limpio(r[campo]);
+        const destino=valor==="—"?"SIN "+etiqueta.toUpperCase():valor;
+        if(!destinos.has(destino))destinos.set(destino,{"VACÍO":0,"MONTE":0,"SALIDO CARGADO":0,"DESCARGANDO":0,total:0});
+        const conteo=destinos.get(destino),estado=normalizarEstado(r._estadoCalculado);
+        conteo[estado]=(conteo[estado]||0)+1;conteo.total++;
+      });
+      const filas=[...destinos.entries()].sort((a,b)=>b[1].total-a[1].total||a[0].localeCompare(b[0],"es",{sensitivity:"base"}));
+      $("tituloResumenDestinos").textContent="Camiones por "+etiqueta.toLowerCase()+" y estado";
+      $("encabezadoTipoDestino").textContent=etiqueta;
+      $("cantidadDestinos").textContent=filas.length+" registros";
+      $("resumenDestinos").innerHTML=filas.length?filas.map(([destino,c])=>"<tr><td class='destino-nombre'>"+esc(destino)+"</td><td><span class='contador-estado contador-vacio'>"+c["VACÍO"]+"</span></td><td><span class='contador-estado contador-monte'>"+c.MONTE+"</span></td><td><span class='contador-estado contador-salido'>"+c["SALIDO CARGADO"]+"</span></td><td><span class='contador-estado contador-descargando'>"+c.DESCARGANDO+"</span></td><td><span class='contador-estado contador-total'>"+c.total+"</span></td></tr>").join(""):"<tr><td colspan='6'>Sin datos</td></tr>";
+    }
     function abrirDetalle(indice,tipo){
       const r=filtradosActuales[indice];if(!r)return;
       let titulo="",subtitulo="",docs=[];
@@ -249,6 +282,7 @@
         return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
       }).join("");
       guardarEstados(estados);
+      renderResumenDestinos(lista);
       actualizarIndicadoresOrden();
       $("mensaje").style.display=lista.length?"none":"block";
       if(!lista.length)$("mensaje").textContent="No hay registros que coincidan con los filtros.";
@@ -276,6 +310,7 @@
       th.addEventListener("click",()=>ordenarPor(th.dataset.columna));
       th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();ordenarPor(th.dataset.columna)}});
     });
+    $("selectorTipoDestino").addEventListener("change",()=>renderResumenDestinos(filtradosActuales));
     actualizarIndicadoresOrden();
     cargar();setInterval(cargar,300000);
   </script>
