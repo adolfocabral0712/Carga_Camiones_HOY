@@ -32,6 +32,7 @@
     table{width:100%;min-width:1550px;border-collapse:collapse;font-size:12px}
     thead{position:sticky;top:0;z-index:2;background:#e7eee9}
     th{text-align:left;padding:12px 11px;color:#54645b;font-size:10px;text-transform:uppercase;letter-spacing:.055em;border-bottom:1px solid #c6d2cb;white-space:nowrap}
+    th.ordenable{cursor:pointer;user-select:none;transition:background .15s,color .15s}th.ordenable:hover{background:#d7e6dc;color:#173f2b}.indicador-orden{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:6px;border:1px solid #aab9b0;border-radius:5px;background:#fff;color:#52645a;font-size:15px;font-weight:900;line-height:1}.orden-activo{background:#d8eadf!important;color:#123c2b!important}.orden-activo .indicador-orden{border-color:#17623d;background:#17623d;color:#fff}
     td{padding:10px 11px;border-bottom:1px solid #edf1ef;vertical-align:top;line-height:1.35}
     tbody tr:hover{background:#f5f9f6}.empresa{font-weight:700}.matricula{font-family:Consolas,monospace;font-weight:800;white-space:nowrap}
     .estado{display:inline-block;border-radius:20px;font-size:10px;font-weight:800;padding:4px 8px;text-transform:uppercase}
@@ -70,7 +71,16 @@
     <div class="tabla-wrap">
       <table>
         <thead><tr>
-          <th>Empresa</th><th>Destino</th><th>Matrícula</th><th>Próximo destino</th><th>Estado</th><th>Comentarios</th><th>Ubicación GPS</th><th>Chofer</th><th>Cédula de identidad</th><th>Acoplados</th>
+          <th class="ordenable" data-columna="empresa">Empresa <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="destino">Destino <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="matricula">Matrícula <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="proximo_destino">Próximo destino <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="_estadoCalculado">Estado <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="comentarios">Comentarios <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="ubicacion_gps">Ubicación GPS <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="chofer">Chofer <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="cedula_identidad">Cédula de identidad <span class="indicador-orden">↕</span></th>
+          <th class="ordenable" data-columna="acoplados">Acoplados <span class="indicador-orden">↕</span></th>
         </tr></thead>
         <tbody id="cuerpo"></tbody>
       </table>
@@ -86,7 +96,7 @@
   <footer>Actualización automática cada 5 minutos</footer>
   <script>
     const JSON_URL="https://dl.dropbox.com/scl/fi/2vvziln8evbqwhbptvodg/HOY_Control.json?rlkey=l6ow7qdwawud2q6vso8mcfq5x&dl=1";
-    let registros=[],filtradosActuales=[];
+    let registros=[],filtradosActuales=[],ordenActual={columna:"empresa",direccion:"asc"};
     const $=id=>document.getElementById(id);
     const limpio=v=>v===null||v===undefined||String(v).trim()===""||String(v).trim().toLowerCase()==="nan"?"—":String(v).trim();
     const esc=v=>limpio(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -97,6 +107,11 @@
     const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
     const ESTADOS_STORAGE="hoy_control_estados_v1";
     const LUGARES_DESCARGA=["PLANTA FAS","UPM PDT","JUANGO","POLO LOGISTICO","LA TABLADA"];
+    const SALIDO_CARGADO_INICIAL={
+      version:"turnos_20260823_1",
+      exactas:["NTP5696","NTP5117","ATP4935","OTP3216","ATP4686","PTP1762","ATP4803","ATP4772","PTP1298","NTP5800","NTP5898","OTP3860"],
+      prefijos:[]
+    };
     const normalizarTexto=v=>limpio(v)==="—"?"":String(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ").trim();
     const normalizarEstado=v=>{const x=normalizarTexto(v);if(x==="MONTE")return"MONTE";if(x==="SALIDO CARGADO")return"SALIDO CARGADO";if(x==="DESCARGANDO")return"DESCARGANDO";return"VACÍO"};
     function leerEstados(){try{const datos=JSON.parse(localStorage.getItem(ESTADOS_STORAGE)||"{}");return datos&&typeof datos==="object"?datos:{}}catch(error){return{}}}
@@ -108,6 +123,13 @@
     }
     function calcularEstado(r,palabrasMonte,estados){
       const matricula=normalizarTexto(r.matricula),gps=normalizarTexto(r.ubicacion_gps);
+      const coincideSalidoInicial=SALIDO_CARGADO_INICIAL.exactas.includes(matricula)||SALIDO_CARGADO_INICIAL.prefijos.some(prefijo=>matricula.startsWith(prefijo));
+      const claveInicial="__salido_inicial_"+matricula;
+      if(coincideSalidoInicial&&estados[claveInicial]!==SALIDO_CARGADO_INICIAL.version){
+        estados[matricula]="SALIDO CARGADO";
+        estados[claveInicial]=SALIDO_CARGADO_INICIAL.version;
+        return"SALIDO CARGADO";
+      }
       const anterior=normalizarEstado(estados[matricula]||r.ubicacion);
       const descargando=LUGARES_DESCARGA.some(lugar=>gps.includes(normalizarTexto(lugar)));
       const monte=[...palabrasMonte].some(palabra=>(" "+gps+" ").includes(" "+palabra+" "));
@@ -120,6 +142,25 @@
       return nuevo;
     }
     const claseEstado=estado=>"estado estado-"+normalizarTexto(estado).toLowerCase().replace(/\s+/g,"-");
+    function compararValores(a,b){
+      const valorA=limpio(a),valorB=limpio(b);
+      if(valorA==="—"&&valorB!=="—")return 1;
+      if(valorB==="—"&&valorA!=="—")return-1;
+      return valorA.localeCompare(valorB,"es",{numeric:true,sensitivity:"base"});
+    }
+    function actualizarIndicadoresOrden(){
+      document.querySelectorAll("th.ordenable").forEach(th=>{
+        const activo=th.dataset.columna===ordenActual.columna;
+        th.classList.toggle("orden-activo",activo);
+        th.querySelector(".indicador-orden").textContent=activo?(ordenActual.direccion==="asc"?"▲":"▼"):"↕";
+        th.setAttribute("aria-sort",activo?(ordenActual.direccion==="asc"?"ascending":"descending"):"none");
+      });
+    }
+    function ordenarPor(columna){
+      if(ordenActual.columna===columna)ordenActual.direccion=ordenActual.direccion==="asc"?"desc":"asc";
+      else ordenActual={columna,direccion:"asc"};
+      render();
+    }
     function abrirDetalle(indice,tipo){
       const r=filtradosActuales[indice];if(!r)return;
       let titulo="",subtitulo="",docs=[];
@@ -196,17 +237,19 @@
       actualizarInfracciones("conductor","totalConductoresInfraccion","cardConductoresInfraccion");
     }
     function render(){
-      const lista=registros;
+      const estados=leerEstados(),palabrasMonte=palabrasDeDestinos(registros);
+      const lista=registros.map(r=>({...r,_estadoCalculado:calcularEstado(r,palabrasMonte,estados)}));
+      if(ordenActual.columna)lista.sort((a,b)=>compararValores(a[ordenActual.columna],b[ordenActual.columna])*(ordenActual.direccion==="asc"?1:-1));
       filtradosActuales=lista;
-      const estados=leerEstados(),palabrasMonte=palabrasDeDestinos(lista);
       $("cuerpo").innerHTML=lista.map((r,indice)=>{
-        const estado=calcularEstado(r,palabrasMonte,estados),estadoClase=claseEstado(estado);
+        const estado=r._estadoCalculado,estadoClase=claseEstado(estado);
         const empresaRoja=algunoVencido([r.applus_date,r.soa_date]);
         const matriculaRoja=algunoVencido([r.bps_date,r.dgi_date,r.bse_acc_date]);
         const choferRojo=algunoVencido([r.health_meat,r.identity_card,r.psychotechnician,r.upm,r.green_card]);
         return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
       }).join("");
       guardarEstados(estados);
+      actualizarIndicadoresOrden();
       $("mensaje").style.display=lista.length?"none":"block";
       if(!lista.length)$("mensaje").textContent="No hay registros que coincidan con los filtros.";
     }
@@ -228,6 +271,12 @@
     $("modalCerrar").addEventListener("click",cerrarModal);
     $("modalFondo").addEventListener("click",e=>{if(e.target===$("modalFondo"))cerrarModal()});
     document.addEventListener("keydown",e=>{if(e.key==="Escape")cerrarModal()});
+    document.querySelectorAll("th.ordenable").forEach(th=>{
+      th.setAttribute("role","button");th.setAttribute("tabindex","0");
+      th.addEventListener("click",()=>ordenarPor(th.dataset.columna));
+      th.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();ordenarPor(th.dataset.columna)}});
+    });
+    actualizarIndicadoresOrden();
     cargar();setInterval(cargar,300000);
   </script>
 </body>
