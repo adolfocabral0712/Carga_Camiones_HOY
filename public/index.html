@@ -205,7 +205,7 @@
     function abrirDetalle(indice,tipo){
       const r=filtradosActuales[indice];if(!r)return;
       let titulo="",subtitulo="",docs=[];
-      if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["BPS",r.bps_date],["DGI",r.dgi_date]]}
+      if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["CERT BPS",r.bps_date],["CERT DGI",r.dgi_date]]}
       if(tipo==="matricula"){titulo=limpio(r.matricula);subtitulo="Documentación de la matrícula · "+limpio(r.empresa);docs=[["APPLUS",r.applus_date],["SOA",r.soa_date]]}
       if(tipo==="chofer"){titulo=limpio(r.chofer);subtitulo="CI "+limpio(r.cedula_identidad)+" · "+limpio(r.empresa);docs=[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card],["Capacitación UPM",r.capacitacion_upm,"estado","APROBADO"],["Instructivo",r.instructivo,"estado","SI"],["Tarjeta verde UPM",r.tarjeta_verde_upm,"estado","VIGENTE"]]}
       $("modalTitulo").textContent=titulo;$("modalSubtitulo").textContent=subtitulo;
@@ -244,9 +244,9 @@
       for(const r of registros){
         if(tipo==="conductor"&&limpio(r.chofer).toUpperCase()==="SIN CHOFER")continue;
         const config=tipo==="empresa"
-          ?[limpio(r.empresa),"Matrícula "+limpio(r.matricula),[["APPLUS",r.applus_date],["SOA",r.soa_date]]]
+          ?[limpio(r.empresa),"Matrícula "+limpio(r.matricula),[["CERT BPS",r.bps_date],["CERT DGI",r.dgi_date]]]
           :tipo==="matricula"
-          ?[limpio(r.matricula),limpio(r.empresa),[["BPS",r.bps_date],["DGI",r.dgi_date],["BSE Accidentes",r.bse_acc_date]]]
+          ?[limpio(r.matricula),limpio(r.empresa),[["APPLUS",r.applus_date],["SOA",r.soa_date]]]
           :[limpio(r.chofer),"Matrícula "+limpio(r.matricula),[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card]]];
         const vencidos=config[2].filter(([,valor])=>claseVencimiento(valor)==="vencida");
         if(!vencidos.length)continue;
@@ -286,8 +286,8 @@
       filtradosActuales=lista;
       $("cuerpo").innerHTML=lista.map((r,indice)=>{
         const estado=r._estadoCalculado,estadoClase=claseEstado(estado);
-        const empresaRoja=algunoVencido([r.applus_date,r.soa_date]);
-        const matriculaRoja=algunoVencido([r.bps_date,r.dgi_date,r.bse_acc_date]);
+        const empresaRoja=algunoVencido([r.bps_date,r.dgi_date]);
+        const matriculaRoja=algunoVencido([r.applus_date,r.soa_date]);
         const choferRojo=algunoVencido([r.health_meat,r.identity_card,r.psychotechnician,r.upm,r.green_card]);
         return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
       }).join("");
