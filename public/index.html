@@ -122,7 +122,7 @@
     const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const ahora=Date.now();const dias=Math.ceil((d.getTime()-ahora)/86400000);return d.getTime()<ahora?"vencida":dias<=30?"proxima":"vigente"};
     const algunoVencido=valores=>valores.some(v=>claseVencimiento(v)==="vencida");
     const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
-    const ESTADOS_STORAGE="hoy_control_estados_v1";
+    const ESTADOS_STORAGE="hoy_control_estados_v2";
     const LUGARES_DESCARGA=["PLANTA FAS","UPM PDT","JUANGO","POLO LOGISTICO","LA TABLADA"];
     const SALIDO_CARGADO_INICIAL={
       version:"turnos_20260823_1",
@@ -133,12 +133,27 @@
     const normalizarEstado=v=>{const x=normalizarTexto(v);if(x==="MONTE")return"MONTE";if(x==="SALIDO CARGADO")return"SALIDO CARGADO";if(x==="DESCARGANDO")return"DESCARGANDO";return"VACÍO"};
     function leerEstados(){try{const datos=JSON.parse(localStorage.getItem(ESTADOS_STORAGE)||"{}");return datos&&typeof datos==="object"?datos:{}}catch(error){return{}}}
     function guardarEstados(estados){try{localStorage.setItem(ESTADOS_STORAGE,JSON.stringify(estados))}catch(error){}}
-    function palabrasDeDestinos(lista){
-      const palabras=new Set();
-      lista.forEach(r=>normalizarTexto(r.destino).split(" ").filter(p=>p.length>=4&&!/^\d+$/.test(p)).forEach(p=>palabras.add(p)));
-      return palabras;
+    const PALABRAS_A_IGNORAR_DESTINO=new Set([
+      "LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO","DOMINGO",
+      "FAS","HORA","HORAS","HS","HRS","VIAJE","PROPIO","PROPIA","DESTINO",
+      "PARA","DESDE","HACIA","RUMBO","TURNO","MANANA","TARDE","NOCHE"
+    ]);
+    function palabrasSignificativasDestino(destino){
+      return normalizarTexto(destino)
+        .split(" ")
+        .filter(palabra=>
+          palabra.length>=3&&
+          !/^\d+$/.test(palabra)&&
+          !PALABRAS_A_IGNORAR_DESTINO.has(palabra)
+        );
     }
-    function calcularEstado(r,palabrasMonte,estados){
+    function destinoCoincideConGps(destino,ubicacionGps){
+      const gps=" "+normalizarTexto(ubicacionGps)+" ";
+      const palabras=palabrasSignificativasDestino(destino);
+      if(!palabras.length)return false;
+      return palabras.every(palabra=>gps.includes(" "+palabra+" "));
+    }
+    function calcularEstado(r,estados){
       const matricula=normalizarTexto(r.matricula),gps=normalizarTexto(r.ubicacion_gps);
       const coincideSalidoInicial=SALIDO_CARGADO_INICIAL.exactas.includes(matricula)||SALIDO_CARGADO_INICIAL.prefijos.some(prefijo=>matricula.startsWith(prefijo));
       const claveInicial="__salido_inicial_"+matricula;
@@ -149,7 +164,7 @@
       }
       const anterior=normalizarEstado(estados[matricula]||r.ubicacion);
       const descargando=LUGARES_DESCARGA.some(lugar=>gps.includes(normalizarTexto(lugar)));
-      const monte=[...palabrasMonte].some(palabra=>(" "+gps+" ").includes(" "+palabra+" "));
+      const monte=destinoCoincideConGps(r.destino,r.ubicacion_gps);
       let nuevo=anterior;
       if(descargando)nuevo="DESCARGANDO";
       else if(monte)nuevo="MONTE";
@@ -278,8 +293,8 @@
       actualizarInfracciones("conductor","totalConductoresInfraccion","cardConductoresInfraccion");
     }
     function render(){
-      const estados=leerEstados(),palabrasMonte=palabrasDeDestinos(registros);
-      const listaCompleta=registros.map(r=>({...r,_estadoCalculado:calcularEstado(r,palabrasMonte,estados)}));
+      const estados=leerEstados();
+      const listaCompleta=registros.map(r=>({...r,_estadoCalculado:calcularEstado(r,estados)}));
       renderResumenDestinos(listaCompleta);
       const lista=filtroDestinoGeneral?listaCompleta.filter(r=>filtroDestinoGeneral==="SIN DESTINO"?limpio(r.destino)==="—":limpio(r.destino)===filtroDestinoGeneral):listaCompleta;
       if(ordenActual.columna)lista.sort((a,b)=>compararValores(a[ordenActual.columna],b[ordenActual.columna])*(ordenActual.direccion==="asc"?1:-1));
