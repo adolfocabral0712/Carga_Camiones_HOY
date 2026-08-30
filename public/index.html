@@ -208,7 +208,7 @@
       let titulo="",subtitulo="",docs=[];
       if(tipo==="empresa"){titulo=limpio(r.empresa);subtitulo="Documentación de la empresa";docs=[["CERT BPS",r.bps_date],["CERT DGI",r.dgi_date]]}
       if(tipo==="matricula"){titulo=limpio(r.matricula);subtitulo="Documentación de la matrícula · "+limpio(r.empresa);docs=[["APPLUS",r.applus_date],["SOA",r.soa_date]]}
-      if(tipo==="chofer"){titulo=limpio(r.chofer);subtitulo="CI "+limpio(r.cedula_identidad)+" · "+limpio(r.empresa);docs=[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Libreta de conducir",r.driver_license],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card],["Capacitación UPM",r.capacitacion_upm,"estado","APROBADO"],["Instructivo",r.instructivo,"estado","SI"],["Tarjeta verde UPM",r.tarjeta_verde_upm,"estado","VIGENTE"]]}
+      if(tipo==="chofer"){titulo=limpio(r.chofer);subtitulo="CI "+limpio(r.cedula_identidad)+" · "+limpio(r.empresa);docs=[["Cédula",r.identity_card],["Libreta de conducir",r.driver_license],["Carné de salud",r.health_meat],["Psicotécnico",r.psychotechnician],["Tarjeta verde",r.green_card],["CURSO UPM - WEB FAS",r.upm],["Instructivo",r.instructivo,"estado","SI"]]}
       $("modalTitulo").textContent=titulo;$("modalSubtitulo").textContent=subtitulo;
       $("modalDocumentos").innerHTML=docs.map(([nombre,valor,tipoDato,esperado])=>{
         const esEstado=tipoDato==="estado";
@@ -248,7 +248,7 @@
           ?[limpio(r.empresa),"Matrícula "+limpio(r.matricula),[["CERT BPS",r.bps_date],["CERT DGI",r.dgi_date]]]
           :tipo==="matricula"
           ?[limpio(r.matricula),limpio(r.empresa),[["APPLUS",r.applus_date],["SOA",r.soa_date]]]
-          :[limpio(r.chofer),"Matrícula "+limpio(r.matricula),[["Carné de salud",r.health_meat],["Cédula",r.identity_card],["Libreta de conducir",r.driver_license],["Psicotécnico",r.psychotechnician],["UPM",r.upm],["Tarjeta verde",r.green_card]]];
+          :[limpio(r.chofer),"Matrícula "+limpio(r.matricula),[["Cédula",r.identity_card],["Libreta de conducir",r.driver_license],["Carné de salud",r.health_meat],["Psicotécnico",r.psychotechnician],["Tarjeta verde",r.green_card],["CURSO UPM - WEB FAS",r.upm]]];
         const vencidos=config[2].filter(([,valor])=>claseVencimiento(valor)==="vencida");
         if(!vencidos.length)continue;
         if(!mapa.has(config[0]))mapa.set(config[0],{titulo:config[0],detalles:new Set()});
