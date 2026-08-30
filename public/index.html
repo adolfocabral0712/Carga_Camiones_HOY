@@ -122,23 +122,15 @@
     const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const ahora=Date.now();const dias=Math.ceil((d.getTime()-ahora)/86400000);return d.getTime()<ahora?"vencida":dias<=30?"proxima":"vigente"};
     const algunoVencido=valores=>valores.some(v=>claseVencimiento(v)==="vencida");
     const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
-    const ESTADOS_STORAGE="hoy_control_estados_v3";
+    const ESTADOS_STORAGE="hoy_control_estados_v4";
     const LUGARES_DESCARGA=["PLANTA FAS","UPM PDT","JUANGO","POLO LOGISTICO","LA TABLADA"];
-    const SALIDO_CARGADO_INICIAL={
-      version:"turnos_20260823_1",
-      exactas:["NTP5696","NTP5117","ATP4935","OTP3216","ATP4686","PTP1762","ATP4803","ATP4772","PTP1298","NTP5800","NTP5898","OTP3860","NTP4948","NTP5684","NTP4943"],
-      prefijos:[]
-    };
     const normalizarTexto=v=>limpio(v)==="—"?"":String(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ").trim();
     const normalizarEstado=v=>{const x=normalizarTexto(v);if(x==="MONTE")return"MONTE";if(x==="SALIDO CARGADO")return"SALIDO CARGADO";if(x==="DESCARGANDO")return"DESCARGANDO";return"VACÍO"};
     function leerEstados(){try{const datos=JSON.parse(localStorage.getItem(ESTADOS_STORAGE)||"{}");return datos&&typeof datos==="object"?datos:{}}catch(error){return{}}}
     function guardarEstados(estados){try{localStorage.setItem(ESTADOS_STORAGE,JSON.stringify(estados))}catch(error){}}
     function obtenerLugarGps(ubicacionGps){
       const texto=String(ubicacionGps||"").trim();
-      if(!texto||texto.toLowerCase()==="nan")return "";
-
-      // Solo se toma el texto anterior al primer " - " de UBICACION GPS.
-      // Ej.: "SANTA TERESA - RUMBO SE - VEL. 10 ..." => "SANTA TERESA"
+      if(!texto||texto.toLowerCase()==="nan")return"";
       const primeraParte=texto.split(/\s+-\s+/)[0];
       return normalizarTexto(primeraParte);
     }
@@ -146,30 +138,22 @@
       const destinoNormalizado=normalizarTexto(destino);
       const lugarGps=obtenerLugarGps(ubicacionGps);
       if(!destinoNormalizado||!lugarGps)return false;
-
-      // MONTE solamente cuando el lugar GPS aparece dentro del DESTINO
-      // de esa misma fila. Ej.:
-      // GPS: SANTA TERESA
-      // DESTINO: DOMINGO SANTA TERESA UPM 7 A 13 HS
       return destinoNormalizado.includes(lugarGps);
     }
     function calcularEstado(r,estados){
-      const matricula=normalizarTexto(r.matricula),gps=normalizarTexto(r.ubicacion_gps);
-      const coincideSalidoInicial=SALIDO_CARGADO_INICIAL.exactas.includes(matricula)||SALIDO_CARGADO_INICIAL.prefijos.some(prefijo=>matricula.startsWith(prefijo));
-      const claveInicial="__salido_inicial_"+matricula;
-      if(coincideSalidoInicial&&estados[claveInicial]!==SALIDO_CARGADO_INICIAL.version){
-        estados[matricula]="SALIDO CARGADO";
-        estados[claveInicial]=SALIDO_CARGADO_INICIAL.version;
-        return"SALIDO CARGADO";
-      }
+      const matricula=normalizarTexto(r.matricula);
+      const gps=normalizarTexto(r.ubicacion_gps);
       const anterior=normalizarEstado(estados[matricula]||r.ubicacion);
       const descargando=LUGARES_DESCARGA.some(lugar=>gps.includes(normalizarTexto(lugar)));
       const monte=destinoCoincideConGps(r.destino,r.ubicacion_gps);
+
       let nuevo=anterior;
+
       if(descargando)nuevo="DESCARGANDO";
       else if(monte)nuevo="MONTE";
       else if(anterior==="MONTE")nuevo="SALIDO CARGADO";
       else if(anterior==="DESCARGANDO")nuevo="VACÍO";
+
       if(matricula)estados[matricula]=nuevo;
       return nuevo;
     }
