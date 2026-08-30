@@ -37,7 +37,7 @@
     td{padding:10px 11px;border-bottom:1px solid #edf1ef;vertical-align:top;line-height:1.35}
     tbody tr:hover{background:#f5f9f6}.empresa{font-weight:700}.matricula{font-family:Consolas,monospace;font-weight:800;white-space:nowrap}
     .estado{display:inline-block;border-radius:20px;font-size:9px;font-weight:800;padding:4px 8px;text-transform:uppercase}
-    .estado-vacio{background:#f8cbae;color:#522510}.estado-monte{background:#75db7a;color:#123c2b}.estado-salido-cargado{background:#64ffff;color:#153f43}.estado-descargando{background:#ff96ff;color:#542254}.comentario{color:#984b00;font-weight:700}.gps{min-width:0;max-width:320px;overflow-wrap:anywhere;color:#46544c}
+    .estado-vacio{background:#f8cbae;color:#522510}.estado-monte{background:#75db7a;color:#123c2b}.estado-salido-cargado{background:#64ffff;color:#153f43}.estado-descargando{background:#ff96ff;color:#542254}.comentario{color:#984b00;font-weight:700}.gps{min-width:0;max-width:320px;overflow-wrap:anywhere;color:#46544c}.rumbo-flecha{display:inline-block;min-width:18px;margin-left:3px;color:#17623d;font-size:17px;font-weight:900;line-height:11px;text-align:center;vertical-align:-1px}
     .ok{color:#17623d;font-weight:800}.no{color:#aa2b20;font-weight:800}.vacio{color:#9aa39e}.mensaje{padding:38px;text-align:center;background:#fff;color:var(--muted)}
     .fecha{font-weight:800;white-space:nowrap}.fecha.vigente{color:#17623d}.fecha.proxima{color:#a56400;background:#fff3d2}.fecha.vencida{color:#aa2b20;background:#fde9e6}.fecha.sin-dato{color:#929c96}
     .alerta-texto{color:#b42318!important;background:#fff0ee;font-weight:900!important}
@@ -117,6 +117,8 @@
     const $=id=>document.getElementById(id);
     const limpio=v=>v===null||v===undefined||String(v).trim()===""||String(v).trim().toLowerCase()==="nan"?"—":String(v).trim();
     const esc=v=>limpio(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const FLECHAS_RUMBO={N:"↑",NE:"↗",E:"→",SE:"↘",S:"↓",SO:"↙",O:"←",NO:"↖"};
+    const gpsConFlecha=v=>esc(v).replace(/\bRUMBO\s+(NE|NO|SE|SO|N|E|S|O)\b/gi,(texto,rumbo)=>"RUMBO "+rumbo.toUpperCase()+" <span class='rumbo-flecha' aria-label='Dirección "+rumbo.toUpperCase()+"'>"+FLECHAS_RUMBO[rumbo.toUpperCase()]+"</span>");
     const fecha=v=>{if(!v)return"—";return new Intl.DateTimeFormat("es-UY",{timeZone:"America/Montevideo",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(v)).replace(",","")};
     const fechaCorta=v=>{const x=limpio(v);if(x==="—")return"—";const d=new Date(x+"T12:00:00");return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("es-UY",{day:"2-digit",month:"2-digit",year:"numeric"}).format(d)};
     const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const ahora=Date.now();const dias=Math.ceil((d.getTime()-ahora)/86400000);return d.getTime()<ahora?"vencida":dias<=30?"proxima":"vigente"};
@@ -288,7 +290,7 @@
         const empresaRoja=algunoVencido([r.bps_date,r.dgi_date]);
         const matriculaRoja=algunoVencido([r.applus_date,r.soa_date]);
         const choferRojo=algunoVencido([r.health_meat,r.identity_card,r.psychotechnician,r.upm,r.green_card]);
-        return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+esc(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
+        return "<tr><td class='empresa "+(empresaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"empresa\")'>"+esc(r.empresa)+"</button></td><td>"+esc(r.destino)+"</td><td class='matricula "+(matriculaRoja?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"matricula\")'>"+esc(r.matricula)+"</button></td><td>"+esc(r.proximo_destino)+"</td><td><span class='"+estadoClase+"'>"+esc(estado)+"</span></td><td class='comentario'>"+esc(r.comentarios)+"</td><td class='gps'>"+gpsConFlecha(r.ubicacion_gps)+"</td><td class='"+(choferRojo?"alerta-texto":"")+"'><button class='abrir' onclick='abrirDetalle("+indice+",\"chofer\")'>"+esc(r.chofer)+"</button></td><td>"+esc(r.cedula_identidad)+"</td><td class='matricula'>"+esc(r.acoplados)+"</td></tr>";
       }).join("");
       guardarEstados(estados);
       actualizarIndicadoresOrden();
