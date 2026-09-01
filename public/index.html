@@ -114,7 +114,7 @@
   <footer>Actualización automática cada 5 minutos</footer>
   <script>
     const JSON_URL="https://dl.dropbox.com/scl/fi/2vvziln8evbqwhbptvodg/HOY_Control.json?rlkey=l6ow7qdwawud2q6vso8mcfq5x&dl=1";
-    let registros=[],filtradosActuales=[],ordenActual={columna:"matricula",direccion:"asc"},filtroDestinoGeneral="";
+    let registros=[],filtradosActuales=[],ordenActual={columna:"matricula",direccion:"asc"},filtroDestinoGeneral="",permitirViajeAlMonte=true;
     const $=id=>document.getElementById(id);
     const limpio=v=>v===null||v===undefined||String(v).trim()===""||String(v).trim().toLowerCase()==="nan"?"—":String(v).trim();
     const esc=v=>limpio(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -125,7 +125,7 @@
     const claseVencimiento=v=>{const x=limpio(v);if(x==="—")return"sin-dato";const d=new Date(x+"T23:59:59");if(Number.isNaN(d.getTime()))return"sin-dato";const ahora=Date.now();const dias=Math.ceil((d.getTime()-ahora)/86400000);return d.getTime()<ahora?"vencida":dias<=30?"proxima":"vigente"};
     const algunoVencido=valores=>valores.some(v=>claseVencimiento(v)==="vencida");
     const celdaFecha=v=>"<td class='fecha "+claseVencimiento(v)+"'>"+esc(fechaCorta(v))+"</td>";
-    const ESTADOS_STORAGE="hoy_control_estados_v8";
+    const ESTADOS_STORAGE="hoy_control_estados_v10";
     const MATRICULAS_SALIDO_CARGADO=new Set(["ATP5817","PTP1096","ATP5097","NTP5021","NTP5683","NTP5039","ATP5142","ATP4254","PTP1591","NTP5154"]);
     const LUGARES_DESCARGA=["PLANTA FAS","UPM PDT","JUANGO","POLO LOGISTICO","LA TABLADA"];
     const normalizarTexto=v=>limpio(v)==="—"?"":String(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9\s]/g," ").replace(/\s+/g," ").trim();
@@ -144,18 +144,34 @@
       if(!destinoNormalizado||!lugarGps)return false;
       return destinoNormalizado.includes(lugarGps);
     }
+    function obtenerDiaActual(){
+      return normalizarTexto(new Intl.DateTimeFormat("es-UY",{timeZone:"America/Montevideo",weekday:"long"}).format(new Date()));
+    }
+    function destinoComienzaConDiaActual(destino){
+      const primerTexto=normalizarTexto(destino).split(" ")[0]||"";
+      return primerTexto!==""&&primerTexto===obtenerDiaActual();
+    }
+    function obtenerVelocidadGps(ubicacionGps){
+      const coincidencia=String(ubicacionGps||"").match(/\bVEL\.\s*(-?\d+(?:[.,]\d+)?)/i);
+      return coincidencia?Number(coincidencia[1].replace(",",".")):null;
+    }
     function calcularEstado(r,estados){
       const matricula=normalizarTexto(r.matricula);
       const gps=normalizarTexto(r.ubicacion_gps);
+      const anterior=normalizarEstado(estados[matricula]||r.ubicacion);
       const descargando=LUGARES_DESCARGA.some(lugar=>gps.includes(normalizarTexto(lugar)));
       const monte=destinoCoincideConGps(r.destino,r.ubicacion_gps);
       const puedeEstarSalidoCargado=MATRICULAS_SALIDO_CARGADO.has(matricula);
+      const velocidad=obtenerVelocidadGps(r.ubicacion_gps);
+      const viajeAlMonte=permitirViajeAlMonte&&(anterior==="VACÍO"||anterior==="EN VIAJE AL MONTE")&&destinoComienzaConDiaActual(r.destino)&&velocidad!==null&&velocidad>20;
 
       let nuevo="VACÍO";
 
-      if(descargando)nuevo="DESCARGANDO";
-      else if(monte)nuevo="MONTE";
+      if(monte)nuevo="MONTE";
+      else if(anterior==="EN VIAJE AL MONTE")nuevo="EN VIAJE AL MONTE";
+      else if(descargando)nuevo="DESCARGANDO";
       else if(puedeEstarSalidoCargado)nuevo="SALIDO CARGADO";
+      else if(viajeAlMonte)nuevo="EN VIAJE AL MONTE";
 
       if(matricula)estados[matricula]=nuevo;
       return nuevo;
