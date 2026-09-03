@@ -3516,7 +3516,11 @@
         const respuesta =
           await fetch(
             JSON_URL +
-            "&_=" +
+            (
+              JSON_URL.includes("?")
+                ? "&_="
+                : "?_="
+            ) +
             Date.now(),
             {
               cache:"no-store"
