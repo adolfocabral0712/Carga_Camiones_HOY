@@ -157,7 +157,7 @@
 
     .tabla-destinos th,
     .tabla-destinos td{
-      width:10%;
+      width:8.75%;
       padding:8px 11px;
       border-bottom:1px solid #edf1ef;
       text-align:center
@@ -207,6 +207,11 @@
     .contador-vacio{
       background:#f8cbae;
       color:#522510
+    }
+
+    .contador-parado{
+      background:#ffc7c7;
+      color:#861515
     }
 
     .contador-viaje{
@@ -484,6 +489,11 @@
     .estado-vacio{
       background:#f8cbae;
       color:#522510
+    }
+
+    .estado-parado{
+      background:#ffc7c7;
+      color:#861515
     }
 
     .estado-en-viaje-al-monte{
@@ -890,6 +900,7 @@
             <tr>
               <th id="encabezadoTipoDestino">Destino</th>
               <th>Vacío</th>
+              <th>Parado</th>
               <th>En viaje<br>al monte</th>
               <th>Monte</th>
               <th>Salido<br>cargado</th>
@@ -1254,6 +1265,9 @@
       if(x === "DESCARGANDO")
         return "DESCARGANDO";
 
+      if(x === "PARADO")
+        return "PARADO";
+
       return "VACÍO";
 
     };
@@ -1383,6 +1397,17 @@
         primerTexto ===
           obtenerDiaActual()
       );
+
+    }
+
+
+    function textoComienzaConZ(
+      texto
+    ){
+
+      return normalizarTexto(
+        texto
+      ).startsWith("Z");
 
     }
 
@@ -1542,6 +1567,23 @@
 
       /*
       ---------------------------------------------------------
+      DESTINO O PRÓXIMO DESTINO COMIENZA CON Z
+
+      En cualquiera de esos dos casos el estado es PARADO.
+      ---------------------------------------------------------
+      */
+
+      const parado =
+        textoComienzaConZ(
+          r.destino
+        ) ||
+        textoComienzaConZ(
+          r.proximo_destino
+        );
+
+
+      /*
+      ---------------------------------------------------------
       DISPARADOR EN VIAJE AL MONTE
 
       IMPORTANTE:
@@ -1591,11 +1633,25 @@
 
       /*
       0)
+      Si DESTINO o PRÓXIMO DESTINO comienza con Z:
+      PARADO.
+      */
+
+      if(parado){
+
+        nuevo =
+          "PARADO";
+
+      }
+
+
+      /*
+      1)
       Si PRÓXIMO DESTINO es A DEFINIR SEGÚN CLIMA:
       VACÍO.
       */
 
-      if(proximoDestinoSegunClima){
+      else if(proximoDestinoSegunClima){
 
         nuevo =
           "VACÍO";
@@ -1604,7 +1660,7 @@
 
 
       /*
-      1)
+      2)
       Si el GPS coincide con el destino:
       MONTE.
       */
@@ -1917,6 +1973,7 @@
               destino,
               {
                 "VACÍO":0,
+                "PARADO":0,
                 "EN VIAJE AL MONTE":0,
                 "MONTE":0,
                 "SALIDO CARGADO":0,
@@ -2028,6 +2085,10 @@
                   c["VACÍO"] +
                   "</span></td>" +
 
+                  "<td><span class='contador-estado contador-parado'>" +
+                  c.PARADO +
+                  "</span></td>" +
+
                   "<td><span class='contador-estado contador-viaje'>" +
                   c["EN VIAJE AL MONTE"] +
                   "</span></td>" +
@@ -2057,7 +2118,7 @@
 
               }
             ).join("")
-          : "<tr><td colspan='8'>Sin datos</td></tr>";
+          : "<tr><td colspan='9'>Sin datos</td></tr>";
 
 
       $("quitarFiltroDestino").hidden =
