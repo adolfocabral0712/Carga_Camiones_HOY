@@ -157,7 +157,7 @@
 
     .tabla-destinos th,
     .tabla-destinos td{
-      width:8.75%;
+      width:10%;
       padding:8px 11px;
       border-bottom:1px solid #edf1ef;
       text-align:center
@@ -207,11 +207,6 @@
     .contador-vacio{
       background:#f8cbae;
       color:#522510
-    }
-
-    .contador-parado{
-      background:#ffc7c7;
-      color:#861515
     }
 
     .contador-viaje{
@@ -275,6 +270,17 @@
       display:block;
       margin-top:4px;
       font-size:24px
+    }
+
+    .card-parados{
+      background:#c62828;
+      border-color:#a91f1f;
+      color:#fff
+    }
+
+    .card-parados span,
+    .card-parados strong{
+      color:#fff
     }
 
     #acopladosFalta{
@@ -492,8 +498,8 @@
     }
 
     .estado-parado{
-      background:#ffc7c7;
-      color:#861515
+      background:#c62828;
+      color:#fff
     }
 
     .estado-en-viaje-al-monte{
@@ -825,6 +831,11 @@
         <strong id="total">—</strong>
       </article>
 
+      <article class="card card-parados">
+        <span>Camiones parados</span>
+        <strong id="totalParados">—</strong>
+      </article>
+
       <article class="card" id="cardAcoplados">
         <span>Camión sin acoplado</span>
         <strong id="acopladosFalta">—</strong>
@@ -900,7 +911,6 @@
             <tr>
               <th id="encabezadoTipoDestino">Destino</th>
               <th>Vacío</th>
-              <th>Parado</th>
               <th>En viaje<br>al monte</th>
               <th>Monte</th>
               <th>Salido<br>cargado</th>
@@ -1973,7 +1983,6 @@
               destino,
               {
                 "VACÍO":0,
-                "PARADO":0,
                 "EN VIAJE AL MONTE":0,
                 "MONTE":0,
                 "SALIDO CARGADO":0,
@@ -2085,10 +2094,6 @@
                   c["VACÍO"] +
                   "</span></td>" +
 
-                  "<td><span class='contador-estado contador-parado'>" +
-                  c.PARADO +
-                  "</span></td>" +
-
                   "<td><span class='contador-estado contador-viaje'>" +
                   c["EN VIAJE AL MONTE"] +
                   "</span></td>" +
@@ -2118,7 +2123,7 @@
 
               }
             ).join("")
-          : "<tr><td colspan='9'>Sin datos</td></tr>";
+          : "<tr><td colspan='8'>Sin datos</td></tr>";
 
 
       $("quitarFiltroDestino").hidden =
@@ -2711,6 +2716,18 @@
 
       $("total").textContent =
         registros.length;
+
+
+      $("totalParados").textContent =
+        registros.filter(
+          r =>
+            textoComienzaConZ(
+              r.destino
+            ) ||
+            textoComienzaConZ(
+              r.proximo_destino
+            )
+        ).length;
 
 
       const matriculasSinAcoplado =
