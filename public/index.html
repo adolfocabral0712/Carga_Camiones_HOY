@@ -1173,14 +1173,13 @@
     ESTADOS OPERATIVOS
     ===========================================================
 
-    Se cambia V12 -> V13 deliberadamente.
-
-    Esto evita reutilizar estados EN VIAJE AL MONTE incorrectos
-    que pudieron quedar guardados antes de validar PRÓXIMO DESTINO.
+    Se mantiene V12 para conservar los estados históricos.
+    Los registros con PRÓXIMO DESTINO "A DEFINIR SEGÚN CLIMA"
+    se corrigen individualmente a VACÍO.
     */
 
     const ESTADOS_STORAGE =
-      "hoy_control_estados_v13";
+      "hoy_control_estados_v12";
 
 
     /*
@@ -1528,6 +1527,21 @@
 
       /*
       ---------------------------------------------------------
+      PRÓXIMO DESTINO A DEFINIR SEGÚN CLIMA
+
+      Estos registros deben quedar siempre en VACÍO y también
+      corrigen cualquier EN VIAJE AL MONTE guardado anteriormente.
+      ---------------------------------------------------------
+      */
+
+      const proximoDestinoSegunClima =
+        normalizarTexto(
+          r.proximo_destino
+        ) === "A DEFINIR SEGUN CLIMA";
+
+
+      /*
+      ---------------------------------------------------------
       DISPARADOR EN VIAJE AL MONTE
 
       IMPORTANTE:
@@ -1576,12 +1590,26 @@
 
 
       /*
+      0)
+      Si PRÓXIMO DESTINO es A DEFINIR SEGÚN CLIMA:
+      VACÍO.
+      */
+
+      if(proximoDestinoSegunClima){
+
+        nuevo =
+          "VACÍO";
+
+      }
+
+
+      /*
       1)
       Si el GPS coincide con el destino:
       MONTE.
       */
 
-      if(monte){
+      else if(monte){
 
         nuevo =
           "MONTE";
