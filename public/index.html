@@ -577,6 +577,23 @@
       color:#46544c
     }
 
+    .gps-mapa{
+      border:0;
+      background:transparent;
+      color:#174b91;
+      font:inherit;
+      padding:0;
+      text-align:left;
+      cursor:pointer;
+      text-decoration:underline;
+      text-decoration-style:dotted;
+      text-underline-offset:3px
+    }
+
+    .gps-mapa:hover{
+      color:#0d693a
+    }
+
     .rumbo-flecha{
       display:inline-block;
       min-width:18px;
@@ -676,6 +693,37 @@
       border-radius:14px;
       padding:22px;
       box-shadow:0 24px 70px #0007
+    }
+
+    .mapa-contenedor{
+      display:grid;
+      gap:12px
+    }
+
+    .mapa-frame{
+      width:100%;
+      height:430px;
+      border:1px solid var(--borde);
+      border-radius:10px;
+      background:#eef2ef
+    }
+
+    .mapa-abrir{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      justify-self:center;
+      border-radius:8px;
+      background:#17623d;
+      color:#fff;
+      padding:10px 16px;
+      font-size:11px;
+      font-weight:800;
+      text-decoration:none
+    }
+
+    .mapa-abrir:hover{
+      background:#104c2e
     }
 
     .modal-cerrar{
@@ -1140,6 +1188,105 @@
           FLECHAS_RUMBO[rumbo.toUpperCase()] +
           "</span>"
       );
+
+
+    function obtenerPositionLinkSeguro(
+      valor
+    ){
+
+      const enlace =
+        String(
+          valor || ""
+        ).trim();
+
+      if(
+        !enlace ||
+        enlace.toLowerCase() === "nan"
+      )
+        return "";
+
+      try{
+
+        const url =
+          new URL(enlace);
+
+        return (
+          url.protocol === "https:" ||
+          url.protocol === "http:"
+        )
+          ? url.href
+          : "";
+
+      }
+      catch(error){
+
+        return "";
+
+      }
+
+    }
+
+
+    function obtenerUrlMapaEmbebido(
+      enlace
+    ){
+
+      let texto =
+        String(
+          enlace || ""
+        );
+
+      try{
+
+        texto =
+          decodeURIComponent(
+            texto
+          );
+
+      }
+      catch(error){}
+
+      const coincidencia =
+        texto.match(
+          /@(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/
+        ) ||
+        texto.match(
+          /(?:query|q|destination)=(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/i
+        ) ||
+        texto.match(
+          /(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/
+        );
+
+      if(!coincidencia)
+        return "";
+
+      const latitud =
+        Number(
+          coincidencia[1]
+        );
+
+      const longitud =
+        Number(
+          coincidencia[2]
+        );
+
+      if(
+        !Number.isFinite(latitud) ||
+        !Number.isFinite(longitud) ||
+        Math.abs(latitud) > 90 ||
+        Math.abs(longitud) > 180
+      )
+        return "";
+
+      return (
+        "https://www.google.com/maps?q=" +
+        encodeURIComponent(
+          latitud + "," + longitud
+        ) +
+        "&z=15&output=embed"
+      );
+
+    }
 
 
     const fecha = v => {
@@ -2546,6 +2693,66 @@
     }
 
 
+    function abrirMapa(
+      indice
+    ){
+
+      const registro =
+        filtradosActuales[indice];
+
+      if(!registro)
+        return;
+
+      const enlace =
+        obtenerPositionLinkSeguro(
+          registro.position_link
+        );
+
+      if(!enlace)
+        return;
+
+      const enlaceEmbebido =
+        obtenerUrlMapaEmbebido(
+          enlace
+        );
+
+      $("modalTitulo").textContent =
+        "Ubicación GPS · " +
+        limpio(
+          registro.matricula
+        );
+
+      $("modalSubtitulo").textContent =
+        limpio(
+          registro.ubicacion_gps
+        );
+
+      $("modalDocumentos").innerHTML =
+        "<div class='mapa-contenedor'>" +
+
+        (
+          enlaceEmbebido
+            ? "<iframe class='mapa-frame' title='Ubicación en Google Maps' loading='lazy' referrerpolicy='no-referrer-when-downgrade' src='" +
+              esc(enlaceEmbebido) +
+              "'></iframe>"
+            : "<article class='documento vigente'><b>Ubicación disponible</b><small>Usá el botón para verla en Google Maps.</small></article>"
+        ) +
+
+        "<a class='mapa-abrir' href='" +
+        esc(enlace) +
+        "' target='_blank' rel='noopener noreferrer'>Abrir en Google Maps</a>" +
+
+        "</div>";
+
+      $("modalFondo")
+        .classList
+        .add(
+          "abierto"
+        );
+
+    }
+
+
     function cerrarModal(){
 
       $("modalFondo")
@@ -2553,6 +2760,15 @@
         .remove(
           "abierto"
         );
+
+      const mapa =
+        $("modalDocumentos")
+          .querySelector(
+            ".mapa-frame"
+          );
+
+      if(mapa)
+        mapa.src = "about:blank";
 
     }
 
@@ -3120,6 +3336,12 @@
               );
 
 
+            const positionLink =
+              obtenerPositionLinkSeguro(
+                r.position_link
+              );
+
+
             const empresaRoja =
               algunoVencido(
                 [
@@ -3211,8 +3433,18 @@
 
 
               "<td class='gps'>" +
-              gpsConFlecha(
-                r.ubicacion_gps
+              (
+                positionLink
+                  ? "<button class='gps-mapa' type='button' onclick='abrirMapa(" +
+                    indice +
+                    ")' title='Ver ubicación en Google Maps'>" +
+                    gpsConFlecha(
+                      r.ubicacion_gps
+                    ) +
+                    "</button>"
+                  : gpsConFlecha(
+                      r.ubicacion_gps
+                    )
               ) +
               "</td>" +
 
@@ -3508,3 +3740,5 @@
 
 </body>
 </html>
+index-final.html
+HTML
