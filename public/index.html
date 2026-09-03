@@ -178,6 +178,22 @@
       color:#24352c
     }
 
+    .origen-trozas{
+      background:#d8f0dc !important;
+    }
+
+    .origen-upm{
+      background:#fff0b8 !important;
+    }
+
+    .origen-fas{
+      background:#e3e7ea !important;
+    }
+
+    .origen-z{
+      background:#ffd2d2 !important;
+    }
+
     .destino-filtro{
       border:0;
       background:transparent;
@@ -1422,6 +1438,32 @@
     }
 
 
+    function claseFondoOrigen(
+      valor
+    ){
+
+      const texto =
+        normalizarTexto(
+          valor
+        );
+
+      if(texto.startsWith("Z"))
+        return "origen-z";
+
+      if(texto.includes("TROZAS"))
+        return "origen-trozas";
+
+      if(texto.includes("UPM"))
+        return "origen-upm";
+
+      if(texto.includes("FAS"))
+        return "origen-fas";
+
+      return "";
+
+    }
+
+
     function obtenerVelocidadGps(
       ubicacionGps
     ){
@@ -2136,7 +2178,9 @@
                 return (
                   "<tr>" +
 
-                  "<td class='destino-nombre'>" +
+                  "<td class='destino-nombre " +
+                  claseFondoOrigen(destino) +
+                  "'>" +
                   nombre +
                   "</td>" +
 
@@ -2994,7 +3038,9 @@
               "</td>" +
 
 
-              "<td>" +
+              "<td class='" +
+              claseFondoOrigen(r.destino) +
+              "'>" +
               esc(r.destino) +
               "</td>" +
 
@@ -3016,7 +3062,9 @@
               "</td>" +
 
 
-              "<td>" +
+              "<td class='" +
+              claseFondoOrigen(r.proximo_destino) +
+              "'>" +
               esc(r.proximo_destino) +
               "</td>" +
 
