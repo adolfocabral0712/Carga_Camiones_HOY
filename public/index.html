@@ -1957,6 +1957,42 @@
         new Map();
 
 
+      const diasSemana = [
+        "LUNES",
+        "MARTES",
+        "MIERCOLES",
+        "JUEVES",
+        "VIERNES",
+        "SABADO",
+        "DOMINGO"
+      ];
+
+
+      const ordenDestino = valor => {
+
+        const texto =
+          normalizarTexto(
+            valor
+          );
+
+        if(texto.startsWith("Z"))
+          return 99;
+
+        const primeraPalabra =
+          texto.split(" ")[0] || "";
+
+        const indiceDia =
+          diasSemana.indexOf(
+            primeraPalabra
+          );
+
+        return indiceDia >= 0
+          ? indiceDia
+          : 8;
+
+      };
+
+
       lista.forEach(
         r => {
 
@@ -2040,16 +2076,30 @@
       const filas =
         [...destinos.entries()]
           .sort(
-            (a,b) =>
-              b[1].total -
-              a[1].total ||
-              a[0].localeCompare(
+            (a,b) => {
+
+              const ordenA =
+                ordenDestino(
+                  a[0]
+                );
+
+              const ordenB =
+                ordenDestino(
+                  b[0]
+                );
+
+              return (
+                ordenA - ordenB ||
+                a[0].localeCompare(
                 b[0],
                 "es",
                 {
                   sensitivity:"base"
                 }
-              )
+                )
+              );
+
+            }
           );
 
 
