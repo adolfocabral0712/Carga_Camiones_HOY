@@ -1173,14 +1173,14 @@
     ESTADOS OPERATIVOS
     ===========================================================
 
-    Se cambia V11 -> V12 deliberadamente.
+    Se cambia V12 -> V13 deliberadamente.
 
-    Esto evita reutilizar estados incorrectos que pudieron
-    quedar guardados por la lógica anterior en localStorage.
+    Esto evita reutilizar estados EN VIAJE AL MONTE incorrectos
+    que pudieron quedar guardados antes de validar PRÓXIMO DESTINO.
     */
 
     const ESTADOS_STORAGE =
-      "hoy_control_estados_v12";
+      "hoy_control_estados_v13";
 
 
     /*
@@ -1371,12 +1371,12 @@
     }
 
 
-    function destinoComienzaConDiaActual(
-      destino
+    function textoComienzaConDiaActual(
+      texto
     ){
 
       const primerTexto =
-        normalizarTexto(destino)
+        normalizarTexto(texto)
           .split(" ")[0] || "";
 
       return (
@@ -1532,6 +1532,8 @@
 
       IMPORTANTE:
       solamente desde VACÍO.
+      La primera palabra de PRÓXIMO DESTINO debe ser
+      igual al día actual.
       ---------------------------------------------------------
       */
 
@@ -1540,8 +1542,8 @@
 
         anterior === "VACÍO" &&
 
-        destinoComienzaConDiaActual(
-          r.destino
+        textoComienzaConDiaActual(
+          r.proximo_destino
         ) &&
 
         velocidad !== null &&
