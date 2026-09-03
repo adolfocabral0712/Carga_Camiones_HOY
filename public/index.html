@@ -173,6 +173,13 @@
       border-bottom:0
     }
 
+    .tabla-destinos .fila-total-destinos td{
+      background:#dfe8e2;
+      border-top:2px solid #789184;
+      color:#000;
+      font-weight:900
+    }
+
     .destino-nombre{
       font-weight:800;
       color:#24352c
@@ -2197,6 +2204,46 @@
           );
 
 
+      const totalesColumnas =
+        filas.reduce(
+          (total,[,conteo]) => {
+
+            total["VACÍO"] +=
+              conteo["VACÍO"] || 0;
+
+            total["EN VIAJE AL MONTE"] +=
+              conteo["EN VIAJE AL MONTE"] || 0;
+
+            total.MONTE +=
+              conteo.MONTE || 0;
+
+            total["SALIDO CARGADO"] +=
+              conteo["SALIDO CARGADO"] || 0;
+
+            total.DESCARGANDO +=
+              conteo.DESCARGANDO || 0;
+
+            total.plantaFas +=
+              conteo.plantaFas || 0;
+
+            total.total +=
+              conteo.total || 0;
+
+            return total;
+
+          },
+          {
+            "VACÍO":0,
+            "EN VIAJE AL MONTE":0,
+            "MONTE":0,
+            "SALIDO CARGADO":0,
+            "DESCARGANDO":0,
+            plantaFas:0,
+            total:0
+          }
+        );
+
+
       $("tituloResumenDestinos").textContent =
         "Camiones por " +
         etiqueta.toLowerCase() +
@@ -2268,7 +2315,41 @@
                 );
 
               }
-            ).join("")
+            ).join("") +
+
+            "<tr class='fila-total-destinos'>" +
+
+            "<td>TOTAL</td>" +
+
+            "<td><span class='contador-estado contador-vacio'>" +
+            totalesColumnas["VACÍO"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-viaje'>" +
+            totalesColumnas["EN VIAJE AL MONTE"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-monte'>" +
+            totalesColumnas.MONTE +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-salido'>" +
+            totalesColumnas["SALIDO CARGADO"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-descargando'>" +
+            totalesColumnas.DESCARGANDO +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-planta'>" +
+            totalesColumnas.plantaFas +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-total'>" +
+            totalesColumnas.total +
+            "</span></td>" +
+
+            "</tr>"
           : "<tr><td colspan='8'>Sin datos</td></tr>";
 
 
@@ -3427,5 +3508,3 @@
 
 </body>
 </html>
-index-final.html
-HTML
