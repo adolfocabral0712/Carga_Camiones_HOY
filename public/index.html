@@ -2035,6 +2035,27 @@
       };
 
 
+      const ordenTipoOrigen = valor => {
+
+        const texto =
+          normalizarTexto(
+            valor
+          );
+
+        if(texto.includes("TROZAS"))
+          return 0;
+
+        if(texto.includes("FAS"))
+          return 1;
+
+        if(texto.includes("UPM"))
+          return 2;
+
+        return 3;
+
+      };
+
+
       lista.forEach(
         r => {
 
@@ -2130,8 +2151,19 @@
                   b[0]
                 );
 
+              const tipoA =
+                ordenTipoOrigen(
+                  a[0]
+                );
+
+              const tipoB =
+                ordenTipoOrigen(
+                  b[0]
+                );
+
               return (
                 ordenA - ordenB ||
+                tipoA - tipoB ||
                 a[0].localeCompare(
                 b[0],
                 "es",
