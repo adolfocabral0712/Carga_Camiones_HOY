@@ -129,11 +129,6 @@
       white-space:nowrap
     }
 
-    .quitar-filtro-destino:hover{
-      border-color:#17623d;
-      color:#17623d
-    }
-
     .resumen-destinos-wrap{
       overflow-x:auto
     }
@@ -160,10 +155,6 @@
       text-align:left
     }
 
-    .tabla-destinos tbody tr:last-child td{
-      border-bottom:0
-    }
-
     .tabla-destinos .fila-total-destinos td{
       background:#dfe8e2;
       border-top:2px solid #789184;
@@ -176,17 +167,10 @@
       color:#24352c
     }
 
-    .origen-trozas{background:#d8f0dc !important}
-    .origen-upm{background:#fff0b8 !important}
-    .origen-fas{background:#e3e7ea !important}
-    .origen-z{background:#ffd2d2 !important}
-
-    .tabla-principal td.origen-trozas,
-    .tabla-principal td.origen-upm,
-    .tabla-principal td.origen-fas,
-    .tabla-principal td.origen-z{
-      background:transparent !important
-    }
+    .origen-trozas{background:#d8f0dc!important}
+    .origen-upm{background:#fff0b8!important}
+    .origen-fas{background:#e3e7ea!important}
+    .origen-z{background:#ffd2d2!important}
 
     .destino-filtro{
       border:0;
@@ -201,8 +185,6 @@
       text-decoration-style:dotted;
       text-underline-offset:3px
     }
-
-    .destino-filtro:hover{color:#0d693a}
 
     .contador-estado{
       display:inline-block;
@@ -230,11 +212,6 @@
     }
 
     button.card{cursor:pointer}
-
-    .card-control:hover{
-      border-color:#bd756c;
-      box-shadow:0 3px 12px #70211618
-    }
 
     .card span{
       display:block;
@@ -264,8 +241,7 @@
 
     #acopladosFalta{
       font-family:Consolas,monospace;
-      font-size:19px;
-      letter-spacing:.04em
+      font-size:19px
     }
 
     .card.alerta{
@@ -285,8 +261,6 @@
 
     .tabla-wrap{
       overflow-x:auto;
-      overflow-y:visible;
-      max-height:none;
       background:#fff;
       border:1px solid var(--borde);
       border-radius:10px
@@ -299,24 +273,6 @@
 
     .tabla-principal{
       width:100%;
-      min-width:0;
-      table-layout:auto
-    }
-
-    .tabla-principal th,
-    .tabla-principal td{
-      width:1%
-    }
-
-    .tabla-principal th:nth-child(2),
-    .tabla-principal td:nth-child(2),
-    .tabla-principal th:nth-child(4),
-    .tabla-principal td:nth-child(4),
-    .tabla-principal th:nth-child(6),
-    .tabla-principal td:nth-child(6),
-    .tabla-principal th:nth-child(7),
-    .tabla-principal td:nth-child(7){
-      width:auto
     }
 
     thead{
@@ -327,21 +283,17 @@
     }
 
     th{
-      text-align:left;
       padding:12px 11px;
       color:#000;
       font-size:9px;
       text-transform:uppercase;
-      letter-spacing:.055em;
       border-bottom:1px solid #c6d2cb;
-      white-space:nowrap
+      white-space:nowrap;
+      text-align:center
     }
 
-    .tabla-principal th{text-align:center}
-
     th.ordenable{
-      cursor:pointer;
-      user-select:none
+      cursor:pointer
     }
 
     .indicador-orden{
@@ -352,35 +304,26 @@
       margin-left:6px;
       border:1px solid #aab9b0;
       border-radius:5px;
-      background:#fff;
-      color:#52645a;
-      font-size:14px;
-      font-weight:900
+      background:#fff
     }
 
     .orden-activo{
-      background:#d8eadf!important;
-      color:#000!important
-    }
-
-    .orden-activo .indicador-orden{
-      border-color:#17623d;
-      background:#17623d;
-      color:#fff
+      background:#d8eadf!important
     }
 
     td{
       padding:10px 11px;
       border-bottom:1px solid #edf1ef;
-      vertical-align:top;
-      line-height:1.35
+      vertical-align:top
     }
 
-    .centrada{text-align:center !important}
+    .centrada{
+      text-align:center!important
+    }
 
-    tbody tr:hover{background:#f5f9f6}
-
-    .empresa{font-weight:700}
+    .empresa{
+      font-weight:700
+    }
 
     .matricula{
       font-family:Consolas,monospace;
@@ -410,7 +353,6 @@
     }
 
     .gps{
-      min-width:0;
       max-width:320px;
       overflow-wrap:anywhere;
       color:#46544c
@@ -425,8 +367,7 @@
       text-align:left;
       cursor:pointer;
       text-decoration:underline;
-      text-decoration-style:dotted;
-      text-underline-offset:3px
+      text-decoration-style:dotted
     }
 
     .rumbo-flecha{
@@ -435,20 +376,8 @@
       margin-left:3px;
       color:#17623d;
       font-size:17px;
-      font-weight:900;
-      line-height:11px;
-      text-align:center
+      font-weight:900
     }
-
-    .fecha{
-      font-weight:800;
-      white-space:nowrap
-    }
-
-    .fecha.vigente{color:#17623d}
-    .fecha.proxima{color:#a56400;background:#fff3d2}
-    .fecha.vencida{color:#aa2b20;background:#fde9e6}
-    .fecha.sin-dato{color:#929c96}
 
     .alerta-texto{
       color:#b42318!important;
@@ -463,11 +392,9 @@
       font:inherit;
       font-weight:inherit;
       padding:0;
-      text-align:left;
       cursor:pointer;
       text-decoration:underline;
-      text-decoration-style:dotted;
-      text-underline-offset:3px
+      text-decoration-style:dotted
     }
 
     .mensaje{
@@ -487,7 +414,9 @@
       place-items:center
     }
 
-    .modal-fondo.abierto{display:grid}
+    .modal-fondo.abierto{
+      display:grid
+    }
 
     .modal{
       position:relative;
@@ -496,8 +425,7 @@
       overflow:auto;
       background:#fff;
       border-radius:14px;
-      padding:22px;
-      box-shadow:0 24px 70px #0007
+      padding:22px
     }
 
     .modal-cerrar{
@@ -507,19 +435,7 @@
       border:0;
       background:transparent;
       font-size:28px;
-      color:#65736b;
       cursor:pointer
-    }
-
-    .modal h2{
-      margin:0 35px 5px 0;
-      font-size:20px
-    }
-
-    .modal-subtitulo{
-      margin:0 0 18px;
-      color:var(--muted);
-      font-size:11px
     }
 
     .documentos{
@@ -535,29 +451,14 @@
       padding:11px
     }
 
-    .documento.proxima{
-      border-left-color:#d58a16;
-      background:#fffaf0
-    }
-
     .documento.vencida{
       border-left-color:#bd3025;
       background:#fff3f1
     }
 
-    .documento.sin-dato{border-left-color:#a3aca7}
-
-    .documento span,
-    .documento b{
-      display:block
-    }
-
-    .documento span{
-      color:var(--muted);
-      font-size:9px;
-      font-weight:800;
-      text-transform:uppercase;
-      margin-bottom:5px
+    .documento.proxima{
+      border-left-color:#d58a16;
+      background:#fffaf0
     }
 
     .mapa-contenedor{
@@ -569,22 +470,19 @@
       width:100%;
       height:430px;
       border:1px solid var(--borde);
-      border-radius:10px;
-      background:#eef2ef
+      border-radius:10px
     }
 
     .mapa-abrir{
       display:inline-flex;
-      align-items:center;
       justify-content:center;
       justify-self:center;
       border-radius:8px;
       background:#17623d;
       color:#fff;
       padding:10px 16px;
-      font-size:11px;
-      font-weight:800;
-      text-decoration:none
+      text-decoration:none;
+      font-weight:800
     }
 
     footer{
@@ -595,38 +493,21 @@
     }
 
     @media(max-width:1100px){
-      .resumen{grid-template-columns:repeat(2,1fr)}
+      .resumen{
+        grid-template-columns:repeat(2,1fr)
+      }
     }
 
     @media(max-width:800px){
       header{padding:16px}
-
       h1{font-size:21px}
-
-      .resumen{grid-template-columns:1fr 1fr}
-
-      .documentos{grid-template-columns:1fr}
-
       main{padding:9px}
+      .resumen{grid-template-columns:1fr 1fr}
+      .documentos{grid-template-columns:1fr}
 
       .resumen-destinos-titulo{
         flex-direction:column;
         align-items:stretch
-      }
-
-      .resumen-destinos-controles{
-        display:grid;
-        grid-template-columns:minmax(0,1fr) auto
-      }
-
-      #selectorTipoDestino{
-        width:100%;
-        min-width:0
-      }
-
-      .quitar-filtro-destino{
-        grid-column:1/-1;
-        width:100%
       }
     }
   </style>
@@ -699,7 +580,10 @@
 <section class="resumen-destinos">
 
   <div class="resumen-destinos-titulo">
-    <h2 id="tituloResumenDestinos">Camiones por destino y estado</h2>
+
+    <h2 id="tituloResumenDestinos">
+      Camiones por destino y estado
+    </h2>
 
     <div class="resumen-destinos-controles">
 
@@ -708,18 +592,24 @@
         <option value="proximo_destino">PRÓXIMO DESTINO</option>
       </select>
 
-      <button class="quitar-filtro-destino" id="quitarFiltroDestino" hidden>
+      <button
+        class="quitar-filtro-destino"
+        id="quitarFiltroDestino"
+        hidden
+      >
         Quitar filtro
       </button>
 
       <span id="cantidadDestinos">—</span>
 
     </div>
+
   </div>
 
   <div class="resumen-destinos-wrap">
 
     <table class="tabla-destinos">
+
       <thead>
         <tr>
           <th id="encabezadoTipoDestino">Destino</th>
@@ -734,6 +624,7 @@
       </thead>
 
       <tbody id="resumenDestinos"></tbody>
+
     </table>
 
   </div>
@@ -746,16 +637,47 @@
 
 <thead>
 <tr>
-  <th class="ordenable" data-columna="empresa">Empresa <span class="indicador-orden">↕</span></th>
-  <th class="ordenable" data-columna="destino">Destino <span class="indicador-orden">↕</span></th>
-  <th class="ordenable centrada" data-columna="matricula">Matrícula <span class="indicador-orden">↕</span></th>
-  <th class="ordenable" data-columna="proximo_destino">Próximo destino <span class="indicador-orden">↕</span></th>
-  <th class="ordenable centrada" data-columna="_estadoCalculado">Estado <span class="indicador-orden">↕</span></th>
-  <th class="ordenable centrada" data-columna="comentarios">Comentarios <span class="indicador-orden">↕</span></th>
-  <th class="ordenable" data-columna="ubicacion_gps">Ubicación GPS <span class="indicador-orden">↕</span></th>
-  <th class="ordenable" data-columna="chofer">Chofer <span class="indicador-orden">↕</span></th>
-  <th class="ordenable centrada" data-columna="cedula_identidad">Cédula de identidad <span class="indicador-orden">↕</span></th>
-  <th class="ordenable centrada" data-columna="acoplados">Acoplados <span class="indicador-orden">↕</span></th>
+
+  <th class="ordenable" data-columna="empresa">
+    Empresa <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="destino">
+    Destino <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="matricula">
+    Matrícula <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="proximo_destino">
+    Próximo destino <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="_estadoCalculado">
+    Estado <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="comentarios">
+    Comentarios <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="ubicacion_gps">
+    Ubicación GPS <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="chofer">
+    Chofer <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="cedula_identidad">
+    Cédula de identidad <span class="indicador-orden">↕</span>
+  </th>
+
+  <th class="ordenable" data-columna="acoplados">
+    Acoplados <span class="indicador-orden">↕</span>
+  </th>
+
 </tr>
 </thead>
 
@@ -763,7 +685,9 @@
 
 </table>
 
-<div class="mensaje" id="mensaje">Cargando información…</div>
+<div class="mensaje" id="mensaje">
+  Cargando información…
+</div>
 
 </div>
 
@@ -773,24 +697,39 @@
 
 <section class="modal">
 
-<button class="modal-cerrar" id="modalCerrar">×</button>
+  <button class="modal-cerrar" id="modalCerrar">
+    ×
+  </button>
 
-<h2 id="modalTitulo"></h2>
-<p class="modal-subtitulo" id="modalSubtitulo"></p>
+  <h2 id="modalTitulo"></h2>
 
-<div class="documentos" id="modalDocumentos"></div>
+  <p id="modalSubtitulo"></p>
+
+  <div class="documentos" id="modalDocumentos"></div>
 
 </section>
 
 </div>
 
 <footer>
-Actualización automática cada 5 minutos
+  Actualización automática cada 5 minutos
 </footer>
 
 <script>
 
 const JSON_URL = "/api/datos";
+
+/*
+===========================================================
+MEMORIA DE ESTADOS
+
+V14 para no reutilizar estados incorrectos anteriores.
+===========================================================
+*/
+
+const ESTADOS_STORAGE =
+  "hoy_control_estados_v14";
+
 
 let registros = [];
 let filtradosActuales = [];
@@ -802,10 +741,10 @@ let ordenActual = {
 
 let filtroDestinoGeneral = "";
 
-let permitirViajeAlMonte = true;
 
 const $ = id =>
   document.getElementById(id);
+
 
 const limpio = v =>
   v === null ||
@@ -814,6 +753,7 @@ const limpio = v =>
   String(v).trim().toLowerCase() === "nan"
     ? "—"
     : String(v).trim();
+
 
 const esc = v =>
   limpio(v).replace(
@@ -827,6 +767,7 @@ const esc = v =>
     }[c])
   );
 
+
 const FLECHAS_RUMBO = {
   N:"↑",
   NE:"↗",
@@ -838,185 +779,16 @@ const FLECHAS_RUMBO = {
   NO:"↖"
 };
 
-const gpsConFlecha = v =>
-  esc(v).replace(
-    /\bRUMBO\s+(NE|NO|SE|SO|N|E|S|O)\b/gi,
-    (texto,rumbo) =>
-      "RUMBO " +
-      rumbo.toUpperCase() +
-      " <span class='rumbo-flecha'>" +
-      FLECHAS_RUMBO[rumbo.toUpperCase()] +
-      "</span>"
-  );
 
-function obtenerPositionLinkSeguro(valor){
-
-  const enlace =
-    String(valor || "").trim();
-
-  if(
-    !enlace ||
-    enlace.toLowerCase() === "nan"
-  )
-    return "";
-
-  try{
-
-    const url =
-      new URL(enlace);
-
-    return (
-      url.protocol === "https:" ||
-      url.protocol === "http:"
-    )
-      ? url.href
-      : "";
-
-  }
-  catch{
-    return "";
-  }
-
-}
-
-function obtenerUrlMapaEmbebido(enlace){
-
-  let texto =
-    String(enlace || "");
-
-  try{
-    texto = decodeURIComponent(texto);
-  }
-  catch{}
-
-  const coincidencia =
-    texto.match(
-      /@(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/
-    ) ||
-    texto.match(
-      /(?:query|q|destination)=(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/i
-    ) ||
-    texto.match(
-      /(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/
-    );
-
-  if(!coincidencia)
-    return "";
-
-  const latitud =
-    Number(coincidencia[1]);
-
-  const longitud =
-    Number(coincidencia[2]);
-
-  if(
-    !Number.isFinite(latitud) ||
-    !Number.isFinite(longitud) ||
-    Math.abs(latitud) > 90 ||
-    Math.abs(longitud) > 180
-  )
-    return "";
-
-  return (
-    "https://www.google.com/maps?q=" +
-    encodeURIComponent(
-      latitud + "," + longitud
-    ) +
-    "&z=15&output=embed"
-  );
-
-}
-
-const fecha = v => {
-
-  if(!v)
-    return "—";
-
-  return new Intl.DateTimeFormat(
-    "es-UY",
-    {
-      timeZone:"America/Montevideo",
-      day:"2-digit",
-      month:"2-digit",
-      year:"numeric",
-      hour:"2-digit",
-      minute:"2-digit",
-      hour12:false
-    }
-  )
-  .format(new Date(v))
-  .replace(",","");
-
-};
-
-const fechaCorta = v => {
-
-  const x = limpio(v);
-
-  if(x === "—")
-    return "—";
-
-  const d =
-    new Date(x + "T12:00:00");
-
-  return Number.isNaN(d.getTime())
-    ? "—"
-    : new Intl.DateTimeFormat(
-        "es-UY",
-        {
-          day:"2-digit",
-          month:"2-digit",
-          year:"numeric"
-        }
-      ).format(d);
-
-};
-
-const claseVencimiento = v => {
-
-  const x = limpio(v);
-
-  if(x === "—")
-    return "sin-dato";
-
-  const d =
-    new Date(x + "T23:59:59");
-
-  if(Number.isNaN(d.getTime()))
-    return "sin-dato";
-
-  const ahora = Date.now();
-
-  const dias =
-    Math.ceil(
-      (d.getTime() - ahora) /
-      86400000
-    );
-
-  return d.getTime() < ahora
-    ? "vencida"
-    : dias <= 30
-      ? "proxima"
-      : "vigente";
-
-};
-
-const algunoVencido = valores =>
-  valores.some(
-    v =>
-      claseVencimiento(v) ===
-      "vencida"
-  );
-
-
-/*
-===========================================================
-ESTADOS OPERATIVOS V13
-===========================================================
-*/
-
-const ESTADOS_STORAGE =
-  "hoy_control_estados_v13";
+const DIAS_SEMANA = [
+  "LUNES",
+  "MARTES",
+  "MIERCOLES",
+  "JUEVES",
+  "VIERNES",
+  "SABADO",
+  "DOMINGO"
+];
 
 
 const MATRICULAS_SALIDO_CARGADO =
@@ -1110,7 +882,9 @@ function leerEstados(){
 
   }
   catch{
+
     return {};
+
   }
 
 }
@@ -1127,57 +901,6 @@ function guardarEstados(estados){
 
   }
   catch{}
-
-}
-
-
-function obtenerLugarGps(
-  ubicacionGps
-){
-
-  const texto =
-    String(
-      ubicacionGps || ""
-    ).trim();
-
-  if(
-    !texto ||
-    texto.toLowerCase() === "nan"
-  )
-    return "";
-
-  const primeraParte =
-    texto.split(/\s+-\s+/)[0];
-
-  return normalizarTexto(
-    primeraParte
-  );
-
-}
-
-
-function destinoCoincideConGps(
-  destino,
-  ubicacionGps
-){
-
-  const destinoNormalizado =
-    normalizarTexto(destino);
-
-  const lugarGps =
-    obtenerLugarGps(
-      ubicacionGps
-    );
-
-  if(
-    !destinoNormalizado ||
-    !lugarGps
-  )
-    return false;
-
-  return destinoNormalizado.includes(
-    lugarGps
-  );
 
 }
 
@@ -1199,18 +922,48 @@ function obtenerDiaActual(){
 }
 
 
-function textoComienzaConDiaActual(
+function obtenerPrimerDiaSemana(
   texto
 ){
 
-  const primerTexto =
-    normalizarTexto(texto)
-      .split(" ")[0] || "";
+  const primeraPalabra =
+    normalizarTexto(
+      texto
+    )
+    .split(" ")[0] || "";
+
+  return DIAS_SEMANA.includes(
+    primeraPalabra
+  )
+    ? primeraPalabra
+    : "";
+
+}
+
+
+function comienzaConDiaSemana(
+  texto
+){
+
+  return obtenerPrimerDiaSemana(
+    texto
+  ) !== "";
+
+}
+
+
+function comienzaConDiaActual(
+  texto
+){
+
+  const dia =
+    obtenerPrimerDiaSemana(
+      texto
+    );
 
   return (
-    primerTexto !== "" &&
-    primerTexto ===
-      obtenerDiaActual()
+    dia !== "" &&
+    dia === obtenerDiaActual()
   );
 
 }
@@ -1227,26 +980,57 @@ function textoComienzaConZ(
 }
 
 
-function claseFondoOrigen(
-  valor
+function obtenerLugarGps(
+  ubicacionGps
 ){
 
   const texto =
-    normalizarTexto(valor);
+    String(
+      ubicacionGps || ""
+    ).trim();
 
-  if(texto.startsWith("Z"))
-    return "origen-z";
+  if(
+    !texto ||
+    texto.toLowerCase() === "nan"
+  )
+    return "";
 
-  if(texto.includes("TROZAS"))
-    return "origen-trozas";
+  const primeraParte =
+    texto.split(
+      /\s+-\s+/
+    )[0];
 
-  if(texto.includes("UPM"))
-    return "origen-upm";
+  return normalizarTexto(
+    primeraParte
+  );
 
-  if(texto.includes("FAS"))
-    return "origen-fas";
+}
 
-  return "";
+
+function destinoCoincideConGps(
+  destino,
+  ubicacionGps
+){
+
+  const destinoNormalizado =
+    normalizarTexto(
+      destino
+    );
+
+  const lugarGps =
+    obtenerLugarGps(
+      ubicacionGps
+    );
+
+  if(
+    !destinoNormalizado ||
+    !lugarGps
+  )
+    return false;
+
+  return destinoNormalizado.includes(
+    lugarGps
+  );
 
 }
 
@@ -1262,11 +1046,19 @@ function obtenerVelocidadGps(
       /\bVEL\.\s*(-?\d+(?:[.,]\d+)?)/i
     );
 
-  return coincidencia
-    ? Number(
-        coincidencia[1]
-          .replace(",",".")
-      )
+  if(!coincidencia)
+    return null;
+
+  const velocidad =
+    Number(
+      coincidencia[1]
+        .replace(",",".")
+    );
+
+  return Number.isFinite(
+    velocidad
+  )
+    ? velocidad
     : null;
 
 }
@@ -1276,7 +1068,7 @@ function obtenerVelocidadGps(
 ===========================================================
 MÁQUINA DE ESTADOS
 
-ÚNICO CICLO PERMITIDO:
+ÚNICO ORDEN:
 
 VACÍO
   ↓
@@ -1302,13 +1094,14 @@ function calcularEstado(
       r.matricula
     );
 
+
   const gps =
     normalizarTexto(
       r.ubicacion_gps
     );
 
 
-  const tieneEstadoGuardado =
+  const tieneGuardado =
     Object.prototype
       .hasOwnProperty
       .call(
@@ -1317,14 +1110,16 @@ function calcularEstado(
       );
 
 
+  /*
+  =========================================================
+  ESTADO ANTERIOR
+  =========================================================
+  */
+
   let anterior;
 
 
-  /*
-  PRIMERA VEZ QUE VEMOS LA MATRÍCULA
-  */
-
-  if(tieneEstadoGuardado){
+  if(tieneGuardado){
 
     anterior =
       normalizarEstado(
@@ -1334,7 +1129,9 @@ function calcularEstado(
   }
   else if(
     MATRICULAS_SALIDO_CARGADO
-      .has(matricula)
+      .has(
+        matricula
+      )
   ){
 
     anterior =
@@ -1352,43 +1149,7 @@ function calcularEstado(
 
 
   /*
-  DETECTAR MONTE
-  */
-
-  const monte =
-    destinoCoincideConGps(
-      r.destino,
-      r.ubicacion_gps
-    );
-
-
-  /*
-  DETECTAR LUGAR DE DESCARGA
-  */
-
-  const descargando =
-    LUGARES_DESCARGA.some(
-      lugar =>
-        gps.includes(
-          normalizarTexto(
-            lugar
-          )
-        )
-    );
-
-
-  /*
-  VELOCIDAD GPS
-  */
-
-  const velocidad =
-    obtenerVelocidadGps(
-      r.ubicacion_gps
-    );
-
-
-  /*
-  PARADO
+  PARADO ES SOLO VISUAL.
   */
 
   const parado =
@@ -1401,51 +1162,96 @@ function calcularEstado(
 
 
   /*
-  A DEFINIR SEGÚN CLIMA
-
-  Solamente evita que un VACÍO comience viaje.
-  No rompe un ciclo ya iniciado.
+  LLEGÓ AL MONTE.
   */
 
-  const proximoDestinoSegunClima =
-    normalizarTexto(
+  const estaEnMonte =
+    destinoCoincideConGps(
+      r.destino,
+      r.ubicacion_gps
+    );
+
+
+  /*
+  LLEGÓ A UN LUGAR DE DESCARGA.
+  */
+
+  const estaDescargando =
+    LUGARES_DESCARGA.some(
+      lugar =>
+        gps.includes(
+          normalizarTexto(
+            lugar
+          )
+        )
+    );
+
+
+  /*
+  VELOCIDAD.
+  */
+
+  const velocidad =
+    obtenerVelocidadGps(
+      r.ubicacion_gps
+    );
+
+
+  /*
+  =========================================================
+  PRÓXIMO DESTINO
+  =========================================================
+
+  Si NO comienza con:
+
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+
+  y el estado es VACÍO:
+
+  QUEDA VACÍO.
+  =========================================================
+  */
+
+  const proximoTieneDia =
+    comienzaConDiaSemana(
       r.proximo_destino
-    ) ===
-    "A DEFINIR SEGUN CLIMA";
+    );
+
+
+  const proximoEsHoy =
+    comienzaConDiaActual(
+      r.proximo_destino
+    );
 
 
   /*
   =========================================================
   VACÍO -> EN VIAJE AL MONTE
 
-  DEBEN CUMPLIRSE LAS TRES CONDICIONES:
+  LAS TRES CONDICIONES PRINCIPALES:
 
-  1) estado anterior VACÍO
-  2) DESTINO corresponde al día actual
-  3) velocidad > 20 km/h
+  1. Estado = VACÍO
+  2. PRÓXIMO DESTINO empieza con el día ACTUAL
+  3. VELOCIDAD > 20
+
+  Además, si PRÓXIMO DESTINO no empieza con ningún día,
+  permanece VACÍO.
   =========================================================
   */
 
-  const viajeAlMonte =
-    permitirViajeAlMonte === true &&
-
+  const puedeIniciarViaje =
     anterior === "VACÍO" &&
-
-    proximoDestinoSegunClima === false &&
-
-    textoComienzaConDiaActual(
-      r.destino
-    ) &&
-
+    proximoTieneDia === true &&
+    proximoEsHoy === true &&
     velocidad !== null &&
-
     velocidad > 20;
 
-
-  /*
-  POR DEFECTO:
-  MANTENER ESTADO ANTERIOR
-  */
 
   let nuevo =
     anterior;
@@ -1453,7 +1259,7 @@ function calcularEstado(
 
   /*
   =========================================================
-  VACÍO
+  ESTADO: VACÍO
   =========================================================
   */
 
@@ -1461,12 +1267,72 @@ function calcularEstado(
     anterior === "VACÍO"
   ){
 
-    if(viajeAlMonte){
+    /*
+    PRÓXIMO DESTINO SIN DÍA:
+
+    VACÍO -> VACÍO
+    */
+
+    if(
+      !proximoTieneDia
+    ){
+
+      nuevo =
+        "VACÍO";
+
+    }
+
+
+    /*
+    PRÓXIMO DESTINO CON DÍA,
+    PERO NO ES HOY:
+
+    VACÍO -> VACÍO
+    */
+
+    else if(
+      !proximoEsHoy
+    ){
+
+      nuevo =
+        "VACÍO";
+
+    }
+
+
+    /*
+    ES HOY PERO VELOCIDAD <= 20:
+
+    VACÍO -> VACÍO
+    */
+
+    else if(
+      velocidad === null ||
+      velocidad <= 20
+    ){
+
+      nuevo =
+        "VACÍO";
+
+    }
+
+
+    /*
+    ES HOY Y VELOCIDAD > 20:
+
+    VACÍO -> EN VIAJE AL MONTE
+    */
+
+    else if(
+      puedeIniciarViaje
+    ){
 
       nuevo =
         "EN VIAJE AL MONTE";
 
     }
+
+
     else{
 
       nuevo =
@@ -1479,11 +1345,14 @@ function calcularEstado(
 
   /*
   =========================================================
-  EN VIAJE AL MONTE
+  ESTADO: EN VIAJE AL MONTE
 
-  No vuelve a VACÍO aunque la velocidad baje.
+  La velocidad deja de importar.
 
-  Solamente pasa a MONTE cuando llega al destino.
+  Si baja de 20 o incluso queda en 0:
+  sigue EN VIAJE AL MONTE.
+
+  Solamente cambia cuando llega al monte.
   =========================================================
   */
 
@@ -1492,7 +1361,9 @@ function calcularEstado(
     "EN VIAJE AL MONTE"
   ){
 
-    if(monte){
+    if(
+      estaEnMonte
+    ){
 
       nuevo =
         "MONTE";
@@ -1510,9 +1381,9 @@ function calcularEstado(
 
   /*
   =========================================================
-  MONTE
+  ESTADO: MONTE
 
-  Mientras continúe en el monte:
+  Mientras GPS coincide con DESTINO:
   MONTE.
 
   Cuando abandona:
@@ -1524,7 +1395,9 @@ function calcularEstado(
     anterior === "MONTE"
   ){
 
-    if(monte){
+    if(
+      estaEnMonte
+    ){
 
       nuevo =
         "MONTE";
@@ -1542,14 +1415,13 @@ function calcularEstado(
 
   /*
   =========================================================
+  ESTADO: SALIDO CARGADO
+
+  Solamente puede:
+
   SALIDO CARGADO
-
-  Únicamente puede pasar a DESCARGANDO.
-
-  Nunca:
-  - VACÍO
-  - EN VIAJE AL MONTE
-  - MONTE
+         ↓
+  DESCARGANDO
   =========================================================
   */
 
@@ -1558,7 +1430,9 @@ function calcularEstado(
     "SALIDO CARGADO"
   ){
 
-    if(descargando){
+    if(
+      estaDescargando
+    ){
 
       nuevo =
         "DESCARGANDO";
@@ -1576,15 +1450,15 @@ function calcularEstado(
 
   /*
   =========================================================
-  DESCARGANDO
+  ESTADO: DESCARGANDO
 
-  Mientras continúe en lugar de descarga:
+  Mientras está en zona de descarga:
   DESCARGANDO.
 
-  Al salir:
+  Cuando sale:
   VACÍO.
 
-  Ahí comienza un nuevo ciclo.
+  Ahí comienza un ciclo nuevo.
   =========================================================
   */
 
@@ -1593,7 +1467,9 @@ function calcularEstado(
     "DESCARGANDO"
   ){
 
-    if(descargando){
+    if(
+      estaDescargando
+    ){
 
       nuevo =
         "DESCARGANDO";
@@ -1610,7 +1486,7 @@ function calcularEstado(
 
 
   /*
-  ESTADO DESCONOCIDO
+  SEGURIDAD.
   */
 
   else{
@@ -1622,7 +1498,7 @@ function calcularEstado(
 
 
   /*
-  GUARDAR ESTADO REAL DEL CICLO
+  GUARDAMOS EL ESTADO REAL DEL CICLO.
   */
 
   if(matricula){
@@ -1634,9 +1510,7 @@ function calcularEstado(
 
 
   /*
-  PARADO ES SOLAMENTE VISUAL.
-
-  No destruimos el estado real guardado.
+  PARADO NO DESTRUYE EL ESTADO GUARDADO.
   */
 
   if(parado){
@@ -1651,16 +1525,264 @@ function calcularEstado(
 }
 
 
-const claseEstado = estado =>
-  "estado estado-" +
-  normalizarTexto(
-    estado
-  )
-  .toLowerCase()
-  .replace(
-    /\s+/g,
-    "-"
+const gpsConFlecha = v =>
+  esc(v).replace(
+    /\bRUMBO\s+(NE|NO|SE|SO|N|E|S|O)\b/gi,
+    (texto,rumbo) =>
+      "RUMBO " +
+      rumbo.toUpperCase() +
+      " <span class='rumbo-flecha'>" +
+      FLECHAS_RUMBO[
+        rumbo.toUpperCase()
+      ] +
+      "</span>"
   );
+
+
+function obtenerPositionLinkSeguro(
+  valor
+){
+
+  const enlace =
+    String(
+      valor || ""
+    ).trim();
+
+  if(
+    !enlace ||
+    enlace.toLowerCase() === "nan"
+  )
+    return "";
+
+  try{
+
+    const url =
+      new URL(
+        enlace
+      );
+
+    return (
+      url.protocol === "https:" ||
+      url.protocol === "http:"
+    )
+      ? url.href
+      : "";
+
+  }
+  catch{
+
+    return "";
+
+  }
+
+}
+
+
+function obtenerUrlMapaEmbebido(
+  enlace
+){
+
+  let texto =
+    String(
+      enlace || ""
+    );
+
+  try{
+    texto =
+      decodeURIComponent(
+        texto
+      );
+  }
+  catch{}
+
+  const coincidencia =
+    texto.match(
+      /@(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/
+    ) ||
+    texto.match(
+      /(?:query|q|destination)=(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/i
+    ) ||
+    texto.match(
+      /(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/
+    );
+
+  if(!coincidencia)
+    return "";
+
+  const lat =
+    Number(
+      coincidencia[1]
+    );
+
+  const lon =
+    Number(
+      coincidencia[2]
+    );
+
+  if(
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon)
+  )
+    return "";
+
+  return (
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(
+      lat + "," + lon
+    ) +
+    "&z=15&output=embed"
+  );
+
+}
+
+
+const fecha = v => {
+
+  if(!v)
+    return "—";
+
+  return new Intl.DateTimeFormat(
+    "es-UY",
+    {
+      timeZone:"America/Montevideo",
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit",
+      hour12:false
+    }
+  )
+  .format(
+    new Date(v)
+  )
+  .replace(",","");
+
+};
+
+
+const fechaCorta = v => {
+
+  const x =
+    limpio(v);
+
+  if(x === "—")
+    return "—";
+
+  const d =
+    new Date(
+      x + "T12:00:00"
+    );
+
+  return Number.isNaN(
+    d.getTime()
+  )
+    ? "—"
+    : new Intl.DateTimeFormat(
+        "es-UY",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          year:"numeric"
+        }
+      ).format(d);
+
+};
+
+
+const claseVencimiento = v => {
+
+  const x =
+    limpio(v);
+
+  if(x === "—")
+    return "sin-dato";
+
+  const d =
+    new Date(
+      x + "T23:59:59"
+    );
+
+  if(
+    Number.isNaN(
+      d.getTime()
+    )
+  )
+    return "sin-dato";
+
+  const dias =
+    Math.ceil(
+      (
+        d.getTime() -
+        Date.now()
+      ) /
+      86400000
+    );
+
+  return d.getTime() <
+         Date.now()
+    ? "vencida"
+    : dias <= 30
+      ? "proxima"
+      : "vigente";
+
+};
+
+
+const algunoVencido =
+  valores =>
+    valores.some(
+      v =>
+        claseVencimiento(v) ===
+        "vencida"
+    );
+
+
+function claseFondoOrigen(
+  valor
+){
+
+  const texto =
+    normalizarTexto(
+      valor
+    );
+
+  if(
+    texto.startsWith("Z")
+  )
+    return "origen-z";
+
+  if(
+    texto.includes("TROZAS")
+  )
+    return "origen-trozas";
+
+  if(
+    texto.includes("UPM")
+  )
+    return "origen-upm";
+
+  if(
+    texto.includes("FAS")
+  )
+    return "origen-fas";
+
+  return "";
+
+}
+
+
+const claseEstado =
+  estado =>
+    "estado estado-" +
+    normalizarTexto(
+      estado
+    )
+    .toLowerCase()
+    .replace(
+      /\s+/g,
+      "-"
+    );
 
 
 function compararValores(
@@ -1668,26 +1790,14 @@ function compararValores(
   b
 ){
 
-  const valorA =
+  const A =
     limpio(a);
 
-  const valorB =
+  const B =
     limpio(b);
 
-  if(
-    valorA === "—" &&
-    valorB !== "—"
-  )
-    return 1;
-
-  if(
-    valorB === "—" &&
-    valorA !== "—"
-  )
-    return -1;
-
-  return valorA.localeCompare(
-    valorB,
+  return A.localeCompare(
+    B,
     "es",
     {
       numeric:true,
@@ -1769,7 +1879,8 @@ function renderResumenDestinos(
 ){
 
   const campo =
-    $("selectorTipoDestino").value;
+    $("selectorTipoDestino")
+      .value;
 
   const etiqueta =
     campo === "proximo_destino"
@@ -1778,38 +1889,6 @@ function renderResumenDestinos(
 
   const destinos =
     new Map();
-
-  const diasSemana = [
-    "LUNES",
-    "MARTES",
-    "MIERCOLES",
-    "JUEVES",
-    "VIERNES",
-    "SABADO",
-    "DOMINGO"
-  ];
-
-  const ordenDestino = valor => {
-
-    const texto =
-      normalizarTexto(valor);
-
-    if(texto.startsWith("Z"))
-      return 99;
-
-    const primeraPalabra =
-      texto.split(" ")[0] || "";
-
-    const indiceDia =
-      diasSemana.indexOf(
-        primeraPalabra
-      );
-
-    return indiceDia >= 0
-      ? indiceDia
-      : 8;
-
-  };
 
   lista.forEach(
     r => {
@@ -1846,7 +1925,7 @@ function renderResumenDestinos(
 
       }
 
-      const conteo =
+      const c =
         destinos.get(
           destino
         );
@@ -1856,7 +1935,10 @@ function renderResumenDestinos(
           r._estadoCalculado
         );
 
-      const ubicacionGpsCompacta =
+      c[estado] =
+        (c[estado] || 0) + 1;
+
+      const gps =
         normalizarTexto(
           r.ubicacion_gps
         ).replace(
@@ -1864,28 +1946,26 @@ function renderResumenDestinos(
           ""
         );
 
-      conteo[estado] =
-        (conteo[estado] || 0) + 1;
-
       if(
-        ubicacionGpsCompacta.includes(
+        gps.includes(
           "ESTACIONAMIENTOPLANTA"
         )
       ){
-        conteo.plantaFas++;
+
+        c.plantaFas++;
+
       }
 
-      conteo.total++;
+      c.total++;
 
     }
   );
+
 
   const filas =
     [...destinos.entries()]
       .sort(
         (a,b) =>
-          ordenDestino(a[0]) -
-          ordenDestino(b[0]) ||
           a[0].localeCompare(
             b[0],
             "es",
@@ -1895,16 +1975,17 @@ function renderResumenDestinos(
           )
       );
 
-  const totales =
-    {
-      "VACÍO":0,
-      "EN VIAJE AL MONTE":0,
-      "MONTE":0,
-      "SALIDO CARGADO":0,
-      "DESCARGANDO":0,
-      plantaFas:0,
-      total:0
-    };
+
+  const totales = {
+    "VACÍO":0,
+    "EN VIAJE AL MONTE":0,
+    "MONTE":0,
+    "SALIDO CARGADO":0,
+    "DESCARGANDO":0,
+    plantaFas:0,
+    total:0
+  };
+
 
   filas.forEach(
     ([,c]) => {
@@ -1912,151 +1993,126 @@ function renderResumenDestinos(
       Object.keys(
         totales
       ).forEach(
-        k =>
+        k => {
+
           totales[k] +=
-            c[k] || 0
+            c[k] || 0;
+
+        }
       );
 
     }
   );
 
-  $("tituloResumenDestinos").textContent =
-    "Camiones por " +
-    etiqueta.toLowerCase() +
-    " y estado";
 
-  $("encabezadoTipoDestino").textContent =
-    etiqueta;
-
-  $("cantidadDestinos").textContent =
-    filas.length +
-    " registros";
-
-  $("resumenDestinos").innerHTML =
-    filas.length
-      ? filas.map(
-          ([destino,c]) => {
-
-            const nombre =
-              campo === "destino"
-                ? "<button class='destino-filtro' data-destino='" +
-                  esc(destino) +
-                  "'>" +
-                  esc(destino) +
-                  "</button>"
-                : esc(destino);
-
-            return (
-              "<tr>" +
-
-              "<td class='destino-nombre " +
-              claseFondoOrigen(destino) +
-              "'>" +
-              nombre +
-              "</td>" +
-
-              "<td><span class='contador-estado contador-vacio'>" +
-              c["VACÍO"] +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-viaje'>" +
-              c["EN VIAJE AL MONTE"] +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-monte'>" +
-              c.MONTE +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-salido'>" +
-              c["SALIDO CARGADO"] +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-descargando'>" +
-              c.DESCARGANDO +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-planta'>" +
-              c.plantaFas +
-              "</span></td>" +
-
-              "<td><span class='contador-estado contador-total'>" +
-              c.total +
-              "</span></td>" +
-
-              "</tr>"
-            );
-
-          }
-        ).join("") +
-
-        "<tr class='fila-total-destinos'>" +
-
-        "<td>TOTAL</td>" +
-
-        "<td><span class='contador-estado contador-vacio'>" +
-        totales["VACÍO"] +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-viaje'>" +
-        totales["EN VIAJE AL MONTE"] +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-monte'>" +
-        totales.MONTE +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-salido'>" +
-        totales["SALIDO CARGADO"] +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-descargando'>" +
-        totales.DESCARGANDO +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-planta'>" +
-        totales.plantaFas +
-        "</span></td>" +
-
-        "<td><span class='contador-estado contador-total'>" +
-        totales.total +
-        "</span></td>" +
-
-        "</tr>"
-      : "<tr><td colspan='8'>Sin datos</td></tr>";
-
-  $("quitarFiltroDestino").hidden =
-    !(
-      campo === "destino" &&
-      filtroDestinoGeneral
-    );
-
-  $("quitarFiltroDestino").textContent =
-    filtroDestinoGeneral
-      ? "Quitar filtro: " +
-        filtroDestinoGeneral
-      : "Quitar filtro";
-
-}
+  $("tituloResumenDestinos")
+    .textContent =
+      "Camiones por " +
+      etiqueta.toLowerCase() +
+      " y estado";
 
 
-function aplicarFiltroDestino(
-  destino
-){
-
-  filtroDestinoGeneral =
-    destino;
-
-  render();
-
-}
+  $("encabezadoTipoDestino")
+    .textContent =
+      etiqueta;
 
 
-function quitarFiltroDestino(){
+  $("cantidadDestinos")
+    .textContent =
+      filas.length +
+      " registros";
 
-  filtroDestinoGeneral =
-    "";
 
-  render();
+  $("resumenDestinos")
+    .innerHTML =
+      filas.map(
+        ([destino,c]) => {
+
+          const nombre =
+            campo === "destino"
+              ? "<button class='destino-filtro' data-destino='" +
+                esc(destino) +
+                "'>" +
+                esc(destino) +
+                "</button>"
+              : esc(destino);
+
+          return (
+            "<tr>" +
+
+            "<td class='destino-nombre " +
+            claseFondoOrigen(destino) +
+            "'>" +
+            nombre +
+            "</td>" +
+
+            "<td><span class='contador-estado contador-vacio'>" +
+            c["VACÍO"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-viaje'>" +
+            c["EN VIAJE AL MONTE"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-monte'>" +
+            c.MONTE +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-salido'>" +
+            c["SALIDO CARGADO"] +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-descargando'>" +
+            c.DESCARGANDO +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-planta'>" +
+            c.plantaFas +
+            "</span></td>" +
+
+            "<td><span class='contador-estado contador-total'>" +
+            c.total +
+            "</span></td>" +
+
+            "</tr>"
+          );
+
+        }
+      ).join("") +
+
+      "<tr class='fila-total-destinos'>" +
+
+      "<td>TOTAL</td>" +
+
+      "<td>" +
+      totales["VACÍO"] +
+      "</td>" +
+
+      "<td>" +
+      totales["EN VIAJE AL MONTE"] +
+      "</td>" +
+
+      "<td>" +
+      totales.MONTE +
+      "</td>" +
+
+      "<td>" +
+      totales["SALIDO CARGADO"] +
+      "</td>" +
+
+      "<td>" +
+      totales.DESCARGANDO +
+      "</td>" +
+
+      "<td>" +
+      totales.plantaFas +
+      "</td>" +
+
+      "<td>" +
+      totales.total +
+      "</td>" +
+
+      "</tr>";
 
 }
 
@@ -2067,7 +2123,9 @@ function abrirDetalle(
 ){
 
   const r =
-    filtradosActuales[indice];
+    filtradosActuales[
+      indice
+    ];
 
   if(!r)
     return;
@@ -2076,9 +2134,14 @@ function abrirDetalle(
   let subtitulo = "";
   let docs = [];
 
-  if(tipo === "empresa"){
+  if(
+    tipo === "empresa"
+  ){
 
-    titulo = limpio(r.empresa);
+    titulo =
+      limpio(
+        r.empresa
+      );
 
     subtitulo =
       "Documentación de la empresa";
@@ -2090,14 +2153,20 @@ function abrirDetalle(
 
   }
 
-  if(tipo === "matricula"){
+
+  if(
+    tipo === "matricula"
+  ){
 
     titulo =
-      limpio(r.matricula);
+      limpio(
+        r.matricula
+      );
 
     subtitulo =
-      "Documentación de la matrícula · " +
-      limpio(r.empresa);
+      limpio(
+        r.empresa
+      );
 
     docs = [
       ["APPLUS",r.applus_date],
@@ -2106,16 +2175,21 @@ function abrirDetalle(
 
   }
 
-  if(tipo === "chofer"){
+
+  if(
+    tipo === "chofer"
+  ){
 
     titulo =
-      limpio(r.chofer);
+      limpio(
+        r.chofer
+      );
 
     subtitulo =
       "CI " +
-      limpio(r.cedula_identidad) +
-      " · " +
-      limpio(r.empresa);
+      limpio(
+        r.cedula_identidad
+      );
 
     docs = [
       ["Cédula",r.identity_card],
@@ -2123,65 +2197,59 @@ function abrirDetalle(
       ["Carné de salud",r.health_meat],
       ["Psicotécnico",r.psychotechnician],
       ["Tarjeta verde",r.green_card],
-      ["CURSO UPM - WEB FAS",r.upm],
-      ["Instructivo",r.instructivo,"estado","SI"]
+      ["CURSO UPM - WEB FAS",r.upm]
     ];
 
   }
 
-  $("modalTitulo").textContent =
-    titulo;
 
-  $("modalSubtitulo").textContent =
-    subtitulo;
+  $("modalTitulo")
+    .textContent =
+      titulo;
 
-  $("modalDocumentos").innerHTML =
-    docs.map(
-      ([nombre,valor,tipoDato,esperado]) => {
 
-        const esEstado =
-          tipoDato === "estado";
+  $("modalSubtitulo")
+    .textContent =
+      subtitulo;
 
-        const clase =
-          esEstado
-            ? (
-                limpio(valor)
-                  .toUpperCase() ===
-                esperado
-                  ? "vigente"
-                  : "vencida"
-              )
-            : claseVencimiento(
+
+  $("modalDocumentos")
+    .innerHTML =
+      docs.map(
+        ([nombre,valor]) => {
+
+          const clase =
+            claseVencimiento(
+              valor
+            );
+
+          return (
+            "<article class='documento " +
+            clase +
+            "'>" +
+
+            "<b>" +
+            esc(nombre) +
+            "</b><br>" +
+
+            esc(
+              fechaCorta(
                 valor
-              );
+              )
+            ) +
 
-        const texto =
-          esEstado
-            ? limpio(valor)
-            : fechaCorta(valor);
+            "</article>"
+          );
 
-        return (
-          "<article class='documento " +
-          clase +
-          "'>" +
+        }
+      ).join("");
 
-          "<span>" +
-          esc(nombre) +
-          "</span>" +
-
-          "<b>" +
-          esc(texto) +
-          "</b>" +
-
-          "</article>"
-        );
-
-      }
-    ).join("");
 
   $("modalFondo")
     .classList
-    .add("abierto");
+    .add(
+      "abierto"
+    );
 
 }
 
@@ -2190,52 +2258,63 @@ function abrirMapa(
   indice
 ){
 
-  const registro =
-    filtradosActuales[indice];
+  const r =
+    filtradosActuales[
+      indice
+    ];
 
-  if(!registro)
+  if(!r)
     return;
 
   const enlace =
     obtenerPositionLinkSeguro(
-      registro.position_link
+      r.position_link
     );
 
   if(!enlace)
     return;
 
-  const enlaceEmbebido =
+  const embed =
     obtenerUrlMapaEmbebido(
       enlace
     );
 
-  $("modalTitulo").textContent =
-    "Ubicación GPS · " +
-    limpio(registro.matricula);
+  $("modalTitulo")
+    .textContent =
+      "Ubicación GPS · " +
+      limpio(
+        r.matricula
+      );
 
-  $("modalSubtitulo").textContent =
-    limpio(registro.ubicacion_gps);
+  $("modalSubtitulo")
+    .textContent =
+      limpio(
+        r.ubicacion_gps
+      );
 
-  $("modalDocumentos").innerHTML =
-    "<div class='mapa-contenedor'>" +
+  $("modalDocumentos")
+    .innerHTML =
+      "<div class='mapa-contenedor'>" +
 
-    (
-      enlaceEmbebido
-        ? "<iframe class='mapa-frame' src='" +
-          esc(enlaceEmbebido) +
-          "'></iframe>"
-        : "<article class='documento vigente'><b>Ubicación disponible</b></article>"
-    ) +
+      (
+        embed
+          ? "<iframe class='mapa-frame' src='" +
+            esc(embed) +
+            "'></iframe>"
+          : ""
+      ) +
 
-    "<a class='mapa-abrir' href='" +
-    esc(enlace) +
-    "' target='_blank' rel='noopener noreferrer'>Abrir en Google Maps</a>" +
+      "<a class='mapa-abrir' target='_blank' rel='noopener noreferrer' href='" +
+      esc(enlace) +
+      "'>Abrir en Google Maps</a>" +
 
-    "</div>";
+      "</div>";
 
   $("modalFondo")
     .classList
-    .add("abierto");
+    .add(
+      "abierto"
+    );
 
 }
 
@@ -2244,7 +2323,9 @@ function cerrarModal(){
 
   $("modalFondo")
     .classList
-    .remove("abierto");
+    .remove(
+      "abierto"
+    );
 
 }
 
@@ -2255,38 +2336,46 @@ function esAlertaControl(
 ){
 
   if(
-    limpio(r.chofer)
-      .toUpperCase() ===
+    limpio(
+      r.chofer
+    ).toUpperCase() ===
     "SIN CHOFER"
   )
     return false;
 
   if(
-    tipo === "capacitacion"
+    tipo ===
+    "capacitacion"
   )
     return (
-      limpio(r.capacitacion_upm)
-        .toUpperCase() !==
+      limpio(
+        r.capacitacion_upm
+      ).toUpperCase() !==
       "APROBADO"
     );
 
   if(
-    tipo === "tarjeta"
+    tipo ===
+    "tarjeta"
   )
     return (
-      limpio(r.tarjeta_verde_upm)
-        .toUpperCase() !==
+      limpio(
+        r.tarjeta_verde_upm
+      ).toUpperCase() !==
       "VIGENTE"
     );
 
   const valor =
-    limpio(r.instructivo)
-      .toUpperCase();
+    limpio(
+      r.instructivo
+    ).toUpperCase();
 
   return (
     valor === "—" ||
     valor === "-" ||
-    valor.includes("FALTA")
+    valor.includes(
+      "FALTA"
+    )
   );
 
 }
@@ -2305,35 +2394,36 @@ function actualizarControl(
         )
     ).length;
 
-  const ids = {
-
+  const mapa = {
     capacitacion:[
       "controlCapacitacion",
       "cardCapacitacion"
     ],
-
     instructivo:[
       "controlInstructivo",
       "cardInstructivo"
     ],
-
     tarjeta:[
       "controlTarjeta",
       "cardTarjeta"
     ]
+  };
 
-  }[nombre];
+  const ids =
+    mapa[nombre];
 
-  $(ids[0]).textContent =
-    cantidad;
+  $(ids[0])
+    .textContent =
+      cantidad;
 
-  $(ids[1]).className =
-    "card card-control " +
-    (
-      cantidad
-        ? "alerta"
-        : "correcto"
-    );
+  $(ids[1])
+    .className =
+      "card card-control " +
+      (
+        cantidad
+          ? "alerta"
+          : "correcto"
+      );
 
 }
 
@@ -2343,23 +2433,20 @@ function abrirControl(
 ){
 
   const config = {
-
     capacitacion:[
       "Capacitación UPM no aprobada",
       "capacitacion_upm"
     ],
-
     instructivo:[
       "Instructivo con - o FALTA",
       "instructivo"
     ],
-
     tarjeta:[
       "Tarjeta verde UPM no vigente",
       "tarjeta_verde_upm"
     ]
-
   }[tipo];
+
 
   const lista =
     registros.filter(
@@ -2370,36 +2457,51 @@ function abrirControl(
         )
     );
 
-  $("modalTitulo").textContent =
-    config[0];
 
-  $("modalSubtitulo").textContent =
-    lista.length +
-    " camiones encontrados";
+  $("modalTitulo")
+    .textContent =
+      config[0];
 
-  $("modalDocumentos").innerHTML =
-    lista.length
-      ? lista.map(
-          r =>
-            "<article class='documento vencida'>" +
 
-            "<b>" +
-            esc(r.chofer) +
-            "</b>" +
+  $("modalSubtitulo")
+    .textContent =
+      lista.length +
+      " camiones encontrados";
 
-            "<small>Matrícula: " +
-            esc(r.matricula) +
-            " · Valor: " +
-            esc(r[config[1]]) +
-            "</small>" +
 
-            "</article>"
-        ).join("")
-      : "<article class='documento vigente'><b>Sin observaciones</b></article>";
+  $("modalDocumentos")
+    .innerHTML =
+      lista.map(
+        r =>
+          "<article class='documento vencida'>" +
+
+          "<b>" +
+          esc(
+            r.chofer
+          ) +
+          "</b><br>" +
+
+          esc(
+            r.matricula
+          ) +
+
+          " · " +
+
+          esc(
+            r[
+              config[1]
+            ]
+          ) +
+
+          "</article>"
+      ).join("");
+
 
   $("modalFondo")
     .classList
-    .add("abierto");
+    .add(
+      "abierto"
+    );
 
 }
 
@@ -2411,97 +2513,88 @@ function obtenerInfracciones(
   const mapa =
     new Map();
 
-  for(
-    const r of registros
-  ){
+  registros.forEach(
+    r => {
 
-    if(
-      tipo === "conductor" &&
-      limpio(r.chofer)
-        .toUpperCase() ===
-      "SIN CHOFER"
-    )
-      continue;
+      let clave;
+      let valores;
 
-    const config =
-      tipo === "empresa"
-        ? [
-            limpio(r.empresa),
-            "Matrícula " +
-            limpio(r.matricula),
-            [
-              ["CERT BPS",r.bps_date],
-              ["CERT DGI",r.dgi_date]
-            ]
-          ]
-        : tipo === "matricula"
-          ? [
-              limpio(r.matricula),
-              limpio(r.empresa),
-              [
-                ["APPLUS",r.applus_date],
-                ["SOA",r.soa_date]
-              ]
-            ]
-          : [
-              limpio(r.chofer),
-              "Matrícula " +
-              limpio(r.matricula),
-              [
-                ["Cédula",r.identity_card],
-                ["Libreta de conducir",r.driver_license],
-                ["Carné de salud",r.health_meat],
-                ["Psicotécnico",r.psychotechnician],
-                ["Tarjeta verde",r.green_card],
-                ["CURSO UPM - WEB FAS",r.upm]
-              ]
-            ];
+      if(
+        tipo ===
+        "empresa"
+      ){
 
-    const vencidos =
-      config[2].filter(
-        ([,valor]) =>
-          claseVencimiento(
-            valor
-          ) === "vencida"
-      );
+        clave =
+          limpio(
+            r.empresa
+          );
 
-    if(!vencidos.length)
-      continue;
+        valores = [
+          r.bps_date,
+          r.dgi_date
+        ];
 
-    if(
-      !mapa.has(
-        config[0]
-      )
-    ){
+      }
+      else if(
+        tipo ===
+        "matricula"
+      ){
 
-      mapa.set(
-        config[0],
-        {
-          titulo:config[0],
-          detalles:new Set()
-        }
-      );
+        clave =
+          limpio(
+            r.matricula
+          );
+
+        valores = [
+          r.applus_date,
+          r.soa_date
+        ];
+
+      }
+      else{
+
+        if(
+          limpio(
+            r.chofer
+          ).toUpperCase() ===
+          "SIN CHOFER"
+        )
+          return;
+
+        clave =
+          limpio(
+            r.chofer
+          );
+
+        valores = [
+          r.identity_card,
+          r.driver_license,
+          r.health_meat,
+          r.psychotechnician,
+          r.green_card,
+          r.upm
+        ];
+
+      }
+
+      if(
+        algunoVencido(
+          valores
+        )
+      ){
+
+        mapa.set(
+          clave,
+          true
+        );
+
+      }
 
     }
-
-    vencidos.forEach(
-      ([nombre,valor]) =>
-        mapa
-          .get(config[0])
-          .detalles
-          .add(
-            nombre +
-            ": " +
-            fechaCorta(valor) +
-            " · " +
-            config[1]
-          )
-    );
-
-  }
+  );
 
   return [
-    ...mapa.values()
+    ...mapa.keys()
   ];
 
 }
@@ -2511,60 +2604,42 @@ function abrirInfracciones(
   tipo
 ){
 
-  const titulos = {
-
-    empresa:
-      "Empresas con infracciones",
-
-    matricula:
-      "Matrículas con infracciones",
-
-    conductor:
-      "Conductores con infracciones"
-
-  };
-
   const lista =
-    obtenerInfracciones(tipo);
+    obtenerInfracciones(
+      tipo
+    );
 
-  $("modalTitulo").textContent =
-    titulos[tipo];
+  $("modalTitulo")
+    .textContent =
+      "Registros con infracciones";
 
-  $("modalSubtitulo").textContent =
-    lista.length +
-    " registros en rojo";
+  $("modalSubtitulo")
+    .textContent =
+      lista.length +
+      " registros";
 
-  $("modalDocumentos").innerHTML =
-    lista.length
-      ? lista.map(
-          item =>
-            "<article class='documento vencida'>" +
-
-            "<b>" +
-            esc(item.titulo) +
-            "</b>" +
-
-            "<small>" +
-            [...item.detalles]
-              .map(esc)
-              .join("<br>") +
-            "</small>" +
-
-            "</article>"
-        ).join("")
-      : "<article class='documento vigente'><b>Sin infracciones</b></article>";
+  $("modalDocumentos")
+    .innerHTML =
+      lista.map(
+        item =>
+          "<article class='documento vencida'><b>" +
+          esc(item) +
+          "</b></article>"
+      ).join("");
 
   $("modalFondo")
     .classList
-    .add("abierto");
+    .add(
+      "abierto"
+    );
 
 }
 
 
 function actualizarInfracciones(
   tipo,
-  idValor,
-  idCard
+  valorId,
+  cardId
 ){
 
   const cantidad =
@@ -2572,67 +2647,84 @@ function actualizarInfracciones(
       tipo
     ).length;
 
-  $(idValor).textContent =
-    cantidad;
+  $(valorId)
+    .textContent =
+      cantidad;
 
-  $(idCard).className =
-    "card card-control " +
-    (
-      cantidad
-        ? "alerta"
-        : "correcto"
-    );
+  $(cardId)
+    .className =
+      "card card-control " +
+      (
+        cantidad
+          ? "alerta"
+          : "correcto"
+      );
 
 }
 
 
 function resumen(){
 
-  $("total").textContent =
-    registros.length;
+  $("total")
+    .textContent =
+      registros.length;
 
-  $("totalParados").textContent =
-    registros.filter(
-      r =>
-        textoComienzaConZ(
-          r.destino
-        ) ||
-        textoComienzaConZ(
-          r.proximo_destino
-        )
-    ).length;
 
-  const matriculasSinAcoplado =
+  $("totalParados")
+    .textContent =
+      registros.filter(
+        r =>
+          textoComienzaConZ(
+            r.destino
+          ) ||
+          textoComienzaConZ(
+            r.proximo_destino
+          )
+      ).length;
+
+
+  const sinAcoplado =
     [
       ...new Set(
         registros
           .filter(
             r =>
-              limpio(r.acoplados)
-                .toUpperCase()
-                .includes("FALTA")
+              limpio(
+                r.acoplados
+              )
+              .toUpperCase()
+              .includes(
+                "FALTA"
+              )
           )
           .map(
             r =>
-              limpio(r.matricula)
+              limpio(
+                r.matricula
+              )
           )
       )
     ];
 
-  $("acopladosFalta").textContent =
-    matriculasSinAcoplado.length
-      ? matriculasSinAcoplado.join(
-          " · "
-        )
-      : "NINGUNO";
 
-  $("cardAcoplados").className =
-    "card " +
-    (
-      matriculasSinAcoplado.length
-        ? "alerta"
-        : "correcto"
-    );
+  $("acopladosFalta")
+    .textContent =
+      sinAcoplado.length
+        ? sinAcoplado.join(
+            " · "
+          )
+        : "NINGUNO";
+
+
+  $("cardAcoplados")
+    .className =
+      "card " +
+      (
+        sinAcoplado.length
+          ? "alerta"
+          : "correcto"
+      );
+
 
   actualizarControl(
     "capacitacion"
@@ -2645,6 +2737,7 @@ function resumen(){
   actualizarControl(
     "tarjeta"
   );
+
 
   actualizarInfracciones(
     "empresa",
@@ -2672,11 +2765,11 @@ function render(){
   const estados =
     leerEstados();
 
+
   const listaCompleta =
     registros.map(
       r => ({
         ...r,
-
         _estadoCalculado:
           calcularEstado(
             r,
@@ -2685,216 +2778,229 @@ function render(){
       })
     );
 
+
   renderResumenDestinos(
     listaCompleta
   );
 
-  const lista =
+
+  let lista =
     filtroDestinoGeneral
       ? listaCompleta.filter(
           r =>
-            filtroDestinoGeneral ===
-            "SIN DESTINO"
-              ? limpio(
-                  r.destino
-                ) === "—"
-              : limpio(
-                  r.destino
-                ) ===
-                filtroDestinoGeneral
+            limpio(
+              r.destino
+            ) ===
+            filtroDestinoGeneral
         )
-      : listaCompleta;
+      : [
+          ...listaCompleta
+        ];
 
-  if(
-    ordenActual.columna
-  ){
 
-    lista.sort(
-      (a,b) =>
-        compararValores(
-          a[
-            ordenActual.columna
-          ],
-          b[
-            ordenActual.columna
-          ]
-        ) *
-        (
-          ordenActual.direccion ===
-          "asc"
-            ? 1
-            : -1
-        )
-    );
+  lista.sort(
+    (a,b) =>
+      compararValores(
+        a[
+          ordenActual.columna
+        ],
+        b[
+          ordenActual.columna
+        ]
+      ) *
+      (
+        ordenActual.direccion ===
+        "asc"
+          ? 1
+          : -1
+      )
+  );
 
-  }
 
   filtradosActuales =
     lista;
 
-  $("cuerpo").innerHTML =
-    lista.map(
-      (r,indice) => {
 
-        const estado =
-          r._estadoCalculado;
+  $("cuerpo")
+    .innerHTML =
+      lista.map(
+        (r,indice) => {
 
-        const estadoClase =
-          claseEstado(
-            estado
-          );
+          const estado =
+            r._estadoCalculado;
 
-        const positionLink =
-          obtenerPositionLinkSeguro(
-            r.position_link
-          );
+          const positionLink =
+            obtenerPositionLinkSeguro(
+              r.position_link
+            );
 
-        const empresaRoja =
-          algunoVencido(
-            [
+          const empresaRoja =
+            algunoVencido([
               r.bps_date,
               r.dgi_date
-            ]
-          );
+            ]);
 
-        const matriculaRoja =
-          algunoVencido(
-            [
+          const matriculaRoja =
+            algunoVencido([
               r.applus_date,
               r.soa_date
-            ]
-          );
+            ]);
 
-        const choferRojo =
-          algunoVencido(
-            [
+          const choferRojo =
+            algunoVencido([
               r.health_meat,
               r.identity_card,
               r.driver_license,
               r.psychotechnician,
               r.upm,
               r.green_card
-            ]
+            ]);
+
+          return (
+
+            "<tr>" +
+
+            "<td class='" +
+            (
+              empresaRoja
+                ? "alerta-texto"
+                : ""
+            ) +
+            "'>" +
+
+            "<button class='abrir' onclick='abrirDetalle(" +
+            indice +
+            ",\"empresa\")'>" +
+            esc(
+              r.empresa
+            ) +
+            "</button>" +
+
+            "</td>" +
+
+
+            "<td>" +
+            esc(
+              r.destino
+            ) +
+            "</td>" +
+
+
+            "<td class='matricula centrada " +
+            (
+              matriculaRoja
+                ? "alerta-texto"
+                : ""
+            ) +
+            "'>" +
+
+            "<button class='abrir' onclick='abrirDetalle(" +
+            indice +
+            ",\"matricula\")'>" +
+            esc(
+              r.matricula
+            ) +
+            "</button>" +
+
+            "</td>" +
+
+
+            "<td>" +
+            esc(
+              r.proximo_destino
+            ) +
+            "</td>" +
+
+
+            "<td class='centrada'><span class='" +
+            claseEstado(
+              estado
+            ) +
+            "'>" +
+            esc(
+              estado
+            ) +
+            "</span></td>" +
+
+
+            "<td class='comentario centrada'>" +
+            esc(
+              r.comentarios
+            ) +
+            "</td>" +
+
+
+            "<td class='gps'>" +
+            (
+              positionLink
+                ? "<button class='gps-mapa' onclick='abrirMapa(" +
+                  indice +
+                  ")'>" +
+                  gpsConFlecha(
+                    r.ubicacion_gps
+                  ) +
+                  "</button>"
+                : gpsConFlecha(
+                    r.ubicacion_gps
+                  )
+            ) +
+            "</td>" +
+
+
+            "<td class='" +
+            (
+              choferRojo
+                ? "alerta-texto"
+                : ""
+            ) +
+            "'>" +
+
+            "<button class='abrir' onclick='abrirDetalle(" +
+            indice +
+            ",\"chofer\")'>" +
+            esc(
+              r.chofer
+            ) +
+            "</button>" +
+
+            "</td>" +
+
+
+            "<td class='centrada'>" +
+            esc(
+              r.cedula_identidad
+            ) +
+            "</td>" +
+
+
+            "<td class='matricula centrada'>" +
+            esc(
+              r.acoplados
+            ) +
+            "</td>" +
+
+
+            "</tr>"
+
           );
 
-        return (
-          "<tr>" +
+        }
+      ).join("");
 
-          "<td class='empresa " +
-          (
-            empresaRoja
-              ? "alerta-texto"
-              : ""
-          ) +
-          "'>" +
-
-          "<button class='abrir' onclick='abrirDetalle(" +
-          indice +
-          ",\"empresa\")'>" +
-          esc(r.empresa) +
-          "</button>" +
-
-          "</td>" +
-
-          "<td>" +
-          esc(r.destino) +
-          "</td>" +
-
-          "<td class='matricula centrada " +
-          (
-            matriculaRoja
-              ? "alerta-texto"
-              : ""
-          ) +
-          "'>" +
-
-          "<button class='abrir' onclick='abrirDetalle(" +
-          indice +
-          ",\"matricula\")'>" +
-          esc(r.matricula) +
-          "</button>" +
-
-          "</td>" +
-
-          "<td>" +
-          esc(r.proximo_destino) +
-          "</td>" +
-
-          "<td class='centrada'><span class='" +
-          estadoClase +
-          "'>" +
-          esc(estado) +
-          "</span></td>" +
-
-          "<td class='comentario centrada'>" +
-          esc(r.comentarios) +
-          "</td>" +
-
-          "<td class='gps'>" +
-
-          (
-            positionLink
-              ? "<button class='gps-mapa' onclick='abrirMapa(" +
-                indice +
-                ")'>" +
-                gpsConFlecha(
-                  r.ubicacion_gps
-                ) +
-                "</button>"
-              : gpsConFlecha(
-                  r.ubicacion_gps
-                )
-          ) +
-
-          "</td>" +
-
-          "<td class='" +
-          (
-            choferRojo
-              ? "alerta-texto"
-              : ""
-          ) +
-          "'>" +
-
-          "<button class='abrir' onclick='abrirDetalle(" +
-          indice +
-          ",\"chofer\")'>" +
-          esc(r.chofer) +
-          "</button>" +
-
-          "</td>" +
-
-          "<td class='centrada'>" +
-          esc(r.cedula_identidad) +
-          "</td>" +
-
-          "<td class='matricula centrada'>" +
-          esc(r.acoplados) +
-          "</td>" +
-
-          "</tr>"
-        );
-
-      }
-    ).join("");
 
   guardarEstados(
     estados
   );
 
+
   actualizarIndicadoresOrden();
 
-  $("mensaje").style.display =
-    lista.length
-      ? "none"
-      : "block";
 
-  if(!lista.length){
-
-    $("mensaje").textContent =
-      "No hay registros que coincidan con los filtros.";
-
-  }
+  $("mensaje")
+    .style.display =
+      lista.length
+        ? "none"
+        : "block";
 
 }
 
@@ -2913,14 +3019,22 @@ async function cargar(){
         }
       );
 
-    if(!respuesta.ok)
+
+    if(
+      !respuesta.ok
+    ){
+
       throw new Error(
         "HTTP " +
         respuesta.status
       );
 
+    }
+
+
     const datos =
       await respuesta.json();
+
 
     registros =
       Array.isArray(
@@ -2929,11 +3043,14 @@ async function cargar(){
         ? datos.registros
         : [];
 
-    $("actualizado").textContent =
-      "Actualizado: " +
-      fecha(
-        datos.actualizado
-      );
+
+    $("actualizado")
+      .textContent =
+        "Actualizado: " +
+        fecha(
+          datos.actualizado
+        );
+
 
     const ultimaExcel =
       datos.ultima_actualizacion_excel ||
@@ -2943,11 +3060,14 @@ async function cargar(){
           .ultima_actualizacion_excel
       );
 
-    $("actualizacionExcel").textContent =
-      "Última actualización Excel: " +
-      fecha(
-        ultimaExcel
-      );
+
+    $("actualizacionExcel")
+      .textContent =
+        "Última actualización Excel: " +
+        fecha(
+          ultimaExcel
+        );
+
 
     resumen();
 
@@ -2956,53 +3076,20 @@ async function cargar(){
   }
   catch(error){
 
-    $("mensaje").style.display =
-      "block";
+    $("mensaje")
+      .style.display =
+        "block";
 
-    $("mensaje").innerHTML =
-      "No fue posible cargar HOY_Control.json. " +
-      esc(error.message) +
-      ' <button onclick="cargar()">Reintentar</button>';
+    $("mensaje")
+      .innerHTML =
+        "No fue posible cargar los datos. " +
+        esc(
+          error.message
+        );
 
   }
 
 }
-
-
-$("modalCerrar")
-  .addEventListener(
-    "click",
-    cerrarModal
-  );
-
-
-$("modalFondo")
-  .addEventListener(
-    "click",
-    e => {
-
-      if(
-        e.target ===
-        $("modalFondo")
-      )
-        cerrarModal();
-
-    }
-  );
-
-
-document
-  .addEventListener(
-    "keydown",
-    e => {
-
-      if(
-        e.key === "Escape"
-      )
-        cerrarModal();
-
-    }
-  );
 
 
 document
@@ -3034,10 +3121,13 @@ $("resumenDestinos")
           ".destino-filtro"
         );
 
-      if(boton)
-        aplicarFiltroDestino(
-          boton.dataset.destino
-        );
+      if(!boton)
+        return;
+
+      filtroDestinoGeneral =
+        boton.dataset.destino;
+
+      render();
 
     }
   );
@@ -3046,7 +3136,14 @@ $("resumenDestinos")
 $("quitarFiltroDestino")
   .addEventListener(
     "click",
-    quitarFiltroDestino
+    () => {
+
+      filtroDestinoGeneral =
+        "";
+
+      render();
+
+    }
   );
 
 
@@ -3064,9 +3161,53 @@ $("selectorTipoDestino")
   );
 
 
+$("modalCerrar")
+  .addEventListener(
+    "click",
+    cerrarModal
+  );
+
+
+$("modalFondo")
+  .addEventListener(
+    "click",
+    e => {
+
+      if(
+        e.target ===
+        $("modalFondo")
+      ){
+
+        cerrarModal();
+
+      }
+
+    }
+  );
+
+
+document
+  .addEventListener(
+    "keydown",
+    e => {
+
+      if(
+        e.key ===
+        "Escape"
+      ){
+
+        cerrarModal();
+
+      }
+
+    }
+  );
+
+
 actualizarIndicadoresOrden();
 
 cargar();
+
 
 setInterval(
   cargar,
