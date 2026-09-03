@@ -194,6 +194,18 @@
       background:#ffd2d2 !important;
     }
 
+    /*
+    Los colores por tipo se usan únicamente en el resumen superior.
+    La tabla principal siempre conserva fondo normal en DESTINO y
+    PRÓXIMO DESTINO, aunque una celda mantuviera alguna clase anterior.
+    */
+    .tabla-principal td.origen-trozas,
+    .tabla-principal td.origen-upm,
+    .tabla-principal td.origen-fas,
+    .tabla-principal td.origen-z{
+      background:transparent !important;
+    }
+
     .destino-filtro{
       border:0;
       background:transparent;
@@ -483,6 +495,10 @@
       border-bottom:1px solid #edf1ef;
       vertical-align:top;
       line-height:1.35
+    }
+
+    .centrada{
+      text-align:center !important
     }
 
     tbody tr:hover{
@@ -959,7 +975,7 @@
               Destino <span class="indicador-orden">↕</span>
             </th>
 
-            <th class="ordenable" data-columna="matricula">
+            <th class="ordenable centrada" data-columna="matricula">
               Matrícula <span class="indicador-orden">↕</span>
             </th>
 
@@ -967,11 +983,11 @@
               Próximo destino <span class="indicador-orden">↕</span>
             </th>
 
-            <th class="ordenable" data-columna="_estadoCalculado">
+            <th class="ordenable centrada" data-columna="_estadoCalculado">
               Estado <span class="indicador-orden">↕</span>
             </th>
 
-            <th class="ordenable" data-columna="comentarios">
+            <th class="ordenable centrada" data-columna="comentarios">
               Comentarios <span class="indicador-orden">↕</span>
             </th>
 
@@ -983,11 +999,11 @@
               Chofer <span class="indicador-orden">↕</span>
             </th>
 
-            <th class="ordenable" data-columna="cedula_identidad">
+            <th class="ordenable centrada" data-columna="cedula_identidad">
               Cédula de identidad <span class="indicador-orden">↕</span>
             </th>
 
-            <th class="ordenable" data-columna="acoplados">
+            <th class="ordenable centrada" data-columna="acoplados">
               Acoplados <span class="indicador-orden">↕</span>
             </th>
 
@@ -3070,14 +3086,12 @@
               "</td>" +
 
 
-              "<td class='" +
-              claseFondoOrigen(r.destino) +
-              "'>" +
+              "<td>" +
               esc(r.destino) +
               "</td>" +
 
 
-              "<td class='matricula " +
+              "<td class='matricula centrada " +
               (
                 matriculaRoja
                   ? "alerta-texto"
@@ -3094,21 +3108,19 @@
               "</td>" +
 
 
-              "<td class='" +
-              claseFondoOrigen(r.proximo_destino) +
-              "'>" +
+              "<td>" +
               esc(r.proximo_destino) +
               "</td>" +
 
 
-              "<td><span class='" +
+              "<td class='centrada'><span class='" +
               estadoClase +
               "'>" +
               esc(estado) +
               "</span></td>" +
 
 
-              "<td class='comentario'>" +
+              "<td class='comentario centrada'>" +
               esc(r.comentarios) +
               "</td>" +
 
@@ -3137,12 +3149,12 @@
               "</td>" +
 
 
-              "<td>" +
+              "<td class='centrada'>" +
               esc(r.cedula_identidad) +
               "</td>" +
 
 
-              "<td class='matricula'>" +
+              "<td class='matricula centrada'>" +
               esc(r.acoplados) +
               "</td>" +
 
@@ -3411,3 +3423,5 @@
 
 </body>
 </html>
+index.html
+HTML
