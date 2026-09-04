@@ -3084,88 +3084,154 @@ function obtenerInfracciones(
   const mapa =
     new Map();
 
-  registros.forEach(
-    r => {
 
-      let clave;
-      let valores;
+  for(
+    const r of registros
+  ){
 
-      if(
-        tipo ===
-        "empresa"
-      ){
+    if(
+      tipo === "conductor" &&
+      limpio(
+        r.chofer
+      ).toUpperCase() ===
+      "SIN CHOFER"
+    )
+      continue;
 
-        clave =
-          limpio(
-            r.empresa
-          );
 
-        valores = [
-          r.bps_date,
-          r.dgi_date
-        ];
+    let clave = "";
+    let contexto = "";
+    let documentos = [];
 
-      }
-      else if(
-        tipo ===
-        "matricula"
-      ){
 
-        clave =
-          limpio(
-            r.matricula
-          );
+    if(
+      tipo === "empresa"
+    ){
 
-        valores = [
-          r.applus_date,
-          r.soa_date
-        ];
-
-      }
-      else{
-
-        if(
-          limpio(
-            r.chofer
-          ).toUpperCase() ===
-          "SIN CHOFER"
-        )
-          return;
-
-        clave =
-          limpio(
-            r.chofer
-          );
-
-        valores = [
-          r.identity_card,
-          r.driver_license,
-          r.health_meat,
-          r.psychotechnician,
-          r.green_card,
-          r.upm
-        ];
-
-      }
-
-      if(
-        algunoVencido(
-          valores
-        )
-      ){
-
-        mapa.set(
-          clave,
-          true
+      clave =
+        limpio(
+          r.empresa
         );
 
-      }
+      contexto =
+        "Matrícula " +
+        limpio(
+          r.matricula
+        );
+
+      documentos = [
+        ["CERT BPS",r.bps_date],
+        ["CERT DGI",r.dgi_date]
+      ];
 
     }
-  );
+    else if(
+      tipo === "matricula"
+    ){
+
+      clave =
+        limpio(
+          r.matricula
+        );
+
+      contexto =
+        limpio(
+          r.empresa
+        );
+
+      documentos = [
+        ["APPLUS",r.applus_date],
+        ["SOA",r.soa_date]
+      ];
+
+    }
+    else{
+
+      clave =
+        limpio(
+          r.chofer
+        );
+
+      contexto =
+        "Matrícula " +
+        limpio(
+          r.matricula
+        ) +
+        " · " +
+        limpio(
+          r.empresa
+        );
+
+      documentos = [
+        ["Cédula",r.identity_card],
+        ["Libreta de conducir",r.driver_license],
+        ["Carné de salud",r.health_meat],
+        ["Psicotécnico",r.psychotechnician],
+        ["Tarjeta verde",r.green_card],
+        ["CURSO UPM - WEB FAS",r.upm]
+      ];
+
+    }
+
+
+    const vencidos =
+      documentos.filter(
+        ([,valor]) =>
+          claseVencimiento(
+            valor
+          ) === "vencida"
+      );
+
+
+    if(
+      !vencidos.length
+    )
+      continue;
+
+
+    if(
+      !mapa.has(
+        clave
+      )
+    ){
+
+      mapa.set(
+        clave,
+        {
+          titulo:clave,
+          detalles:new Set()
+        }
+      );
+
+    }
+
+
+    vencidos.forEach(
+      ([nombre,valor]) => {
+
+        mapa
+          .get(
+            clave
+          )
+          .detalles
+          .add(
+            nombre +
+            ": " +
+            fechaCorta(
+              valor
+            ) +
+            " · " +
+            contexto
+          );
+
+      }
+    );
+
+  }
+
 
   return [
-    ...mapa.keys()
+    ...mapa.values()
   ];
 
 }
@@ -3175,28 +3241,67 @@ function abrirInfracciones(
   tipo
 ){
 
+  const titulos = {
+
+    empresa:
+      "Empresas con infracciones",
+
+    matricula:
+      "Matrículas con infracciones",
+
+    conductor:
+      "Conductores con infracciones"
+
+  };
+
+
   const lista =
     obtenerInfracciones(
       tipo
     );
 
+
   $("modalTitulo")
     .textContent =
-      "Registros con infracciones";
+      titulos[tipo];
+
 
   $("modalSubtitulo")
     .textContent =
       lista.length +
       " registros";
 
+
   $("modalDocumentos")
     .innerHTML =
-      lista.map(
-        item =>
-          "<article class='documento vencida'><b>" +
-          esc(item) +
-          "</b></article>"
-      ).join("");
+      lista.length
+        ? lista.map(
+            item =>
+              "<article class='documento vencida'>" +
+
+              "<b>" +
+              esc(
+                item.titulo
+              ) +
+              "</b><br>" +
+
+              "<small>" +
+              [...item.detalles]
+                .map(
+                  detalle =>
+                    esc(
+                      detalle
+                    )
+                )
+                .join(
+                  "<br>"
+                ) +
+              "</small>" +
+
+              "</article>"
+          ).join("")
+        : "<article class='documento vigente'><b>Sin infracciones</b><br><small>No hay documentos vencidos.</small></article>";
+
 
   $("modalFondo")
     .classList
