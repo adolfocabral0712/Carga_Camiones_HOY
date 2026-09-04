@@ -420,13 +420,12 @@
 
     .modal{
       position:relative;
-      width:min(1180px,94vw);
-      max-height:92vh;
+      width:min(650px,100%);
+      max-height:90vh;
       overflow:auto;
       background:#fff;
-      border-radius:18px;
-      padding:28px 32px 30px;
-      box-shadow:0 22px 70px rgba(0,0,0,.35)
+      border-radius:14px;
+      padding:22px
     }
 
     .modal-cerrar{
@@ -464,46 +463,144 @@
 
     .mapa-contenedor{
       display:grid;
-      gap:16px;
-      width:100%
+      gap:12px
     }
 
     .mapa-frame{
-      display:block;
       width:100%;
-      height:min(720px,68vh);
-      min-height:560px;
+      height:430px;
       border:1px solid var(--borde);
-      border-radius:12px;
-      background:#eef2ef
+      border-radius:10px
     }
 
     .mapa-abrir{
       display:inline-flex;
-      align-items:center;
       justify-content:center;
       justify-self:center;
-      border-radius:9px;
+      border-radius:8px;
       background:#17623d;
       color:#fff;
-      padding:12px 20px;
+      padding:10px 16px;
       text-decoration:none;
+      font-weight:800
+    }
+
+
+    /* =====================================================
+       MODAL EXCLUSIVO PARA UBICACIÓN GPS
+       ===================================================== */
+
+    .modal-mapa{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(7,18,12,.82);
+      backdrop-filter:blur(3px)
+    }
+
+    .modal-mapa.abierto{
+      display:flex
+    }
+
+    .modal-mapa-contenido{
+      width:min(760px,calc(100vw - 36px));
+      max-height:calc(100vh - 36px);
+      overflow:auto;
+      border:1px solid #315f4a;
+      border-radius:16px;
+      background:#0b251b;
+      color:#fff;
+      box-shadow:0 24px 70px rgba(0,0,0,.45)
+    }
+
+    .modal-mapa-cabecera{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      padding:18px 20px;
+      border-bottom:1px solid #294c3b
+    }
+
+    .modal-mapa-cabecera h2{
+      margin:0 0 6px;
+      font-size:20px
+    }
+
+    .modal-mapa-cabecera p{
+      margin:0;
+      color:#c2d6ca;
+      font-size:13px;
+      line-height:1.4
+    }
+
+    .modal-mapa-cerrar{
+      flex:0 0 auto;
+      width:38px;
+      height:38px;
+      border:1px solid #456c59;
+      border-radius:10px;
+      background:#17392b;
+      color:#fff;
+      font-size:25px;
+      line-height:1;
+      cursor:pointer
+    }
+
+    .modal-mapa-cerrar:hover{
+      background:#1e4937
+    }
+
+    .modal-mapa-cuerpo{
+      padding:20px
+    }
+
+    .mapa-iframe{
+      display:block;
+      width:100%;
+      height:min(430px,52vh);
+      border:0;
+      border-radius:12px;
+      background:#dbe6ee
+    }
+
+    .mapa-no-disponible{
+      padding:36px 18px;
+      border:1px dashed #456c59;
+      border-radius:12px;
+      color:#c2d6ca;
+      text-align:center
+    }
+
+    .modal-mapa-acciones{
+      display:flex;
+      justify-content:center;
+      margin-top:16px
+    }
+
+    .abrir-google-maps{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:10px 18px;
+      border-radius:10px;
+      background:#2f855a;
+      color:#fff;
       font-weight:800;
-      font-size:16px;
-      line-height:1
+      text-decoration:none
     }
 
-    .modal h2{
-      margin:10px 44px 12px 0;
-      font-size:26px;
-      line-height:1.15
+    .abrir-google-maps:hover{
+      background:#28734e
     }
 
-    #modalSubtitulo{
-      margin:0 0 18px;
-      color:#3f4d45;
-      font-size:16px;
-      line-height:1.35
+    body.modal-mapa-abierto{
+      overflow:hidden
     }
 
     footer{
@@ -531,35 +628,35 @@
         align-items:stretch
       }
 
-      .modal-fondo{
+      .modal-mapa{
         padding:8px
       }
 
-      .modal{
-        width:96vw;
-        max-height:94vh;
-        border-radius:14px;
-        padding:20px 16px 22px
-      }
-
-      .modal h2{
-        margin:8px 40px 10px 0;
-        font-size:21px
-      }
-
-      #modalSubtitulo{
-        font-size:14px;
-        margin-bottom:14px
-      }
-
-      .mapa-frame{
-        height:62vh;
-        min-height:420px
-      }
-
-      .mapa-abrir{
+      .modal-mapa-contenido{
         width:100%;
-        font-size:15px
+        max-height:calc(100vh - 16px);
+        border-radius:14px
+      }
+
+      .modal-mapa-cabecera{
+        padding:15px 16px
+      }
+
+      .modal-mapa-cabecera h2{
+        font-size:18px
+      }
+
+      .modal-mapa-cuerpo{
+        padding:14px
+      }
+
+      .mapa-iframe{
+        height:55vh;
+        min-height:360px
+      }
+
+      .abrir-google-maps{
+        width:100%
       }
     }
   </style>
@@ -761,6 +858,57 @@
 
 </section>
 
+</div>
+
+<div
+  id="modalMapa"
+  class="modal-mapa"
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalMapaTitulo"
+>
+  <div class="modal-mapa-contenido">
+
+    <div class="modal-mapa-cabecera">
+      <div>
+        <h2 id="modalMapaTitulo">Ubicación GPS</h2>
+        <p>
+          <strong id="modalMapaMatricula">—</strong>
+          ·
+          <span id="modalMapaUbicacion">—</span>
+        </p>
+      </div>
+
+      <button
+        id="cerrarModalMapa"
+        class="modal-mapa-cerrar"
+        type="button"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="modal-mapa-cuerpo">
+
+      <div id="modalMapaVista"></div>
+
+      <div class="modal-mapa-acciones">
+        <a
+          id="abrirGoogleMaps"
+          class="abrir-google-maps"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Abrir en Google Maps
+        </a>
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 <footer>
@@ -2331,42 +2479,89 @@ function abrirMapa(
       enlace
     );
 
-  $("modalTitulo")
+  const modal =
+    $("modalMapa");
+
+  const vista =
+    $("modalMapaVista");
+
+  $("modalMapaMatricula")
     .textContent =
-      "Ubicación GPS · " +
       limpio(
         r.matricula
       );
 
-  $("modalSubtitulo")
+  $("modalMapaUbicacion")
     .textContent =
       limpio(
         r.ubicacion_gps
       );
 
-  $("modalDocumentos")
-    .innerHTML =
-      "<div class='mapa-contenedor'>" +
+  $("abrirGoogleMaps")
+    .href =
+      enlace;
 
-      (
-        embed
-          ? "<iframe class='mapa-frame' src='" +
-            esc(embed) +
-            "'></iframe>"
-          : ""
-      ) +
+  vista.innerHTML =
+    embed
+      ? "<iframe class='mapa-iframe' title='Mapa de " +
+        esc(
+          r.matricula
+        ) +
+        "' loading='lazy' referrerpolicy='no-referrer-when-downgrade' src='" +
+        esc(
+          embed
+        ) +
+        "'></iframe>"
+      : "<div class='mapa-no-disponible'>El enlace no contiene coordenadas para mostrar la vista previa.</div>";
 
-      "<a class='mapa-abrir' target='_blank' rel='noopener noreferrer' href='" +
-      esc(enlace) +
-      "'>Abrir en Google Maps</a>" +
-
-      "</div>";
-
-  $("modalFondo")
+  modal
     .classList
     .add(
       "abierto"
     );
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body
+    .classList
+    .add(
+      "modal-mapa-abierto"
+    );
+
+  $("cerrarModalMapa")
+    .focus();
+
+}
+
+
+function cerrarModalMapa(){
+
+  const modal =
+    $("modalMapa");
+
+  modal
+    .classList
+    .remove(
+      "abierto"
+    );
+
+  modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body
+    .classList
+    .remove(
+      "modal-mapa-abierto"
+    );
+
+  $("modalMapaVista")
+    .innerHTML =
+      "";
 
 }
 
@@ -3220,6 +3415,31 @@ $("modalCerrar")
   );
 
 
+$("cerrarModalMapa")
+  .addEventListener(
+    "click",
+    cerrarModalMapa
+  );
+
+
+$("modalMapa")
+  .addEventListener(
+    "click",
+    e => {
+
+      if(
+        e.target ===
+        $("modalMapa")
+      ){
+
+        cerrarModalMapa();
+
+      }
+
+    }
+  );
+
+
 $("modalFondo")
   .addEventListener(
     "click",
@@ -3249,6 +3469,7 @@ document
       ){
 
         cerrarModal();
+        cerrarModalMapa();
 
       }
 
