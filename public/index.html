@@ -2638,6 +2638,29 @@ function renderResumenDestinos(
 
       "</tr>";
 
+
+  /*
+  =========================================================
+  BOTÓN QUITAR FILTRO DE DESTINO
+
+  Cuando se selecciona un DESTINO desde el resumen,
+  aparece nuevamente el botón para volver a ver todos.
+  =========================================================
+  */
+
+  $("quitarFiltroDestino").hidden =
+    !(
+      campo === "destino" &&
+      filtroDestinoGeneral
+    );
+
+
+  $("quitarFiltroDestino").textContent =
+    filtroDestinoGeneral
+      ? "Quitar filtro: " +
+        filtroDestinoGeneral
+      : "Quitar filtro";
+
 }
 
 
