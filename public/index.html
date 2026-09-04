@@ -1468,12 +1468,32 @@ function calcularEstado(
   ){
 
     /*
+    SI EL GPS YA COINCIDE CON DESTINO:
+
+    VACÍO -> MONTE
+
+    Esto permite recuperar correctamente un camión
+    que ya llegó al monte aunque no se haya capturado
+    previamente el momento con velocidad > 20.
+    */
+
+    if(
+      estaEnMonte
+    ){
+
+      nuevo =
+        "MONTE";
+
+    }
+
+
+    /*
     PRÓXIMO DESTINO SIN DÍA:
 
     VACÍO -> VACÍO
     */
 
-    if(
+    else if(
       !proximoTieneDia
     ){
 
