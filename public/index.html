@@ -954,7 +954,10 @@ V14 para no reutilizar estados incorrectos anteriores.
 */
 
 const ESTADOS_STORAGE =
-  "hoy_control_estados_v14";
+  "hoy_control_estados_v15";
+
+const ESTADOS_INICIALIZADOS_STORAGE =
+  "hoy_control_estados_v15_inicializados";
 
 
 let registros = [];
@@ -1017,19 +1020,76 @@ const DIAS_SEMANA = [
 ];
 
 
-const MATRICULAS_SALIDO_CARGADO =
-  new Set([
-    "ATP5817",
-    "PTP1096",
-    "ATP5097",
-    "NTP5021",
-    "NTP5683",
-    "NTP5039",
-    "ATP5142",
-    "ATP4254",
-    "PTP1591",
-    "NTP5154"
-  ]);
+const ESTADOS_INICIALES = {
+  ATP3995:"VACÍO",
+  ATP4045:"VACÍO",
+  ATP4375:"VACÍO",
+  ATP4475:"VACÍO",
+  ATP4686:"VACÍO",
+  ATP4694:"VACÍO",
+  ATP4772:"VACÍO",
+  ATP4797:"VACÍO",
+  ATP4802:"SALIDO CARGADO",
+  ATP4803:"VACÍO",
+  ATP4820:"VACÍO",
+  ATP4897:"VACÍO",
+  ATP4935:"VACÍO",
+  ATP5097:"VACÍO",
+  ATP5105:"VACÍO",
+  ATP5142:"VACÍO",
+  ATP5143:"VACÍO",
+  ATP5523:"VACÍO",
+  ATP5817:"VACÍO",
+  ATP5956:"VACÍO",
+  ATP6654:"PARADO",
+  ATP6749:"VACÍO",
+  ATP6780:"VACÍO",
+  ATP7017:"VACÍO",
+  ATP7351:"VACÍO",
+  ATP7381:"PARADO",
+  LTP6093:"VACÍO",
+  LTP7278:"VACÍO",
+  NTP2638:"VACÍO",
+  NTP4700:"VACÍO",
+  NTP4943:"VACÍO",
+  NTP4948:"VACÍO",
+  NTP5021:"MONTE",
+  NTP5039:"VACÍO",
+  NTP5100:"VACÍO",
+  NTP5117:"VACÍO",
+  NTP5154:"VACÍO",
+  NTP5294:"VACÍO",
+  NTP5295:"PARADO",
+  NTP5565:"VACÍO",
+  NTP5566:"SALIDO CARGADO",
+  NTP5683:"DESCARGANDO",
+  NTP5684:"DESCARGANDO",
+  NTP5685:"MONTE",
+  NTP5696:"VACÍO",
+  NTP5800:"VACÍO",
+  NTP5893:"VACÍO",
+  NTP5898:"VACÍO",
+  NTP6000:"VACÍO",
+  OTP3216:"DESCARGANDO",
+  OTP3860:"VACÍO",
+  PTP0893:"VACÍO",
+  PTP1096:"VACÍO",
+  PTP1292:"PARADO",
+  PTP1298:"MONTE",
+  PTP1380:"PARADO",
+  PTP1524:"VACÍO",
+  PTP1525:"VACÍO",
+  PTP1565:"VACÍO",
+  PTP1567:"VACÍO",
+  PTP1591:"VACÍO",
+  PTP1659:"SALIDO CARGADO",
+  PTP1762:"VACÍO",
+  PTP1894:"VACÍO",
+  PTP1947:"VACÍO",
+  PTP1948:"VACÍO",
+  PTP1949:"VACÍO",
+  PTP2075:"VACÍO"
+};
 
 
 const LUGARES_DESCARGA = [
@@ -1351,17 +1411,6 @@ function calcularEstado(
       normalizarEstado(
         estados[matricula]
       );
-
-  }
-  else if(
-    MATRICULAS_SALIDO_CARGADO
-      .has(
-        matricula
-      )
-  ){
-
-    anterior =
-      "SALIDO CARGADO";
 
   }
   else{
@@ -3282,13 +3331,74 @@ function resumen(){
 }
 
 
-function render(){
+function actualizarEstadosOperativos(){
 
   const estados =
     leerEstados();
 
+  const inicializados =
+    localStorage.getItem(
+      ESTADOS_INICIALIZADOS_STORAGE
+    ) === "SI";
 
-  const listaCompleta =
+
+  if(
+    !inicializados
+  ){
+
+    registros =
+      registros.map(
+        r => {
+
+          const matricula =
+            normalizarTexto(
+              r.matricula
+            );
+
+          const estadoInicial =
+            ESTADOS_INICIALES[
+              matricula
+            ] ||
+            normalizarEstado(
+              r.ubicacion
+            );
+
+          estados[
+            matricula
+          ] =
+            estadoInicial === "PARADO"
+              ? "VACÍO"
+              : estadoInicial;
+
+          return {
+            ...r,
+            _estadoCalculado:
+              estadoInicial
+          };
+
+        }
+      );
+
+    guardarEstados(
+      estados
+    );
+
+    try{
+
+      localStorage.setItem(
+        ESTADOS_INICIALIZADOS_STORAGE,
+        "SI"
+      );
+
+    }
+    catch{}
+
+    return;
+
+  }
+
+
+  registros =
     registros.map(
       r => ({
         ...r,
@@ -3297,6 +3407,22 @@ function render(){
             r,
             estados
           )
+      })
+    );
+
+  guardarEstados(
+    estados
+  );
+
+}
+
+
+function render(){
+
+  const listaCompleta =
+    registros.map(
+      r => ({
+        ...r
       })
     );
 
@@ -3510,11 +3636,6 @@ function render(){
       ).join("");
 
 
-  guardarEstados(
-    estados
-  );
-
-
   actualizarIndicadoresOrden();
 
 
@@ -3590,6 +3711,8 @@ async function cargar(){
           ultimaExcel
         );
 
+
+    actualizarEstadosOperativos();
 
     resumen();
 
