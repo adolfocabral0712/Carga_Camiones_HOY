@@ -77,8 +77,8 @@
     .resumen-destinos{
       margin-bottom:12px;
       background:#fff;
-      border:1px solid var(--borde);
-      border-radius:10px;
+      border:2px solid #000;
+      border-radius:12px;
       overflow:hidden
     }
 
@@ -89,7 +89,7 @@
       gap:12px;
       padding:9px 14px;
       background:#e7eee9;
-      border-bottom:1px solid #c6d2cb
+      border-bottom:1px solid #000
     }
 
     .resumen-destinos-titulo h2{
@@ -139,7 +139,7 @@
       table-layout:fixed;
       border-collapse:collapse;
       font-size:10px;
-      border:1px solid #000
+      border:0
     }
 
     .tabla-destinos th,
@@ -150,26 +150,25 @@
       text-align:center
     }
 
-    .tabla-destinos th:first-child,
-    .tabla-destinos td:first-child{
-      border-left:1px solid #000
+    .tabla-destinos th:last-child,
+    .tabla-destinos td:last-child{
+      border-right:0
     }
 
     .tabla-destinos thead th{
-      border-top:1px solid #000;
       border-bottom:1px solid #000
     }
 
     /*
     BORDE FUERTE SOLO CUANDO CAMBIA EL DÍA / GRUPO.
-    Esto separa visualmente LUNES, MARTES, MIÉRCOLES, etc.
+    La primera fila también queda marcada.
     */
     .tabla-destinos tbody tr.inicio-grupo td{
-      border-top:3px solid #000
+      border-top:2px solid #000
     }
 
-    .tabla-destinos tbody tr:last-child td{
-      border-bottom:1px solid #000
+    .tabla-destinos tbody tr:first-child td{
+      border-top:2px solid #000
     }
 
     .tabla-destinos th:first-child,
@@ -180,8 +179,7 @@
 
     .tabla-destinos .fila-total-destinos td{
       background:#dfe8e2;
-      border-top:3px solid #000;
-      border-bottom:1px solid #000;
+      border-top:2px solid #000;
       color:#000;
       font-weight:900
     }
