@@ -2182,17 +2182,171 @@ function renderResumenDestinos(
   );
 
 
+  /*
+  =========================================================
+  ORDEN DEL RESUMEN DE DESTINOS
+
+  1. Día de la semana:
+     LUNES -> MARTES -> MIERCOLES -> JUEVES ->
+     VIERNES -> SABADO -> DOMINGO
+
+  2. Dentro de cada día:
+     FAS -> UPM -> TROZAS -> OTROS
+
+  3. Los registros que comienzan con Z van al final.
+
+  4. Los textos que no comienzan con un día ni con Z
+     quedan después de los días y antes de los Z.
+  =========================================================
+  */
+
+  const ordenDias = {
+    LUNES:0,
+    MARTES:1,
+    MIERCOLES:2,
+    JUEVES:3,
+    VIERNES:4,
+    SABADO:5,
+    DOMINGO:6
+  };
+
+
+  function obtenerOrdenDiaDestino(
+    valor
+  ){
+
+    const texto =
+      normalizarTexto(
+        valor
+      );
+
+    if(
+      texto.startsWith("Z")
+    )
+      return 99;
+
+    const primera =
+      texto.split(" ")[0] || "";
+
+    return Object.prototype
+      .hasOwnProperty
+      .call(
+        ordenDias,
+        primera
+      )
+        ? ordenDias[primera]
+        : 50;
+
+  }
+
+
+  function obtenerOrdenOrigenDestino(
+    valor
+  ){
+
+    const texto =
+      normalizarTexto(
+        valor
+      );
+
+    if(
+      texto.includes("FAS")
+    )
+      return 0;
+
+    if(
+      texto.includes("UPM")
+    )
+      return 1;
+
+    if(
+      texto.includes("TROZA")
+    )
+      return 2;
+
+    return 3;
+
+  }
+
+
   const filas =
     [...destinos.entries()]
       .sort(
-        (a,b) =>
-          a[0].localeCompare(
-            b[0],
+        (a,b) => {
+
+          const destinoA =
+            a[0];
+
+          const destinoB =
+            b[0];
+
+          const diaA =
+            obtenerOrdenDiaDestino(
+              destinoA
+            );
+
+          const diaB =
+            obtenerOrdenDiaDestino(
+              destinoB
+            );
+
+          if(
+            diaA !== diaB
+          ){
+
+            return diaA - diaB;
+
+          }
+
+
+          /*
+          Para los Z:
+          simplemente orden alfabético entre ellos.
+          */
+
+          if(
+            diaA === 99
+          ){
+
+            return destinoA.localeCompare(
+              destinoB,
+              "es",
+              {
+                sensitivity:"base"
+              }
+            );
+
+          }
+
+
+          const origenA =
+            obtenerOrdenOrigenDestino(
+              destinoA
+            );
+
+          const origenB =
+            obtenerOrdenOrigenDestino(
+              destinoB
+            );
+
+          if(
+            origenA !== origenB
+          ){
+
+            return origenA - origenB;
+
+          }
+
+
+          return destinoA.localeCompare(
+            destinoB,
             "es",
             {
               sensitivity:"base"
             }
-          )
+          );
+
+        }
       );
 
 
