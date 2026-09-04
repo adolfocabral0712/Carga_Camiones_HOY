@@ -146,7 +146,21 @@
       width:10%;
       padding:8px 11px;
       border-bottom:1px solid #edf1ef;
+      border-right:1px solid #c6d2cb;
       text-align:center
+    }
+
+    .tabla-destinos th:first-child,
+    .tabla-destinos td:first-child{
+      border-left:1px solid #c6d2cb
+    }
+
+    .tabla-destinos thead th{
+      border-top:1px solid #c6d2cb
+    }
+
+    .tabla-destinos tbody tr.inicio-grupo td{
+      border-top:2px solid #789184
     }
 
     .tabla-destinos th:first-child,
@@ -2350,6 +2364,35 @@ function renderResumenDestinos(
       );
 
 
+  function obtenerGrupoVisualDestino(
+    valor
+  ){
+
+    const texto =
+      normalizarTexto(
+        valor
+      );
+
+    if(
+      texto.startsWith("Z")
+    )
+      return "Z";
+
+    const primera =
+      texto.split(" ")[0] || "";
+
+    if(
+      DIAS_SEMANA.includes(
+        primera
+      )
+    )
+      return primera;
+
+    return "OTROS";
+
+  }
+
+
   const totales = {
     "VACÍO":0,
     "EN VIAJE AL MONTE":0,
@@ -2397,6 +2440,9 @@ function renderResumenDestinos(
       " registros";
 
 
+  let grupoAnterior =
+    "";
+
   $("resumenDestinos")
     .innerHTML =
       filas.map(
@@ -2411,8 +2457,23 @@ function renderResumenDestinos(
                 "</button>"
               : esc(destino);
 
+          const grupoActual =
+            obtenerGrupoVisualDestino(
+              destino
+            );
+
+          const claseInicioGrupo =
+            grupoActual !== grupoAnterior
+              ? " class='inicio-grupo'"
+              : "";
+
+          grupoAnterior =
+            grupoActual;
+
           return (
-            "<tr>" +
+            "<tr" +
+            claseInicioGrupo +
+            ">" +
 
             "<td class='destino-nombre " +
             claseFondoOrigen(destino) +
