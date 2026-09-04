@@ -954,10 +954,10 @@ V14 para no reutilizar estados incorrectos anteriores.
 */
 
 const ESTADOS_STORAGE =
-  "hoy_control_estados_v15";
+  "hoy_control_estados_v16";
 
 const ESTADOS_INICIALIZADOS_STORAGE =
-  "hoy_control_estados_v15_inicializados";
+  "hoy_control_estados_v16_inicializados";
 
 
 let registros = [];
@@ -1424,7 +1424,8 @@ function calcularEstado(
 
 
   /*
-  PARADO ES SOLO VISUAL.
+  PARADO ES SOLO VISUAL Y SE EVALÚA DESPUÉS DE LAS
+  CONDICIONES FÍSICAS DE GPS.
   */
 
   const parado =
@@ -1437,7 +1438,16 @@ function calcularEstado(
 
 
   /*
-  LLEGÓ AL MONTE.
+  =========================================================
+  CONDICIONES FÍSICAS DEL GPS
+
+  PRIORIDAD ABSOLUTA:
+
+  1. SI GPS ESTÁ EN LUGAR DE DESCARGA => DESCARGANDO
+  2. SI GPS COINCIDE CON DESTINO      => MONTE
+
+  ESTAS DOS REGLAS NO DEPENDEN DEL ESTADO ANTERIOR.
+  =========================================================
   */
 
   const estaEnMonte =
@@ -1446,10 +1456,6 @@ function calcularEstado(
       r.ubicacion_gps
     );
 
-
-  /*
-  LLEGÓ A UN LUGAR DE DESCARGA.
-  */
 
   const estaDescargando =
     LUGARES_DESCARGA.some(
@@ -1476,21 +1482,6 @@ function calcularEstado(
   =========================================================
   PRÓXIMO DESTINO
   =========================================================
-
-  Si NO comienza con:
-
-  LUNES
-  MARTES
-  MIERCOLES
-  JUEVES
-  VIERNES
-  SABADO
-  DOMINGO
-
-  y el estado es VACÍO:
-
-  QUEDA VACÍO.
-  =========================================================
   */
 
   const proximoTieneDia =
@@ -1504,21 +1495,6 @@ function calcularEstado(
       r.proximo_destino
     );
 
-
-  /*
-  =========================================================
-  VACÍO -> EN VIAJE AL MONTE
-
-  LAS TRES CONDICIONES PRINCIPALES:
-
-  1. Estado = VACÍO
-  2. PRÓXIMO DESTINO empieza con el día ACTUAL
-  3. VELOCIDAD > 20
-
-  Además, si PRÓXIMO DESTINO no empieza con ningún día,
-  permanece VACÍO.
-  =========================================================
-  */
 
   const puedeIniciarViaje =
     anterior === "VACÍO" &&
@@ -1534,155 +1510,63 @@ function calcularEstado(
 
   /*
   =========================================================
-  ESTADO: VACÍO
+  1. PRIORIDAD MÁXIMA: LUGAR DE DESCARGA
+
+  PLANTA FAS
+  UPM PDT
+  JUANGO
+  POLO LOGISTICO
+  LA TABLADA
+
+  SI EL GPS INDICA CUALQUIERA DE ELLOS:
+  DESCARGANDO SI O SI.
+
+  NO IMPORTA EL ESTADO ANTERIOR.
   =========================================================
   */
 
   if(
-    anterior === "VACÍO"
+    estaDescargando
   ){
 
-    /*
-    SI EL GPS YA COINCIDE CON DESTINO:
-
-    VACÍO -> MONTE
-
-    Esto permite recuperar correctamente un camión
-    que ya llegó al monte aunque no se haya capturado
-    previamente el momento con velocidad > 20.
-    */
-
-    if(
-      estaEnMonte
-    ){
-
-      nuevo =
-        "MONTE";
-
-    }
-
-
-    /*
-    PRÓXIMO DESTINO SIN DÍA:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      !proximoTieneDia
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    PRÓXIMO DESTINO CON DÍA,
-    PERO NO ES HOY:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      !proximoEsHoy
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    ES HOY PERO VELOCIDAD <= 20:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      velocidad === null ||
-      velocidad <= 20
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    ES HOY Y VELOCIDAD > 20:
-
-    VACÍO -> EN VIAJE AL MONTE
-    */
-
-    else if(
-      puedeIniciarViaje
-    ){
-
-      nuevo =
-        "EN VIAJE AL MONTE";
-
-    }
-
-
-    else{
-
-      nuevo =
-        "VACÍO";
-
-    }
+    nuevo =
+      "DESCARGANDO";
 
   }
 
 
   /*
   =========================================================
-  ESTADO: EN VIAJE AL MONTE
+  2. SEGUNDA PRIORIDAD: GPS DENTRO DEL DESTINO
 
-  La velocidad deja de importar.
+  SI LA UBICACIÓN GPS COINCIDE CON DESTINO:
+  MONTE SI O SI.
 
-  Si baja de 20 o incluso queda en 0:
-  sigue EN VIAJE AL MONTE.
-
-  Solamente cambia cuando llega al monte.
+  NO IMPORTA EL ESTADO ANTERIOR.
   =========================================================
   */
 
   else if(
-    anterior ===
-    "EN VIAJE AL MONTE"
+    estaEnMonte
   ){
 
-    if(
-      estaEnMonte
-    ){
-
-      nuevo =
-        "MONTE";
-
-    }
-    else{
-
-      nuevo =
-        "EN VIAJE AL MONTE";
-
-    }
+    nuevo =
+      "MONTE";
 
   }
 
 
   /*
   =========================================================
-  ESTADO: MONTE
+  3. SI ESTABA EN MONTE Y YA NO ESTÁ EN EL DESTINO
 
-  Mientras GPS coincide con DESTINO:
-  MONTE.
+  MONTE -> SALIDO CARGADO
 
-  Cuando abandona:
-  SALIDO CARGADO.
+  Como arriba ya comprobamos:
+  - no está descargando
+  - no está en el monte
+
+  entonces salió cargado.
   =========================================================
   */
 
@@ -1690,84 +1574,96 @@ function calcularEstado(
     anterior === "MONTE"
   ){
 
-    if(
-      estaEnMonte
-    ){
-
-      nuevo =
-        "MONTE";
-
-    }
-    else{
-
-      nuevo =
-        "SALIDO CARGADO";
-
-    }
+    nuevo =
+      "SALIDO CARGADO";
 
   }
 
 
   /*
   =========================================================
-  ESTADO: SALIDO CARGADO
+  4. DESCARGANDO Y SALIÓ DE LA ZONA DE DESCARGA
 
-  Solamente puede:
+  DESCARGANDO -> VACÍO
 
-  SALIDO CARGADO
-         ↓
-  DESCARGANDO
+  Como la condición "estaDescargando" ya fue evaluada
+  arriba, si llega acá significa que abandonó la descarga.
   =========================================================
   */
 
   else if(
-    anterior ===
-    "SALIDO CARGADO"
+    anterior === "DESCARGANDO"
   ){
 
-    if(
-      estaDescargando
-    ){
-
-      nuevo =
-        "DESCARGANDO";
-
-    }
-    else{
-
-      nuevo =
-        "SALIDO CARGADO";
-
-    }
+    nuevo =
+      "VACÍO";
 
   }
 
 
   /*
   =========================================================
-  ESTADO: DESCARGANDO
+  5. SALIDO CARGADO
 
-  Mientras está en zona de descarga:
-  DESCARGANDO.
-
-  Cuando sale:
-  VACÍO.
-
-  Ahí comienza un ciclo nuevo.
+  Mientras no llegue a una zona de descarga ni vuelva a
+  coincidir con DESTINO, continúa SALIDO CARGADO.
   =========================================================
   */
 
   else if(
-    anterior ===
-    "DESCARGANDO"
+    anterior === "SALIDO CARGADO"
+  ){
+
+    nuevo =
+      "SALIDO CARGADO";
+
+  }
+
+
+  /*
+  =========================================================
+  6. EN VIAJE AL MONTE
+
+  La velocidad deja de importar una vez iniciado el viaje.
+
+  Como la coincidencia con DESTINO ya se evaluó arriba,
+  mientras no llegue sigue EN VIAJE AL MONTE.
+  =========================================================
+  */
+
+  else if(
+    anterior === "EN VIAJE AL MONTE"
+  ){
+
+    nuevo =
+      "EN VIAJE AL MONTE";
+
+  }
+
+
+  /*
+  =========================================================
+  7. VACÍO
+
+  Solo pasa a EN VIAJE AL MONTE cuando:
+
+  - PRÓXIMO DESTINO comienza con el día actual
+  - velocidad > 20
+
+  Si no, continúa VACÍO.
+  =========================================================
+  */
+
+  else if(
+    anterior === "VACÍO"
   ){
 
     if(
-      estaDescargando
+      puedeIniciarViaje
     ){
 
       nuevo =
-        "DESCARGANDO";
+        "EN VIAJE AL MONTE";
 
     }
     else{
@@ -1793,7 +1689,9 @@ function calcularEstado(
 
 
   /*
-  GUARDAMOS EL ESTADO REAL DEL CICLO.
+  =========================================================
+  GUARDAMOS EL ESTADO OPERATIVO REAL.
+  =========================================================
   */
 
   if(matricula){
@@ -1805,10 +1703,23 @@ function calcularEstado(
 
 
   /*
-  PARADO NO DESTRUYE EL ESTADO GUARDADO.
+  =========================================================
+  PARADO
+
+  DESCARGANDO, MONTE y SALIDO CARGADO tienen prioridad
+  sobre PARADO porque representan una situación física
+  confirmada por GPS o por la salida inmediata del monte.
+
+  Para los demás casos, Z mantiene el estado visual PARADO.
+  =========================================================
   */
 
-  if(parado){
+  if(
+    parado &&
+    nuevo !== "DESCARGANDO" &&
+    nuevo !== "MONTE" &&
+    nuevo !== "SALIDO CARGADO"
+  ){
 
     return "PARADO";
 
@@ -3474,38 +3385,55 @@ function actualizarEstadosOperativos(){
     !inicializados
   ){
 
+    /*
+    Primero cargamos los estados iniciales SOLO como memoria
+    anterior. Después calculamos inmediatamente el estado
+    actual usando el GPS real.
+
+    De esta forma, si al abrir la página un camión ya está
+    en PLANTA FAS / UPM / etc., aparece DESCARGANDO en la
+    primera carga y no hay que esperar 5 minutos.
+    */
+
+    registros.forEach(
+      r => {
+
+        const matricula =
+          normalizarTexto(
+            r.matricula
+          );
+
+        const estadoInicial =
+          ESTADOS_INICIALES[
+            matricula
+          ] ||
+          normalizarEstado(
+            r.ubicacion
+          );
+
+        estados[
+          matricula
+        ] =
+          estadoInicial === "PARADO"
+            ? "VACÍO"
+            : estadoInicial;
+
+      }
+    );
+
+
     registros =
       registros.map(
-        r => {
-
-          const matricula =
-            normalizarTexto(
-              r.matricula
-            );
-
-          const estadoInicial =
-            ESTADOS_INICIALES[
-              matricula
-            ] ||
-            normalizarEstado(
-              r.ubicacion
-            );
-
-          estados[
-            matricula
-          ] =
-            estadoInicial === "PARADO"
-              ? "VACÍO"
-              : estadoInicial;
-
-          return {
-            ...r,
-            _estadoCalculado:
-              estadoInicial
-          };
-
-        }
+        r => ({
+          ...r,
+          _estadoCalculado:
+            calcularEstado(
+              r,
+              estados
+            )
+        })
       );
+
 
     guardarEstados(
       estados
