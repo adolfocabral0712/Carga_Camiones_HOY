@@ -167,6 +167,10 @@
       border-top:2px solid #000
     }
 
+    .tabla-destinos tbody tr.fin-grupo td{
+      border-bottom:2px solid #000
+    }
+
     .tabla-destinos tbody tr:first-child td{
       border-top:2px solid #000
     }
@@ -2448,13 +2452,10 @@ function renderResumenDestinos(
       " registros";
 
 
-  let grupoAnterior =
-    "";
-
   $("resumenDestinos")
     .innerHTML =
       filas.map(
-        ([destino,c]) => {
+        ([destino,c],indice) => {
 
           const nombre =
             campo === "destino"
@@ -2470,17 +2471,48 @@ function renderResumenDestinos(
               destino
             );
 
-          const claseInicioGrupo =
-            grupoActual !== grupoAnterior
-              ? " class='inicio-grupo'"
+          const grupoAnterior =
+            indice > 0
+              ? obtenerGrupoVisualDestino(
+                  filas[indice - 1][0]
+                )
               : "";
 
-          grupoAnterior =
-            grupoActual;
+          const grupoSiguiente =
+            indice < filas.length - 1
+              ? obtenerGrupoVisualDestino(
+                  filas[indice + 1][0]
+                )
+              : "";
+
+          const clasesGrupo = [];
+
+          if(
+            grupoActual !== grupoAnterior
+          ){
+            clasesGrupo.push(
+              "inicio-grupo"
+            );
+          }
+
+          if(
+            grupoActual !== grupoSiguiente
+          ){
+            clasesGrupo.push(
+              "fin-grupo"
+            );
+          }
+
+          const atributoClase =
+            clasesGrupo.length
+              ? " class='" +
+                clasesGrupo.join(" ") +
+                "'"
+              : "";
 
           return (
             "<tr" +
-            claseInicioGrupo +
+            atributoClase +
             ">" +
 
             "<td class='destino-nombre " +
