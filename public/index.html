@@ -1,810 +1,763 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#123c2b">
-  <title>Hoy - Carga de Camiones</title>
-
-  <style>
-    :root{
-      --verde:#123c2b;
-      --verde2:#1d6042;
-      --fondo:#f2f5f3;
-      --borde:#d8e1dc;
-      --texto:#17221c;
-      --muted:#68756e
-    }
-
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      background:var(--fondo);
-      color:var(--texto);
-      font-family:Arial,Helvetica,sans-serif
-    }
-
-    header{
-      background:var(--verde);
-      color:#fff;
-      border-bottom:5px solid #56a56f;
-      padding:20px 24px
-    }
-
-    .header-inner{
-      max-width:1800px;
-      margin:auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px
-    }
-
-    .eyebrow{
-      margin:0 0 5px;
-      color:#9ed1ae;
-      font-size:10px;
-      font-weight:800;
-      letter-spacing:.17em
-    }
-
-    h1{
-      margin:0;
-      font-size:26px;
-      letter-spacing:-.02em
-    }
-
-    .actualizado{
-      margin:6px 0 0;
-      color:#c9ddd1;
-      font-size:11px
-    }
-
-    main{
-      max-width:1800px;
-      margin:auto;
-      padding:16px
-    }
-
-    .resumen{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(170px,1fr));
-      gap:10px;
-      margin-bottom:12px
-    }
-
-    .resumen-destinos{
-      margin-bottom:12px;
-      background:#fff;
-      border:2px solid #000;
-      border-radius:12px;
-      overflow:hidden
-    }
-
-    .resumen-destinos-titulo{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:9px 14px;
-      background:#e7eee9;
-      border-bottom:1px solid #000
-    }
-
-    .resumen-destinos-titulo h2{
-      margin:0;
-      font-size:13px
-    }
-
-    .resumen-destinos-controles{
-      display:flex;
-      align-items:center;
-      gap:9px
-    }
-
-    .resumen-destinos-controles span{
-      color:var(--muted);
-      font-size:9px;
-      font-weight:700;
-      white-space:nowrap
-    }
-
-    #selectorTipoDestino{
-      min-width:170px;
-      padding:7px 9px;
-      font-size:10px;
-      font-weight:800
-    }
-
-    .quitar-filtro-destino{
-      border:1px solid #b6c5bc;
-      border-radius:6px;
-      background:#fff;
-      color:#42534a;
-      padding:7px 9px;
-      font-size:9px;
-      font-weight:800;
-      cursor:pointer;
-      white-space:nowrap
-    }
-
-    .resumen-destinos-wrap{
-      overflow-x:auto
-    }
-
-    .tabla-destinos{
-      width:100%;
-      min-width:900px;
-      table-layout:fixed;
-      border-collapse:collapse;
-      font-size:10px;
-      border:0
-    }
-
-    .tabla-destinos th,
-    .tabla-destinos td{
-      width:10%;
-      padding:8px 11px;
-      border-right:1px solid #000;
-      text-align:center
-    }
-
-    .tabla-destinos th:last-child,
-    .tabla-destinos td:last-child{
-      border-right:0
-    }
-
-    .tabla-destinos thead th{
-      border-bottom:1px solid #000
-    }
-
-    /*
-    BORDE FUERTE SOLO CUANDO CAMBIA EL DÍA / GRUPO.
-    La primera fila también queda marcada.
-    */
-    .tabla-destinos tbody tr.inicio-grupo td{
-      border-top:2px solid #000
-    }
-
-    .tabla-destinos tbody tr.fin-grupo td{
-      border-bottom:2px solid #000
-    }
-
-    .tabla-destinos tbody tr:first-child td{
-      border-top:2px solid #000
-    }
-
-    .tabla-destinos th:first-child,
-    .tabla-destinos td:first-child{
-      width:30%;
-      text-align:left
-    }
-
-    .tabla-destinos .fila-total-destinos td{
-      background:#dfe8e2;
-      border-top:2px solid #000;
-      color:#000;
-      font-weight:900
-    }
-
-    .destino-nombre{
-      font-weight:800;
-      color:#24352c
-    }
-
-    .origen-trozas{background:#d8f0dc!important}
-    .origen-upm{background:#fff0b8!important}
-    .origen-fas{background:#e3e7ea!important}
-    .origen-z{background:#ffd2d2!important}
-
-    .destino-filtro{
-      border:0;
-      background:transparent;
-      color:#174b91;
-      font:inherit;
-      font-weight:800;
-      padding:0;
-      text-align:left;
-      cursor:pointer;
-      text-decoration:underline;
-      text-decoration-style:dotted;
-      text-underline-offset:3px
-    }
-
-    .contador-estado{
-      display:inline-block;
-      min-width:30px;
-      border-radius:16px;
-      padding:4px 8px;
-      font-weight:900
-    }
-
-    .contador-vacio{background:#f8cbae;color:#522510}
-    .contador-viaje{background:#ffe36e;color:#111}
-    .contador-monte{background:#75db7a;color:#123c2b}
-    .contador-salido{background:#64ffff;color:#153f43}
-    .contador-descargando{background:#ff96ff;color:#542254}
-    .contador-planta{background:#dce9ff;color:#174b91}
-    .contador-total{background:#e2e8e4;color:#26372e}
-
-    .card{
-      background:#fff;
-      border:1px solid var(--borde);
-      border-radius:10px;
-      padding:13px 15px;
-      text-align:center;
-      color:var(--texto)
-    }
-
-    button.card{cursor:pointer}
-
-    .card span{
-      display:block;
-      color:var(--muted);
-      font-size:9px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.07em
-    }
-
-    .card strong{
-      display:block;
-      margin-top:4px;
-      font-size:24px
-    }
-
-    .card-parados{
-      background:#c62828;
-      border-color:#a91f1f;
-      color:#fff
-    }
-
-    .card-parados span,
-    .card-parados strong{
-      color:#fff
-    }
-
-    #acopladosFalta{
-      font-family:Consolas,monospace;
-      font-size:19px
-    }
-
-    .card.alerta{
-      border-left:5px solid #c8392b;
-      background:#fff4f2
-    }
-
-    .card.alerta span,
-    .card.alerta strong{
-      color:#a42a20
-    }
-
-    .card.correcto{
-      border-left:5px solid #2a8a57;
-      background:#f3fbf6
-    }
-
-    .tabla-wrap{
-      overflow-x:auto;
-      background:#fff;
-      border:1px solid var(--borde);
-      border-radius:10px
-    }
-
-    table{
-      border-collapse:collapse;
-      font-size:11px
-    }
-
-    .tabla-principal{
-      width:100%;
-    }
-
-    thead{
-      position:sticky;
-      top:0;
-      z-index:2;
-      background:#e7eee9
-    }
-
-    th{
-      padding:12px 11px;
-      color:#000;
-      font-size:9px;
-      text-transform:uppercase;
-      border-bottom:1px solid #c6d2cb;
-      white-space:nowrap;
-      text-align:center
-    }
-
-    th.ordenable{
-      cursor:pointer
-    }
-
-    .indicador-orden{
-      display:inline-grid;
-      place-items:center;
-      min-width:22px;
-      height:22px;
-      margin-left:6px;
-      border:1px solid #aab9b0;
-      border-radius:5px;
-      background:#fff
-    }
-
-    .orden-activo{
-      background:#d8eadf!important
-    }
-
-    td{
-      padding:10px 11px;
-      border-bottom:1px solid #edf1ef;
-      vertical-align:top
-    }
-
-    .centrada{
-      text-align:center!important
-    }
-
-    .empresa{
-      font-weight:700
-    }
-
-    .matricula{
-      font-family:Consolas,monospace;
-      font-weight:800;
-      white-space:nowrap
-    }
-
-    .estado{
-      display:inline-block;
-      border-radius:20px;
-      font-size:9px;
-      font-weight:800;
-      padding:4px 8px;
-      text-transform:uppercase
-    }
-
-    .estado-vacio{background:#f8cbae;color:#522510}
-    .estado-parado{background:#c62828;color:#fff}
-    .estado-en-viaje-al-monte{background:#ffe36e;color:#111}
-    .estado-monte{background:#75db7a;color:#123c2b}
-    .estado-salido-cargado{background:#64ffff;color:#153f43}
-    .estado-descargando{background:#ff96ff;color:#542254}
-
-    .comentario{
-      color:#984b00;
-      font-weight:700
-    }
-
-    .gps{
-      max-width:320px;
-      overflow-wrap:anywhere;
-      color:#46544c
-    }
-
-    .gps-mapa{
-      border:0;
-      background:transparent;
-      color:#174b91;
-      font:inherit;
-      padding:0;
-      text-align:left;
-      cursor:pointer;
-      text-decoration:underline;
-      text-decoration-style:dotted
-    }
-
-    .rumbo-flecha{
-      display:inline-block;
-      min-width:18px;
-      margin-left:3px;
-      color:#17623d;
-      font-size:17px;
-      font-weight:900
-    }
-
-    .alerta-texto{
-      color:#b42318!important;
-      background:#fff0ee;
-      font-weight:900!important
-    }
-
-    .abrir{
-      border:0;
-      background:transparent;
-      color:inherit;
-      font:inherit;
-      font-weight:inherit;
-      padding:0;
-      cursor:pointer;
-      text-decoration:underline;
-      text-decoration-style:dotted
-    }
-
-    .mensaje{
-      padding:38px;
-      text-align:center;
-      background:#fff;
-      color:var(--muted)
-    }
-
-    .modal-fondo{
-      display:none;
-      position:fixed;
-      inset:0;
-      z-index:20;
-      background:#07120cba;
-      padding:18px;
-      place-items:center
-    }
-
-    .modal-fondo.abierto{
-      display:grid
-    }
-
-    .modal{
-      position:relative;
-      width:min(650px,100%);
-      max-height:90vh;
-      overflow:auto;
-      background:#fff;
-      border-radius:14px;
-      padding:22px
-    }
-
-    .modal-cerrar{
-      position:absolute;
-      right:13px;
-      top:9px;
-      border:0;
-      background:transparent;
-      font-size:28px;
-      cursor:pointer
-    }
-
-    .documentos{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:9px
-    }
-
-    .documento{
-      border:1px solid var(--borde);
-      border-left:5px solid #2d8b59;
-      border-radius:8px;
-      padding:11px
-    }
-
-    .documento.vencida{
-      border-left-color:#bd3025;
-      background:#fff3f1
-    }
-
-    .documento.proxima{
-      border-left-color:#d58a16;
-      background:#fffaf0
-    }
-
-    .mapa-contenedor{
-      display:grid;
-      gap:12px
-    }
-
-    .mapa-frame{
-      width:100%;
-      height:430px;
-      border:1px solid var(--borde);
-      border-radius:10px
-    }
-
-    .mapa-abrir{
-      display:inline-flex;
-      justify-content:center;
-      justify-self:center;
-      border-radius:8px;
-      background:#17623d;
-      color:#fff;
-      padding:10px 16px;
-      text-decoration:none;
-      font-weight:800
-    }
-
-
-    /* =====================================================
-       MODAL EXCLUSIVO PARA UBICACIÓN GPS
-       ===================================================== */
-
-    .modal-mapa{
-      position:fixed;
-      inset:0;
-      z-index:9999;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      background:rgba(7,18,12,.82);
-      backdrop-filter:blur(3px)
-    }
-
-    .modal-mapa.abierto{
-      display:flex
-    }
-
-    .modal-mapa-contenido{
-      width:min(760px,calc(100vw - 36px));
-      max-height:calc(100vh - 36px);
-      overflow:auto;
-      border:1px solid #315f4a;
-      border-radius:16px;
-      background:#0b251b;
-      color:#fff;
-      box-shadow:0 24px 70px rgba(0,0,0,.45)
-    }
-
-    .modal-mapa-cabecera{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:18px;
-      padding:18px 20px;
-      border-bottom:1px solid #294c3b
-    }
-
-    .modal-mapa-cabecera h2{
-      margin:0 0 6px;
-      font-size:20px
-    }
-
-    .modal-mapa-cabecera p{
-      margin:0;
-      color:#c2d6ca;
-      font-size:13px;
-      line-height:1.4
-    }
-
-    .modal-mapa-cerrar{
-      flex:0 0 auto;
-      width:38px;
-      height:38px;
-      border:1px solid #456c59;
-      border-radius:10px;
-      background:#17392b;
-      color:#fff;
-      font-size:25px;
-      line-height:1;
-      cursor:pointer
-    }
-
-    .modal-mapa-cerrar:hover{
-      background:#1e4937
-    }
-
-    .modal-mapa-cuerpo{
-      padding:20px
-    }
-
-    .mapa-iframe{
-      display:block;
-      width:100%;
-      height:min(430px,52vh);
-      border:0;
-      border-radius:12px;
-      background:#dbe6ee
-    }
-
-    .mapa-no-disponible{
-      padding:36px 18px;
-      border:1px dashed #456c59;
-      border-radius:12px;
-      color:#c2d6ca;
-      text-align:center
-    }
-
-    .modal-mapa-acciones{
-      display:flex;
-      justify-content:center;
-      margin-top:16px
-    }
-
-    .abrir-google-maps{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:44px;
-      padding:10px 18px;
-      border-radius:10px;
-      background:#2f855a;
-      color:#fff;
-      font-weight:800;
-      text-decoration:none
-    }
-
-    .abrir-google-maps:hover{
-      background:#28734e
-    }
-
-    body.modal-mapa-abierto{
-      overflow:hidden
-    }
-
-    footer{
-      text-align:center;
-      color:var(--muted);
-      font-size:10px;
-      padding:15px
-    }
-
-    @media(max-width:1100px){
-      .resumen{
-        grid-template-columns:repeat(2,1fr)
-      }
-    }
-
-    @media(max-width:800px){
-      header{padding:16px}
-      h1{font-size:21px}
-      main{padding:9px}
-      .resumen{grid-template-columns:1fr 1fr}
-      .documentos{grid-template-columns:1fr}
-
-      .resumen-destinos-titulo{
-        flex-direction:column;
-        align-items:stretch
-      }
-
-      .modal-mapa{
-        padding:8px
-      }
-
-      .modal-mapa-contenido{
-        width:100%;
-        max-height:calc(100vh - 16px);
-        border-radius:14px
-      }
-
-      .modal-mapa-cabecera{
-        padding:15px 16px
-      }
-
-      .modal-mapa-cabecera h2{
-        font-size:18px
-      }
-
-      .modal-mapa-cuerpo{
-        padding:14px
-      }
-
-      .mapa-iframe{
-        height:55vh;
-        min-height:360px
-      }
-
-      .abrir-google-maps{
-        width:100%
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123c2b">
+<title>Hoy - Carga de Camiones</title>
+
+<style>
+:root{
+  --verde:#123c2b;
+  --verde2:#1d6042;
+  --fondo:#f2f5f3;
+  --borde:#d8e1dc;
+  --texto:#17221c;
+  --muted:#68756e;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--fondo);
+  color:var(--texto);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+header{
+  background:var(--verde);
+  color:#fff;
+  border-bottom:5px solid #56a56f;
+  padding:20px 24px;
+}
+
+.header-inner{
+  max-width:1800px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.eyebrow{
+  margin:0 0 5px;
+  color:#9ed1ae;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.17em;
+}
+
+h1{
+  margin:0;
+  font-size:26px;
+}
+
+.actualizado{
+  margin:6px 0 0;
+  color:#c9ddd1;
+  font-size:11px;
+}
+
+main{
+  max-width:1800px;
+  margin:auto;
+  padding:16px;
+}
+
+.resumen{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(170px,1fr));
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:10px;
+  padding:13px 15px;
+  text-align:center;
+  color:var(--texto);
+}
+
+button.card{
+  cursor:pointer;
+}
+
+.card span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.card strong{
+  display:block;
+  margin-top:4px;
+  font-size:24px;
+}
+
+.card-parados{
+  background:#c62828;
+  border-color:#a91f1f;
+  color:#fff;
+}
+
+.card-parados span,
+.card-parados strong{
+  color:#fff;
+}
+
+.card.alerta{
+  border-left:5px solid #c8392b;
+  background:#fff4f2;
+}
+
+.card.alerta span,
+.card.alerta strong{
+  color:#a42a20;
+}
+
+.card.correcto{
+  border-left:5px solid #2a8a57;
+  background:#f3fbf6;
+}
+
+#acopladosFalta{
+  font-family:Consolas,monospace;
+  font-size:19px;
+}
+
+.resumen-destinos{
+  margin-bottom:12px;
+  background:#fff;
+  border:2px solid #000;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.resumen-destinos-titulo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:9px 14px;
+  background:#e7eee9;
+  border-bottom:1px solid #000;
+}
+
+.resumen-destinos-titulo h2{
+  margin:0;
+  font-size:13px;
+}
+
+.resumen-destinos-controles{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.resumen-destinos-controles span{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:700;
+}
+
+#selectorTipoDestino{
+  min-width:170px;
+  padding:7px 9px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.quitar-filtro-destino{
+  border:1px solid #b6c5bc;
+  border-radius:6px;
+  background:#fff;
+  color:#42534a;
+  padding:7px 9px;
+  font-size:9px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.resumen-destinos-wrap{
+  overflow-x:auto;
+}
+
+.tabla-destinos{
+  width:100%;
+  min-width:900px;
+  table-layout:fixed;
+  border-collapse:collapse;
+  font-size:10px;
+}
+
+.tabla-destinos th,
+.tabla-destinos td{
+  width:10%;
+  padding:8px 11px;
+  border-right:1px solid #000;
+  text-align:center;
+}
+
+.tabla-destinos th:first-child,
+.tabla-destinos td:first-child{
+  width:30%;
+  text-align:left;
+}
+
+.tabla-destinos th:last-child,
+.tabla-destinos td:last-child{
+  border-right:0;
+}
+
+.tabla-destinos thead th{
+  border-bottom:1px solid #000;
+}
+
+.tabla-destinos tbody tr.inicio-grupo td{
+  border-top:2px solid #000;
+}
+
+.tabla-destinos tbody tr.fin-grupo td{
+  border-bottom:2px solid #000;
+}
+
+.tabla-destinos .fila-total-destinos td{
+  background:#dfe8e2;
+  border-top:2px solid #000;
+  font-weight:900;
+}
+
+.destino-nombre{
+  font-weight:800;
+}
+
+.origen-trozas{background:#d8f0dc!important}
+.origen-upm{background:#fff0b8!important}
+.origen-fas{background:#e3e7ea!important}
+.origen-z{background:#ffd2d2!important}
+
+.destino-filtro{
+  border:0;
+  background:transparent;
+  color:#174b91;
+  font:inherit;
+  font-weight:800;
+  padding:0;
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-underline-offset:3px;
+}
+
+.contador-estado{
+  display:inline-block;
+  min-width:30px;
+  border-radius:16px;
+  padding:4px 8px;
+  font-weight:900;
+}
+
+.contador-vacio{background:#f8cbae;color:#522510}
+.contador-viaje{background:#ffe36e;color:#111}
+.contador-monte{background:#75db7a;color:#123c2b}
+.contador-salido{background:#64ffff;color:#153f43}
+.contador-descargando{background:#ff96ff;color:#542254}
+.contador-planta{background:#dce9ff;color:#174b91}
+.contador-total{background:#e2e8e4;color:#26372e}
+
+.tabla-wrap{
+  overflow-x:auto;
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:10px;
+}
+
+table{
+  border-collapse:collapse;
+  font-size:11px;
+}
+
+.tabla-principal{
+  width:100%;
+}
+
+thead{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#e7eee9;
+}
+
+th{
+  padding:12px 11px;
+  color:#000;
+  font-size:9px;
+  text-transform:uppercase;
+  border-bottom:1px solid #c6d2cb;
+  white-space:nowrap;
+  text-align:center;
+}
+
+th.ordenable{
+  cursor:pointer;
+}
+
+.indicador-orden{
+  display:inline-grid;
+  place-items:center;
+  min-width:22px;
+  height:22px;
+  margin-left:6px;
+  border:1px solid #aab9b0;
+  border-radius:5px;
+  background:#fff;
+}
+
+.orden-activo{
+  background:#d8eadf!important;
+}
+
+td{
+  padding:10px 11px;
+  border-bottom:1px solid #edf1ef;
+  vertical-align:top;
+}
+
+.centrada{
+  text-align:center!important;
+}
+
+.empresa{
+  font-weight:700;
+}
+
+.matricula{
+  font-family:Consolas,monospace;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.estado{
+  display:inline-block;
+  border-radius:20px;
+  font-size:9px;
+  font-weight:800;
+  padding:4px 8px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.estado-vacio{background:#f8cbae;color:#522510}
+.estado-parado{background:#c62828;color:#fff}
+.estado-en-viaje-al-monte{background:#ffe36e;color:#111}
+.estado-monte{background:#75db7a;color:#123c2b}
+.estado-salido-cargado{background:#64ffff;color:#153f43}
+.estado-descargando{background:#ff96ff;color:#542254}
+
+.comentario{
+  color:#984b00;
+  font-weight:700;
+}
+
+.gps{
+  max-width:320px;
+  overflow-wrap:anywhere;
+  color:#46544c;
+}
+
+.gps-mapa{
+  border:0;
+  background:transparent;
+  color:#174b91;
+  font:inherit;
+  padding:0;
+  text-align:left;
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+}
+
+.rumbo-flecha{
+  display:inline-block;
+  min-width:18px;
+  margin-left:3px;
+  color:#17623d;
+  font-size:17px;
+  font-weight:900;
+}
+
+.alerta-texto{
+  color:#b42318!important;
+  background:#fff0ee;
+  font-weight:900!important;
+}
+
+.abrir{
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  font-weight:inherit;
+  padding:0;
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+}
+
+.mensaje{
+  padding:38px;
+  text-align:center;
+  background:#fff;
+  color:var(--muted);
+}
+
+.modal-fondo{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:#07120cba;
+  padding:18px;
+  place-items:center;
+}
+
+.modal-fondo.abierto{
+  display:grid;
+}
+
+.modal{
+  position:relative;
+  width:min(720px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:14px;
+  padding:22px;
+}
+
+.modal-cerrar{
+  position:absolute;
+  right:13px;
+  top:9px;
+  border:0;
+  background:transparent;
+  font-size:28px;
+  cursor:pointer;
+}
+
+.documentos{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+}
+
+.documento{
+  border:1px solid var(--borde);
+  border-left:5px solid #2d8b59;
+  border-radius:8px;
+  padding:11px;
+}
+
+.documento.vencida{
+  border-left-color:#bd3025;
+  background:#fff3f1;
+}
+
+.documento.proxima{
+  border-left-color:#d58a16;
+  background:#fffaf0;
+}
+
+.documento h3{
+  margin:0 0 6px;
+  font-size:12px;
+}
+
+.documento p{
+  margin:0;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.modal-mapa{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(7,18,12,.82);
+}
+
+.modal-mapa.abierto{
+  display:flex;
+}
+
+.modal-mapa-contenido{
+  width:min(760px,calc(100vw - 36px));
+  max-height:calc(100vh - 36px);
+  overflow:auto;
+  border:1px solid #315f4a;
+  border-radius:16px;
+  background:#0b251b;
+  color:#fff;
+}
+
+.modal-mapa-cabecera{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px 20px;
+  border-bottom:1px solid #294c3b;
+}
+
+.modal-mapa-cabecera h2{
+  margin:0 0 6px;
+  font-size:20px;
+}
+
+.modal-mapa-cabecera p{
+  margin:0;
+  color:#c2d6ca;
+  font-size:13px;
+}
+
+.modal-mapa-cerrar{
+  width:38px;
+  height:38px;
+  border:1px solid #456c59;
+  border-radius:10px;
+  background:#17392b;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.modal-mapa-cuerpo{
+  padding:20px;
+}
+
+.mapa-iframe{
+  display:block;
+  width:100%;
+  height:min(430px,52vh);
+  border:0;
+  border-radius:12px;
+  background:#dbe6ee;
+}
+
+.mapa-no-disponible{
+  padding:36px 18px;
+  border:1px dashed #456c59;
+  border-radius:12px;
+  color:#c2d6ca;
+  text-align:center;
+}
+
+.modal-mapa-acciones{
+  display:flex;
+  justify-content:center;
+  margin-top:16px;
+}
+
+.abrir-google-maps{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 18px;
+  border-radius:10px;
+  background:#2f855a;
+  color:#fff;
+  font-weight:800;
+  text-decoration:none;
+}
+
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+  padding:15px;
+}
+
+@media(max-width:1100px){
+  .resumen{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:800px){
+
+  header{padding:16px}
+
+  h1{font-size:21px}
+
+  main{padding:9px}
+
+  .resumen{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .documentos{
+    grid-template-columns:1fr;
+  }
+
+  .resumen-destinos-titulo{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .resumen-destinos-controles{
+    flex-wrap:wrap;
+  }
+
+  .modal-mapa{
+    padding:8px;
+  }
+
+  .modal-mapa-contenido{
+    width:100%;
+    max-height:calc(100vh - 16px);
+  }
+
+  .mapa-iframe{
+    height:55vh;
+    min-height:360px;
+  }
+
+  .abrir-google-maps{
+    width:100%;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="header-inner">
-    <div>
-      <p class="eyebrow">CONTROL OPERATIVO</p>
-      <h1>Hoy - Carga de Camiones</h1>
-      <p class="actualizado" id="actualizado">Actualizado: —</p>
-      <p class="actualizado" id="actualizacionExcel">Última actualización Excel: —</p>
-    </div>
-  </div>
+<div class="header-inner">
+<div>
+<p class="eyebrow">CONTROL OPERATIVO</p>
+<h1>Hoy - Carga de Camiones</h1>
+<p class="actualizado" id="actualizado">Actualizado: —</p>
+<p class="actualizado" id="actualizacionExcel">Última actualización Excel: —</p>
+</div>
+</div>
 </header>
 
 <main>
 
 <section class="resumen">
 
-  <article class="card">
-    <span>Total de camiones</span>
-    <strong id="total">—</strong>
-  </article>
+<article class="card">
+<span>Total de camiones</span>
+<strong id="total">—</strong>
+</article>
 
-  <article class="card card-parados">
-    <span>Camiones parados</span>
-    <strong id="totalParados">—</strong>
-  </article>
+<article class="card card-parados">
+<span>Camiones parados</span>
+<strong id="totalParados">—</strong>
+</article>
 
-  <article class="card" id="cardAcoplados">
-    <span>Camión sin acoplado</span>
-    <strong id="acopladosFalta">—</strong>
-  </article>
+<article class="card" id="cardAcoplados">
+<span>Camión sin acoplado</span>
+<strong id="acopladosFalta">—</strong>
+</article>
 
-  <button class="card card-control" id="cardCapacitacion" onclick="abrirControl('capacitacion')">
-    <span>Capacitación UPM no aprobada</span>
-    <strong id="controlCapacitacion">—</strong>
-  </button>
+<button class="card card-control" id="cardCapacitacion">
+<span>Capacitación UPM no aprobada</span>
+<strong id="controlCapacitacion">—</strong>
+</button>
 
-  <button class="card card-control" id="cardInstructivo" onclick="abrirControl('instructivo')">
-    <span>Instructivo - o FALTA</span>
-    <strong id="controlInstructivo">—</strong>
-  </button>
+<button class="card card-control" id="cardInstructivo">
+<span>Instructivo - o FALTA</span>
+<strong id="controlInstructivo">—</strong>
+</button>
 
-  <button class="card card-control" id="cardTarjeta" onclick="abrirControl('tarjeta')">
-    <span>Tarjeta verde UPM no vigente</span>
-    <strong id="controlTarjeta">—</strong>
-  </button>
+<button class="card card-control" id="cardTarjeta">
+<span>Tarjeta verde UPM no vigente</span>
+<strong id="controlTarjeta">—</strong>
+</button>
 
-  <button class="card card-control" id="cardEmpresasInfraccion" onclick="abrirInfracciones('empresa')">
-    <span>Empresas con infracciones</span>
-    <strong id="totalEmpresasInfraccion">—</strong>
-  </button>
+<button class="card card-control" id="cardEmpresasInfraccion">
+<span>Empresas con infracciones</span>
+<strong id="totalEmpresasInfraccion">—</strong>
+</button>
 
-  <button class="card card-control" id="cardMatriculasInfraccion" onclick="abrirInfracciones('matricula')">
-    <span>Matrículas con infracciones</span>
-    <strong id="totalMatriculasInfraccion">—</strong>
-  </button>
+<button class="card card-control" id="cardMatriculasInfraccion">
+<span>Matrículas con infracciones</span>
+<strong id="totalMatriculasInfraccion">—</strong>
+</button>
 
-  <button class="card card-control" id="cardConductoresInfraccion" onclick="abrirInfracciones('conductor')">
-    <span>Conductores con infracciones</span>
-    <strong id="totalConductoresInfraccion">—</strong>
-  </button>
+<button class="card card-control" id="cardConductoresInfraccion">
+<span>Conductores con infracciones</span>
+<strong id="totalConductoresInfraccion">—</strong>
+</button>
 
 </section>
+
 
 <section class="resumen-destinos">
 
-  <div class="resumen-destinos-titulo">
+<div class="resumen-destinos-titulo">
 
-    <h2 id="tituloResumenDestinos">
-      Camiones por destino y estado
-    </h2>
+<h2 id="tituloResumenDestinos">
+Camiones por destino y estado
+</h2>
 
-    <div class="resumen-destinos-controles">
+<div class="resumen-destinos-controles">
 
-      <select id="selectorTipoDestino">
-        <option value="destino">DESTINO</option>
-        <option value="proximo_destino">PRÓXIMO DESTINO</option>
-      </select>
+<select id="selectorTipoDestino">
+<option value="destino">DESTINO</option>
+<option value="proximo_destino">PRÓXIMO DESTINO</option>
+</select>
 
-      <button
-        class="quitar-filtro-destino"
-        id="quitarFiltroDestino"
-        hidden
-      >
-        Quitar filtro
-      </button>
+<button
+class="quitar-filtro-destino"
+id="quitarFiltroDestino"
+hidden
+>
+Quitar filtro
+</button>
 
-      <span id="cantidadDestinos">—</span>
+<span id="cantidadDestinos">—</span>
 
-    </div>
+</div>
+</div>
 
-  </div>
+<div class="resumen-destinos-wrap">
 
-  <div class="resumen-destinos-wrap">
+<table class="tabla-destinos">
 
-    <table class="tabla-destinos">
+<thead>
+<tr>
+<th id="encabezadoTipoDestino">Destino</th>
+<th>Vacío</th>
+<th>En viaje<br>al monte</th>
+<th>Monte</th>
+<th>Salido<br>cargado</th>
+<th>Descargando</th>
+<th>Planta FAS</th>
+<th>Total</th>
+</tr>
+</thead>
 
-      <thead>
-        <tr>
-          <th id="encabezadoTipoDestino">Destino</th>
-          <th>Vacío</th>
-          <th>En viaje<br>al monte</th>
-          <th>Monte</th>
-          <th>Salido<br>cargado</th>
-          <th>Descargando</th>
-          <th>Planta FAS</th>
-          <th>Total</th>
-        </tr>
-      </thead>
+<tbody id="resumenDestinos"></tbody>
 
-      <tbody id="resumenDestinos"></tbody>
+</table>
 
-    </table>
-
-  </div>
-
+</div>
 </section>
+
 
 <div class="tabla-wrap">
 
@@ -813,45 +766,45 @@
 <thead>
 <tr>
 
-  <th class="ordenable" data-columna="empresa">
-    Empresa <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="empresa">
+Empresa <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="destino">
-    Destino <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="destino">
+Destino <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="matricula">
-    Matrícula <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="matricula">
+Matrícula <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="proximo_destino">
-    Próximo destino <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="proximo_destino">
+Próximo destino <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="_estadoCalculado">
-    Estado <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="_estadoCalculado">
+Estado <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="comentarios">
-    Comentarios <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="comentarios">
+Comentarios <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="ubicacion_gps">
-    Ubicación GPS <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="ubicacion_gps">
+Ubicación GPS <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="chofer">
-    Chofer <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="chofer">
+Chofer <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="cedula_identidad">
-    Cédula de identidad <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="cedula_identidad">
+Cédula de identidad <span class="indicador-orden">↕</span>
+</th>
 
-  <th class="ordenable" data-columna="acoplados">
-    Acoplados <span class="indicador-orden">↕</span>
-  </th>
+<th class="ordenable" data-columna="acoplados">
+Acoplados <span class="indicador-orden">↕</span>
+</th>
 
 </tr>
 </thead>
@@ -861,97 +814,94 @@
 </table>
 
 <div class="mensaje" id="mensaje">
-  Cargando información…
+Cargando información…
 </div>
 
 </div>
 
 </main>
 
+
 <div class="modal-fondo" id="modalFondo">
 
 <section class="modal">
 
-  <button class="modal-cerrar" id="modalCerrar">
-    ×
-  </button>
+<button class="modal-cerrar" id="modalCerrar">
+×
+</button>
 
-  <h2 id="modalTitulo"></h2>
+<h2 id="modalTitulo"></h2>
 
-  <p id="modalSubtitulo"></p>
+<p id="modalSubtitulo"></p>
 
-  <div class="documentos" id="modalDocumentos"></div>
+<div class="documentos" id="modalDocumentos"></div>
 
 </section>
 
 </div>
 
+
 <div
-  id="modalMapa"
-  class="modal-mapa"
-  aria-hidden="true"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="modalMapaTitulo"
+id="modalMapa"
+class="modal-mapa"
+aria-hidden="true"
 >
-  <div class="modal-mapa-contenido">
 
-    <div class="modal-mapa-cabecera">
-      <div>
-        <h2 id="modalMapaTitulo">Ubicación GPS</h2>
-        <p>
-          <strong id="modalMapaMatricula">—</strong>
-          ·
-          <span id="modalMapaUbicacion">—</span>
-        </p>
-      </div>
+<div class="modal-mapa-contenido">
 
-      <button
-        id="cerrarModalMapa"
-        class="modal-mapa-cerrar"
-        type="button"
-        aria-label="Cerrar"
-      >
-        ×
-      </button>
-    </div>
+<div class="modal-mapa-cabecera">
 
-    <div class="modal-mapa-cuerpo">
+<div>
+<h2>Ubicación GPS</h2>
 
-      <div id="modalMapaVista"></div>
-
-      <div class="modal-mapa-acciones">
-        <a
-          id="abrirGoogleMaps"
-          class="abrir-google-maps"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Abrir en Google Maps
-        </a>
-      </div>
-
-    </div>
-
-  </div>
+<p>
+<strong id="modalMapaMatricula">—</strong>
+·
+<span id="modalMapaUbicacion">—</span>
+</p>
 </div>
 
+<button
+id="cerrarModalMapa"
+class="modal-mapa-cerrar"
+type="button"
+>
+×
+</button>
+
+</div>
+
+<div class="modal-mapa-cuerpo">
+
+<div id="modalMapaVista"></div>
+
+<div class="modal-mapa-acciones">
+
+<a
+id="abrirGoogleMaps"
+class="abrir-google-maps"
+href="#"
+target="_blank"
+rel="noopener noreferrer"
+>
+Abrir en Google Maps
+</a>
+
+</div>
+
+</div>
+</div>
+</div>
+
+
 <footer>
-  Actualización automática cada 5 minutos
+Actualización automática cada 5 minutos
 </footer>
+
 
 <script>
 
 const JSON_URL = "/api/datos";
-
-/*
-===========================================================
-MEMORIA DE ESTADOS
-
-V14 para no reutilizar estados incorrectos anteriores.
-===========================================================
-*/
 
 const ESTADOS_STORAGE =
   "hoy_control_estados_v15";
@@ -1021,6 +971,7 @@ const DIAS_SEMANA = [
 
 
 const ESTADOS_INICIALES = {
+
   ATP3995:"VACÍO",
   ATP4045:"VACÍO",
   ATP4375:"VACÍO",
@@ -1047,8 +998,10 @@ const ESTADOS_INICIALES = {
   ATP7017:"VACÍO",
   ATP7351:"VACÍO",
   ATP7381:"PARADO",
+
   LTP6093:"VACÍO",
   LTP7278:"VACÍO",
+
   NTP2638:"VACÍO",
   NTP4700:"VACÍO",
   NTP4943:"VACÍO",
@@ -1070,8 +1023,10 @@ const ESTADOS_INICIALES = {
   NTP5893:"VACÍO",
   NTP5898:"VACÍO",
   NTP6000:"VACÍO",
+
   OTP3216:"DESCARGANDO",
   OTP3860:"VACÍO",
+
   PTP0893:"VACÍO",
   PTP1096:"VACÍO",
   PTP1292:"PARADO",
@@ -1089,6 +1044,7 @@ const ESTADOS_INICIALES = {
   PTP1948:"VACÍO",
   PTP1949:"VACÍO",
   PTP2075:"VACÍO"
+
 };
 
 
@@ -1101,31 +1057,35 @@ const LUGARES_DESCARGA = [
 ];
 
 
-const normalizarTexto = v => {
+function normalizarTexto(v){
 
-  return limpio(v) === "—"
-    ? ""
-    : String(v)
-        .normalize("NFD")
-        .replace(
-          /[\u0300-\u036f]/g,
-          ""
-        )
-        .toUpperCase()
-        .replace(
-          /[^A-Z0-9\s]/g,
-          " "
-        )
-        .replace(
-          /\s+/g,
-          " "
-        )
-        .trim();
+  if(
+    v === null ||
+    v === undefined
+  )
+    return "";
 
-};
+  return String(v)
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .toUpperCase()
+    .replace(
+      /[^A-Z0-9\s]/g,
+      " "
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+
+}
 
 
-const normalizarEstado = v => {
+function normalizarEstado(v){
 
   const x =
     normalizarTexto(v);
@@ -1147,7 +1107,7 @@ const normalizarEstado = v => {
 
   return "VACÍO";
 
-};
+}
 
 
 function leerEstados(){
@@ -1191,6 +1151,33 @@ function guardarEstados(estados){
 }
 
 
+function inicializarEstados(){
+
+  try{
+
+    if(
+      localStorage.getItem(
+        ESTADOS_INICIALIZADOS_STORAGE
+      ) !== "1"
+    ){
+
+      guardarEstados(
+        ESTADOS_INICIALES
+      );
+
+      localStorage.setItem(
+        ESTADOS_INICIALIZADOS_STORAGE,
+        "1"
+      );
+
+    }
+
+  }
+  catch{}
+
+}
+
+
 function obtenerDiaActual(){
 
   return normalizarTexto(
@@ -1208,9 +1195,7 @@ function obtenerDiaActual(){
 }
 
 
-function obtenerPrimerDiaSemana(
-  texto
-){
+function obtenerPrimerDiaSemana(texto){
 
   const primeraPalabra =
     normalizarTexto(
@@ -1227,9 +1212,7 @@ function obtenerPrimerDiaSemana(
 }
 
 
-function comienzaConDiaSemana(
-  texto
-){
+function comienzaConDiaSemana(texto){
 
   return obtenerPrimerDiaSemana(
     texto
@@ -1238,9 +1221,7 @@ function comienzaConDiaSemana(
 }
 
 
-function comienzaConDiaActual(
-  texto
-){
+function comienzaConDiaActual(texto){
 
   const dia =
     obtenerPrimerDiaSemana(
@@ -1255,9 +1236,7 @@ function comienzaConDiaActual(
 }
 
 
-function textoComienzaConZ(
-  texto
-){
+function textoComienzaConZ(texto){
 
   return normalizarTexto(
     texto
@@ -1266,9 +1245,21 @@ function textoComienzaConZ(
 }
 
 
-function obtenerLugarGps(
-  ubicacionGps
-){
+/*
+===========================================================
+UBICACIÓN GPS
+
+Ejemplo:
+
+JEAN PALACIO 112 - RUMBO N - VEL. 0
+
+devuelve:
+
+JEAN PALACIO 112
+===========================================================
+*/
+
+function obtenerLugarGps(ubicacionGps){
 
   const texto =
     String(
@@ -1293,29 +1284,152 @@ function obtenerLugarGps(
 }
 
 
+/*
+===========================================================
+NUEVA LÓGICA PARA DETECTAR MONTE
+
+La ubicación GPS puede contener:
+
+JEAN PALACIO 112
+
+mientras DESTINO contiene:
+
+VIERNES JEAN PALACIO FAS hora 10:00
+
+Para comparar correctamente quitamos:
+
+- números
+- días
+- FAS
+- UPM
+- HORA
+- palabras sin valor operativo
+
+Resultado:
+
+GPS      -> JEAN PALACIO
+DESTINO  -> JEAN PALACIO
+
+COINCIDE -> MONTE
+===========================================================
+*/
+
+function limpiarNombreMonte(texto){
+
+  let x =
+    normalizarTexto(
+      texto
+    );
+
+  if(!x)
+    return "";
+
+  x =
+    x.replace(
+      /\b(LUNES|MARTES|MIERCOLES|JUEVES|VIERNES|SABADO|DOMINGO)\b/g,
+      " "
+    );
+
+  x =
+    x.replace(
+      /\b(FAS|UPM|HORA|HS|HRS)\b/g,
+      " "
+    );
+
+  /*
+  Quitamos números:
+  pila, hora, ruta numérica, etc.
+  */
+
+  x =
+    x.replace(
+      /\b\d+\b/g,
+      " "
+    );
+
+  x =
+    x.replace(
+      /\s+/g,
+      " "
+    )
+    .trim();
+
+  return x;
+
+}
+
+
+/*
+===========================================================
+DETECCIÓN CORREGIDA DE MONTE
+===========================================================
+*/
+
 function destinoCoincideConGps(
   destino,
   ubicacionGps
 ){
 
-  const destinoNormalizado =
-    normalizarTexto(
+  const destinoLimpio =
+    limpiarNombreMonte(
       destino
     );
 
   const lugarGps =
-    obtenerLugarGps(
-      ubicacionGps
+    limpiarNombreMonte(
+      obtenerLugarGps(
+        ubicacionGps
+      )
     );
 
   if(
-    !destinoNormalizado ||
+    !destinoLimpio ||
     !lugarGps
   )
     return false;
 
-  return destinoNormalizado.includes(
+
+  /*
+  Evitamos interpretar rutas genéricas como montes.
+  */
+
+  const palabrasGps =
     lugarGps
+      .split(" ")
+      .filter(
+        p =>
+          p.length >= 3 &&
+          p !== "RUTA" &&
+          p !== "KM" &&
+          p !== "CAMINO" &&
+          p !== "ACCESO"
+      );
+
+
+  if(
+    palabrasGps.length === 0
+  )
+    return false;
+
+
+  const palabrasDestino =
+    new Set(
+      destinoLimpio
+        .split(" ")
+        .filter(Boolean)
+    );
+
+
+  /*
+  Todas las palabras importantes del lugar GPS
+  deben aparecer en DESTINO.
+  */
+
+  return palabrasGps.every(
+    palabra =>
+      palabrasDestino.has(
+        palabra
+      )
   );
 
 }
@@ -1354,8 +1468,6 @@ function obtenerVelocidadGps(
 ===========================================================
 MÁQUINA DE ESTADOS
 
-ÚNICO ORDEN:
-
 VACÍO
   ↓
 EN VIAJE AL MONTE
@@ -1380,12 +1492,10 @@ function calcularEstado(
       r.matricula
     );
 
-
   const gps =
     normalizarTexto(
       r.ubicacion_gps
     );
-
 
   const tieneGuardado =
     Object.prototype
@@ -1396,14 +1506,7 @@ function calcularEstado(
       );
 
 
-  /*
-  =========================================================
-  ESTADO ANTERIOR
-  =========================================================
-  */
-
   let anterior;
-
 
   if(tieneGuardado){
 
@@ -1424,7 +1527,7 @@ function calcularEstado(
 
 
   /*
-  PARADO ES SOLO VISUAL.
+  PARADO ES VISUAL Y TIENE PRIORIDAD.
   */
 
   const parado =
@@ -1437,7 +1540,7 @@ function calcularEstado(
 
 
   /*
-  LLEGÓ AL MONTE.
+  MONTE.
   */
 
   const estaEnMonte =
@@ -1448,7 +1551,7 @@ function calcularEstado(
 
 
   /*
-  LLEGÓ A UN LUGAR DE DESCARGA.
+  DESCARGA.
   */
 
   const estaDescargando =
@@ -1462,36 +1565,11 @@ function calcularEstado(
     );
 
 
-  /*
-  VELOCIDAD.
-  */
-
   const velocidad =
     obtenerVelocidadGps(
       r.ubicacion_gps
     );
 
-
-  /*
-  =========================================================
-  PRÓXIMO DESTINO
-  =========================================================
-
-  Si NO comienza con:
-
-  LUNES
-  MARTES
-  MIERCOLES
-  JUEVES
-  VIERNES
-  SABADO
-  DOMINGO
-
-  y el estado es VACÍO:
-
-  QUEDA VACÍO.
-  =========================================================
-  */
 
   const proximoTieneDia =
     comienzaConDiaSemana(
@@ -1505,25 +1583,10 @@ function calcularEstado(
     );
 
 
-  /*
-  =========================================================
-  VACÍO -> EN VIAJE AL MONTE
-
-  LAS TRES CONDICIONES PRINCIPALES:
-
-  1. Estado = VACÍO
-  2. PRÓXIMO DESTINO empieza con el día ACTUAL
-  3. VELOCIDAD > 20
-
-  Además, si PRÓXIMO DESTINO no empieza con ningún día,
-  permanece VACÍO.
-  =========================================================
-  */
-
   const puedeIniciarViaje =
     anterior === "VACÍO" &&
-    proximoTieneDia === true &&
-    proximoEsHoy === true &&
+    proximoTieneDia &&
+    proximoEsHoy &&
     velocidad !== null &&
     velocidad > 20;
 
@@ -1533,23 +1596,45 @@ function calcularEstado(
 
 
   /*
-  =========================================================
-  ESTADO: VACÍO
-  =========================================================
+  PARADO
+  */
+
+  if(parado){
+
+    nuevo =
+      "PARADO";
+
+  }
+
+
+  /*
+  Si un PARADO deja de tener Z,
+  vuelve a VACÍO para retomar secuencia.
+  */
+
+  else if(
+    anterior === "PARADO"
+  ){
+
+    nuevo =
+      "VACÍO";
+
+  }
+
+
+  /*
+  VACÍO
   */
 
   if(
-    anterior === "VACÍO"
+    nuevo === "VACÍO" &&
+    !parado
   ){
 
     /*
-    SI EL GPS YA COINCIDE CON DESTINO:
-
-    VACÍO -> MONTE
-
-    Esto permite recuperar correctamente un camión
-    que ya llegó al monte aunque no se haya capturado
-    previamente el momento con velocidad > 20.
+    IMPORTANTE:
+    si ya está físicamente en el monte,
+    MONTE tiene prioridad sobre velocidad.
     */
 
     if(
@@ -1560,63 +1645,6 @@ function calcularEstado(
         "MONTE";
 
     }
-
-
-    /*
-    PRÓXIMO DESTINO SIN DÍA:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      !proximoTieneDia
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    PRÓXIMO DESTINO CON DÍA,
-    PERO NO ES HOY:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      !proximoEsHoy
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    ES HOY PERO VELOCIDAD <= 20:
-
-    VACÍO -> VACÍO
-    */
-
-    else if(
-      velocidad === null ||
-      velocidad <= 20
-    ){
-
-      nuevo =
-        "VACÍO";
-
-    }
-
-
-    /*
-    ES HOY Y VELOCIDAD > 20:
-
-    VACÍO -> EN VIAJE AL MONTE
-    */
 
     else if(
       puedeIniciarViaje
@@ -1627,7 +1655,6 @@ function calcularEstado(
 
     }
 
-
     else{
 
       nuevo =
@@ -1639,21 +1666,12 @@ function calcularEstado(
 
 
   /*
-  =========================================================
-  ESTADO: EN VIAJE AL MONTE
-
-  La velocidad deja de importar.
-
-  Si baja de 20 o incluso queda en 0:
-  sigue EN VIAJE AL MONTE.
-
-  Solamente cambia cuando llega al monte.
-  =========================================================
+  EN VIAJE AL MONTE
   */
 
   else if(
-    anterior ===
-    "EN VIAJE AL MONTE"
+    anterior === "EN VIAJE AL MONTE" &&
+    !parado
   ){
 
     if(
@@ -1665,6 +1683,11 @@ function calcularEstado(
 
     }
     else{
+
+      /*
+      NO vuelve a VACÍO porque baje
+      la velocidad.
+      */
 
       nuevo =
         "EN VIAJE AL MONTE";
@@ -1675,19 +1698,12 @@ function calcularEstado(
 
 
   /*
-  =========================================================
-  ESTADO: MONTE
-
-  Mientras GPS coincide con DESTINO:
-  MONTE.
-
-  Cuando abandona:
-  SALIDO CARGADO.
-  =========================================================
+  MONTE
   */
 
   else if(
-    anterior === "MONTE"
+    anterior === "MONTE" &&
+    !parado
   ){
 
     if(
@@ -1698,7 +1714,21 @@ function calcularEstado(
         "MONTE";
 
     }
+
+    else if(
+      estaDescargando
+    ){
+
+      nuevo =
+        "DESCARGANDO";
+
+    }
+
     else{
+
+      /*
+      Abandonó el monte.
+      */
 
       nuevo =
         "SALIDO CARGADO";
@@ -1709,20 +1739,12 @@ function calcularEstado(
 
 
   /*
-  =========================================================
-  ESTADO: SALIDO CARGADO
-
-  Solamente puede:
-
   SALIDO CARGADO
-         ↓
-  DESCARGANDO
-  =========================================================
   */
 
   else if(
-    anterior ===
-    "SALIDO CARGADO"
+    anterior === "SALIDO CARGADO" &&
+    !parado
   ){
 
     if(
@@ -1744,22 +1766,12 @@ function calcularEstado(
 
 
   /*
-  =========================================================
-  ESTADO: DESCARGANDO
-
-  Mientras está en zona de descarga:
-  DESCARGANDO.
-
-  Cuando sale:
-  VACÍO.
-
-  Ahí comienza un ciclo nuevo.
-  =========================================================
+  DESCARGANDO
   */
 
   else if(
-    anterior ===
-    "DESCARGANDO"
+    anterior === "DESCARGANDO" &&
+    !parado
   ){
 
     if(
@@ -1780,262 +1792,15 @@ function calcularEstado(
   }
 
 
-  /*
-  SEGURIDAD.
-  */
-
-  else{
-
-    nuevo =
-      "VACÍO";
-
-  }
-
-
-  /*
-  GUARDAMOS EL ESTADO REAL DEL CICLO.
-  */
-
-  if(matricula){
-
-    estados[matricula] =
-      nuevo;
-
-  }
-
-
-  /*
-  PARADO NO DESTRUYE EL ESTADO GUARDADO.
-  */
-
-  if(parado){
-
-    return "PARADO";
-
-  }
-
+  estados[matricula] =
+    nuevo;
 
   return nuevo;
 
 }
 
 
-const gpsConFlecha = v =>
-  esc(v).replace(
-    /\bRUMBO\s+(NE|NO|SE|SO|N|E|S|O)\b/gi,
-    (texto,rumbo) =>
-      "RUMBO " +
-      rumbo.toUpperCase() +
-      " <span class='rumbo-flecha'>" +
-      FLECHAS_RUMBO[
-        rumbo.toUpperCase()
-      ] +
-      "</span>"
-  );
-
-
-function obtenerPositionLinkSeguro(
-  valor
-){
-
-  const enlace =
-    String(
-      valor || ""
-    ).trim();
-
-  if(
-    !enlace ||
-    enlace.toLowerCase() === "nan"
-  )
-    return "";
-
-  try{
-
-    const url =
-      new URL(
-        enlace
-      );
-
-    return (
-      url.protocol === "https:" ||
-      url.protocol === "http:"
-    )
-      ? url.href
-      : "";
-
-  }
-  catch{
-
-    return "";
-
-  }
-
-}
-
-
-function obtenerUrlMapaEmbebido(
-  enlace
-){
-
-  let texto =
-    String(
-      enlace || ""
-    );
-
-  try{
-    texto =
-      decodeURIComponent(
-        texto
-      );
-  }
-  catch{}
-
-  const coincidencia =
-    texto.match(
-      /@(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/
-    ) ||
-    texto.match(
-      /(?:query|q|destination)=(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/i
-    ) ||
-    texto.match(
-      /(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/
-    );
-
-  if(!coincidencia)
-    return "";
-
-  const lat =
-    Number(
-      coincidencia[1]
-    );
-
-  const lon =
-    Number(
-      coincidencia[2]
-    );
-
-  if(
-    !Number.isFinite(lat) ||
-    !Number.isFinite(lon)
-  )
-    return "";
-
-  return (
-    "https://www.google.com/maps?q=" +
-    encodeURIComponent(
-      lat + "," + lon
-    ) +
-    "&z=15&output=embed"
-  );
-
-}
-
-
-const fecha = v => {
-
-  if(!v)
-    return "—";
-
-  return new Intl.DateTimeFormat(
-    "es-UY",
-    {
-      timeZone:"America/Montevideo",
-      day:"2-digit",
-      month:"2-digit",
-      year:"numeric",
-      hour:"2-digit",
-      minute:"2-digit",
-      hour12:false
-    }
-  )
-  .format(
-    new Date(v)
-  )
-  .replace(",","");
-
-};
-
-
-const fechaCorta = v => {
-
-  const x =
-    limpio(v);
-
-  if(x === "—")
-    return "—";
-
-  const d =
-    new Date(
-      x + "T12:00:00"
-    );
-
-  return Number.isNaN(
-    d.getTime()
-  )
-    ? "—"
-    : new Intl.DateTimeFormat(
-        "es-UY",
-        {
-          day:"2-digit",
-          month:"2-digit",
-          year:"numeric"
-        }
-      ).format(d);
-
-};
-
-
-const claseVencimiento = v => {
-
-  const x =
-    limpio(v);
-
-  if(x === "—")
-    return "sin-dato";
-
-  const d =
-    new Date(
-      x + "T23:59:59"
-    );
-
-  if(
-    Number.isNaN(
-      d.getTime()
-    )
-  )
-    return "sin-dato";
-
-  const dias =
-    Math.ceil(
-      (
-        d.getTime() -
-        Date.now()
-      ) /
-      86400000
-    );
-
-  return d.getTime() <
-         Date.now()
-    ? "vencida"
-    : dias <= 30
-      ? "proxima"
-      : "vigente";
-
-};
-
-
-const algunoVencido =
-  valores =>
-    valores.some(
-      v =>
-        claseVencimiento(v) ===
-        "vencida"
-    );
-
-
-function claseFondoOrigen(
-  valor
-){
+function claseFondoOrigen(valor){
 
   const texto =
     normalizarTexto(
@@ -2121,9 +1886,12 @@ function actualizarIndicadoresOrden(){
           activo
         );
 
-        th.querySelector(
-          ".indicador-orden"
-        ).textContent =
+        const indicador =
+          th.querySelector(
+            ".indicador-orden"
+          );
+
+        indicador.textContent =
           activo
             ? (
                 ordenActual.direccion ===
@@ -2182,8 +1950,10 @@ function renderResumenDestinos(
       ? "Próximo destino"
       : "Destino";
 
+
   const destinos =
     new Map();
+
 
   lista.forEach(
     r => {
@@ -2198,6 +1968,7 @@ function renderResumenDestinos(
           ? "SIN " +
             etiqueta.toUpperCase()
           : valor;
+
 
       if(
         !destinos.has(
@@ -2220,18 +1991,22 @@ function renderResumenDestinos(
 
       }
 
+
       const c =
         destinos.get(
           destino
         );
+
 
       const estado =
         normalizarEstado(
           r._estadoCalculado
         );
 
+
       c[estado] =
         (c[estado] || 0) + 1;
+
 
       const gps =
         normalizarTexto(
@@ -2240,6 +2015,7 @@ function renderResumenDestinos(
           /\s+/g,
           ""
         );
+
 
       if(
         gps.includes(
@@ -2251,29 +2027,12 @@ function renderResumenDestinos(
 
       }
 
+
       c.total++;
 
     }
   );
 
-
-  /*
-  =========================================================
-  ORDEN DEL RESUMEN DE DESTINOS
-
-  1. Día de la semana:
-     LUNES -> MARTES -> MIERCOLES -> JUEVES ->
-     VIERNES -> SABADO -> DOMINGO
-
-  2. Dentro de cada día:
-     FAS -> UPM -> TROZAS -> OTROS
-
-  3. Los registros que comienzan con Z van al final.
-
-  4. Los textos que no comienzan con un día ni con Z
-     quedan después de los días y antes de los Z.
-  =========================================================
-  */
 
   const ordenDias = {
     LUNES:0,
@@ -2286,9 +2045,7 @@ function renderResumenDestinos(
   };
 
 
-  function obtenerOrdenDiaDestino(
-    valor
-  ){
+  function ordenDia(valor){
 
     const texto =
       normalizarTexto(
@@ -2315,28 +2072,20 @@ function renderResumenDestinos(
   }
 
 
-  function obtenerOrdenOrigenDestino(
-    valor
-  ){
+  function ordenOrigen(valor){
 
     const texto =
       normalizarTexto(
         valor
       );
 
-    if(
-      texto.includes("FAS")
-    )
+    if(texto.includes("TROZA"))
       return 0;
 
-    if(
-      texto.includes("UPM")
-    )
+    if(texto.includes("FAS"))
       return 1;
 
-    if(
-      texto.includes("TROZA")
-    )
+    if(texto.includes("UPM"))
       return 2;
 
     return 3;
@@ -2346,112 +2095,30 @@ function renderResumenDestinos(
 
   const filas =
     [...destinos.entries()]
-      .sort(
-        (a,b) => {
+    .sort(
+      (a,b) => {
 
-          const destinoA =
-            a[0];
+        const d =
+          ordenDia(a[0]) -
+          ordenDia(b[0]);
 
-          const destinoB =
-            b[0];
+        if(d !== 0)
+          return d;
 
-          const diaA =
-            obtenerOrdenDiaDestino(
-              destinoA
-            );
+        const o =
+          ordenOrigen(a[0]) -
+          ordenOrigen(b[0]);
 
-          const diaB =
-            obtenerOrdenDiaDestino(
-              destinoB
-            );
+        if(o !== 0)
+          return o;
 
-          if(
-            diaA !== diaB
-          ){
+        return compararValores(
+          a[0],
+          b[0]
+        );
 
-            return diaA - diaB;
-
-          }
-
-
-          /*
-          Para los Z:
-          simplemente orden alfabético entre ellos.
-          */
-
-          if(
-            diaA === 99
-          ){
-
-            return destinoA.localeCompare(
-              destinoB,
-              "es",
-              {
-                sensitivity:"base"
-              }
-            );
-
-          }
-
-
-          const origenA =
-            obtenerOrdenOrigenDestino(
-              destinoA
-            );
-
-          const origenB =
-            obtenerOrdenOrigenDestino(
-              destinoB
-            );
-
-          if(
-            origenA !== origenB
-          ){
-
-            return origenA - origenB;
-
-          }
-
-
-          return destinoA.localeCompare(
-            destinoB,
-            "es",
-            {
-              sensitivity:"base"
-            }
-          );
-
-        }
-      );
-
-
-  function obtenerGrupoVisualDestino(
-    valor
-  ){
-
-    const texto =
-      normalizarTexto(
-        valor
-      );
-
-    if(
-      texto.startsWith("Z")
-    )
-      return "Z";
-
-    const primera =
-      texto.split(" ")[0] || "";
-
-    if(
-      DIAS_SEMANA.includes(
-        primera
-      )
-    )
-      return primera;
-
-    return "OTROS";
-
-  }
+      }
+    );
 
 
   const totales = {
@@ -2501,173 +2168,448 @@ function renderResumenDestinos(
       " registros";
 
 
+  let html = "";
+
+
+  filas.forEach(
+    ([destino,c],i) => {
+
+      const diaActual =
+        ordenDia(
+          destino
+        );
+
+      const diaAnterior =
+        i > 0
+          ? ordenDia(
+              filas[i-1][0]
+            )
+          : null;
+
+      const diaSiguiente =
+        i < filas.length - 1
+          ? ordenDia(
+              filas[i+1][0]
+            )
+          : null;
+
+
+      const clasesFila = [];
+
+      if(
+        i === 0 ||
+        diaActual !== diaAnterior
+      )
+        clasesFila.push(
+          "inicio-grupo"
+        );
+
+      if(
+        i === filas.length - 1 ||
+        diaActual !== diaSiguiente
+      )
+        clasesFila.push(
+          "fin-grupo"
+        );
+
+
+      const nombre =
+        "<button " +
+        "class='destino-filtro' " +
+        "type='button' " +
+        "data-destino='" +
+        esc(destino) +
+        "'>" +
+        esc(destino) +
+        "</button>";
+
+
+      html +=
+        "<tr class='" +
+        clasesFila.join(" ") +
+        "'>" +
+
+        "<td class='destino-nombre " +
+        claseFondoOrigen(destino) +
+        "'>" +
+        nombre +
+        "</td>" +
+
+        "<td><span class='contador-estado contador-vacio'>" +
+        c["VACÍO"] +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-viaje'>" +
+        c["EN VIAJE AL MONTE"] +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-monte'>" +
+        c["MONTE"] +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-salido'>" +
+        c["SALIDO CARGADO"] +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-descargando'>" +
+        c["DESCARGANDO"] +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-planta'>" +
+        c.plantaFas +
+        "</span></td>" +
+
+        "<td><span class='contador-estado contador-total'>" +
+        c.total +
+        "</span></td>" +
+
+        "</tr>";
+
+    }
+  );
+
+
+  html +=
+    "<tr class='fila-total-destinos'>" +
+
+    "<td>TOTAL</td>" +
+
+    "<td>" +
+    totales["VACÍO"] +
+    "</td>" +
+
+    "<td>" +
+    totales["EN VIAJE AL MONTE"] +
+    "</td>" +
+
+    "<td>" +
+    totales["MONTE"] +
+    "</td>" +
+
+    "<td>" +
+    totales["SALIDO CARGADO"] +
+    "</td>" +
+
+    "<td>" +
+    totales["DESCARGANDO"] +
+    "</td>" +
+
+    "<td>" +
+    totales.plantaFas +
+    "</td>" +
+
+    "<td>" +
+    totales.total +
+    "</td>" +
+
+    "</tr>";
+
+
   $("resumenDestinos")
     .innerHTML =
-      filas.map(
-        ([destino,c],indice) => {
+      html;
 
-          const nombre =
-            campo === "destino"
-              ? "<button class='destino-filtro' data-destino='" +
-                esc(destino) +
-                "'>" +
-                esc(destino) +
-                "</button>"
-              : esc(destino);
 
-          const grupoActual =
-            obtenerGrupoVisualDestino(
-              destino
-            );
+  $("quitarFiltroDestino")
+    .hidden =
+      !filtroDestinoGeneral;
 
-          const grupoAnterior =
-            indice > 0
-              ? obtenerGrupoVisualDestino(
-                  filas[indice - 1][0]
-                )
-              : "";
 
-          const grupoSiguiente =
-            indice < filas.length - 1
-              ? obtenerGrupoVisualDestino(
-                  filas[indice + 1][0]
-                )
-              : "";
+  $("quitarFiltroDestino")
+    .textContent =
+      filtroDestinoGeneral
+        ? "Quitar filtro: " +
+          filtroDestinoGeneral
+        : "Quitar filtro";
 
-          const clasesGrupo = [];
+}
 
-          if(
-            grupoActual !== grupoAnterior
-          ){
-            clasesGrupo.push(
-              "inicio-grupo"
-            );
-          }
 
-          if(
-            grupoActual !== grupoSiguiente
-          ){
-            clasesGrupo.push(
-              "fin-grupo"
-            );
-          }
+function extraerRumbo(texto){
 
-          const atributoClase =
-            clasesGrupo.length
-              ? " class='" +
-                clasesGrupo.join(" ") +
-                "'"
-              : "";
+  const m =
+    String(
+      texto || ""
+    ).match(
+      /\bRUMBO\s+([A-Z]{1,2})\b/i
+    );
+
+  return m
+    ? m[1].toUpperCase()
+    : "";
+
+}
+
+
+function htmlGps(
+  r,
+  indice
+){
+
+  const texto =
+    limpio(
+      r.ubicacion_gps
+    );
+
+  if(
+    texto === "—"
+  )
+    return "—";
+
+
+  const rumbo =
+    extraerRumbo(
+      r.ubicacion_gps
+    );
+
+
+  const flecha =
+    FLECHAS_RUMBO[rumbo]
+      ? "<span class='rumbo-flecha'>" +
+        FLECHAS_RUMBO[rumbo] +
+        "</span>"
+      : "";
+
+
+  if(
+    limpio(
+      r.position_link
+    ) !== "—"
+  ){
+
+    return (
+      "<button " +
+      "class='gps-mapa' " +
+      "type='button' " +
+      "data-mapa-indice='" +
+      indice +
+      "'>" +
+      esc(texto) +
+      "</button>" +
+      flecha
+    );
+
+  }
+
+
+  return (
+    esc(texto) +
+    flecha
+  );
+
+}
+
+
+function obtenerAcoplados(r){
+
+  const candidatos = [
+    r.acoplados,
+    r.acoplado,
+    r.matricula_acoplado,
+    r.matricula2
+  ];
+
+  const valores =
+    candidatos
+      .map(
+        limpio
+      )
+      .filter(
+        x =>
+          x !== "—"
+      );
+
+  return valores.length
+    ? valores.join(" / ")
+    : "—";
+
+}
+
+
+function render(){
+
+  let lista =
+    registros.slice();
+
+
+  if(
+    filtroDestinoGeneral
+  ){
+
+    lista =
+      lista.filter(
+        r =>
+          limpio(
+            r.destino
+          ) ===
+          filtroDestinoGeneral
+      );
+
+  }
+
+
+  lista.sort(
+    (a,b) => {
+
+      const resultado =
+        compararValores(
+          a[
+            ordenActual.columna
+          ],
+          b[
+            ordenActual.columna
+          ]
+        );
+
+      return ordenActual.direccion ===
+             "asc"
+        ? resultado
+        : -resultado;
+
+    }
+  );
+
+
+  filtradosActuales =
+    lista;
+
+
+  $("mensaje").style.display =
+    lista.length
+      ? "none"
+      : "block";
+
+
+  $("cuerpo")
+    .innerHTML =
+      lista.map(
+        (r,i) => {
+
+          const estado =
+            r._estadoCalculado;
+
 
           return (
-            "<tr" +
-            atributoClase +
-            ">" +
+            "<tr>" +
 
-            "<td class='destino-nombre " +
-            claseFondoOrigen(destino) +
-            "'>" +
-            nombre +
+            "<td class='empresa'>" +
+            esc(r.empresa) +
             "</td>" +
 
-            "<td><span class='contador-estado contador-vacio'>" +
-            c["VACÍO"] +
-            "</span></td>" +
+            "<td>" +
+            esc(r.destino) +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-viaje'>" +
-            c["EN VIAJE AL MONTE"] +
-            "</span></td>" +
+            "<td class='matricula centrada'>" +
+            esc(r.matricula) +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-monte'>" +
-            c.MONTE +
-            "</span></td>" +
+            "<td>" +
+            esc(r.proximo_destino) +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-salido'>" +
-            c["SALIDO CARGADO"] +
-            "</span></td>" +
+            "<td class='centrada'>" +
+            "<span class='" +
+            claseEstado(
+              estado
+            ) +
+            "'>" +
+            esc(estado) +
+            "</span>" +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-descargando'>" +
-            c.DESCARGANDO +
-            "</span></td>" +
+            "<td class='comentario'>" +
+            esc(r.comentarios) +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-planta'>" +
-            c.plantaFas +
-            "</span></td>" +
+            "<td class='gps'>" +
+            htmlGps(
+              r,
+              i
+            ) +
+            "</td>" +
 
-            "<td><span class='contador-estado contador-total'>" +
-            c.total +
-            "</span></td>" +
+            "<td>" +
+            esc(r.chofer) +
+            "</td>" +
+
+            "<td class='centrada'>" +
+            "<button " +
+            "class='abrir' " +
+            "type='button' " +
+            "data-documentos-indice='" +
+            i +
+            "'>" +
+            esc(
+              r.cedula_identidad
+            ) +
+            "</button>" +
+            "</td>" +
+
+            "<td class='centrada'>" +
+            esc(
+              obtenerAcoplados(
+                r
+              )
+            ) +
+            "</td>" +
 
             "</tr>"
           );
 
         }
-      ).join("") +
-
-      "<tr class='fila-total-destinos'>" +
-
-      "<td>TOTAL</td>" +
-
-      "<td>" +
-      totales["VACÍO"] +
-      "</td>" +
-
-      "<td>" +
-      totales["EN VIAJE AL MONTE"] +
-      "</td>" +
-
-      "<td>" +
-      totales.MONTE +
-      "</td>" +
-
-      "<td>" +
-      totales["SALIDO CARGADO"] +
-      "</td>" +
-
-      "<td>" +
-      totales.DESCARGANDO +
-      "</td>" +
-
-      "<td>" +
-      totales.plantaFas +
-      "</td>" +
-
-      "<td>" +
-      totales.total +
-      "</td>" +
-
-      "</tr>";
+      )
+      .join("");
 
 
-  /*
-  =========================================================
-  BOTÓN QUITAR FILTRO DE DESTINO
-
-  Cuando se selecciona un DESTINO desde el resumen,
-  aparece nuevamente el botón para volver a ver todos.
-  =========================================================
-  */
-
-  $("quitarFiltroDestino").hidden =
-    !(
-      campo === "destino" &&
-      filtroDestinoGeneral
-    );
+  renderResumenDestinos(
+    registros
+  );
 
 
-  $("quitarFiltroDestino").textContent =
-    filtroDestinoGeneral
-      ? "Quitar filtro: " +
-        filtroDestinoGeneral
-      : "Quitar filtro";
+  actualizarIndicadoresOrden();
 
 }
 
 
-function abrirDetalle(
-  indice,
-  tipo
+function valorDocumento(
+  r,
+  nombres
 ){
+
+  for(
+    const nombre of nombres
+  ){
+
+    if(
+      Object.prototype
+        .hasOwnProperty
+        .call(
+          r,
+          nombre
+        )
+    ){
+
+      const valor =
+        limpio(
+          r[nombre]
+        );
+
+      if(
+        valor !== "—"
+      )
+        return valor;
+
+    }
+
+  }
+
+  return "—";
+
+}
+
+
+function abrirDocumentos(indice){
 
   const r =
     filtradosActuales[
@@ -2677,133 +2619,188 @@ function abrirDetalle(
   if(!r)
     return;
 
-  let titulo = "";
-  let subtitulo = "";
-  let docs = [];
 
-  if(
-    tipo === "empresa"
-  ){
+  const docs = [
 
-    titulo =
-      limpio(
-        r.empresa
-      );
+    [
+      "Cédula",
+      [
+        "cedula",
+        "vencimiento_cedula",
+        "cedula_vencimiento"
+      ]
+    ],
 
-    subtitulo =
-      "Documentación de la empresa";
+    [
+      "Libreta",
+      [
+        "libreta",
+        "vencimiento_libreta",
+        "libreta_vencimiento"
+      ]
+    ],
 
-    docs = [
-      ["CERT BPS",r.bps_date],
-      ["CERT DGI",r.dgi_date]
-    ];
+    [
+      "Carné",
+      [
+        "carne",
+        "vencimiento_carne",
+        "carne_vencimiento"
+      ]
+    ],
 
-  }
+    [
+      "Psicotécnico",
+      [
+        "psicotecnico",
+        "vencimiento_psicotecnico"
+      ]
+    ],
 
+    [
+      "Tarjeta verde",
+      [
+        "tarjeta_verde",
+        "tarjeta"
+      ]
+    ],
 
-  if(
-    tipo === "matricula"
-  ){
+    [
+      "Curso UPM - WEB FAS",
+      [
+        "curso_upm",
+        "capacitacion_upm",
+        "capacitacion"
+      ]
+    ],
 
-    titulo =
-      limpio(
-        r.matricula
-      );
+    [
+      "Instructivo",
+      [
+        "instructivo"
+      ]
+    ]
 
-    subtitulo =
-      limpio(
-        r.empresa
-      );
-
-    docs = [
-      ["APPLUS",r.applus_date],
-      ["SOA",r.soa_date]
-    ];
-
-  }
-
-
-  if(
-    tipo === "chofer"
-  ){
-
-    titulo =
-      limpio(
-        r.chofer
-      );
-
-    subtitulo =
-      "CI " +
-      limpio(
-        r.cedula_identidad
-      );
-
-    docs = [
-      ["Cédula",r.identity_card],
-      ["Libreta de conducir",r.driver_license],
-      ["Carné de salud",r.health_meat],
-      ["Psicotécnico",r.psychotechnician],
-      ["Tarjeta verde",r.green_card],
-      ["CURSO UPM - WEB FAS",r.upm]
-    ];
-
-  }
+  ];
 
 
   $("modalTitulo")
     .textContent =
-      titulo;
+      limpio(
+        r.chofer
+      );
 
 
   $("modalSubtitulo")
     .textContent =
-      subtitulo;
+      "Matrícula " +
+      limpio(
+        r.matricula
+      ) +
+      " · CI " +
+      limpio(
+        r.cedula_identidad
+      );
 
 
   $("modalDocumentos")
     .innerHTML =
       docs.map(
-        ([nombre,valor]) => {
+        ([titulo,nombres]) => {
 
-          const clase =
-            claseVencimiento(
+          const valor =
+            valorDocumento(
+              r,
+              nombres
+            );
+
+          const normalizado =
+            normalizarTexto(
               valor
             );
 
+          const clase =
+            normalizado.includes("VENCID") ||
+            normalizado.includes("NO VIGENTE") ||
+            normalizado === "FALTA"
+              ? " vencida"
+              : "";
+
           return (
-            "<article class='documento " +
+            "<div class='documento" +
             clase +
             "'>" +
-
-            "<b>" +
-            esc(nombre) +
-            "</b><br>" +
-
-            esc(
-              fechaCorta(
-                valor
-              )
-            ) +
-
-            "</article>"
+            "<h3>" +
+            esc(titulo) +
+            "</h3>" +
+            "<p>" +
+            esc(valor) +
+            "</p>" +
+            "</div>"
           );
 
         }
-      ).join("");
+      )
+      .join("");
 
 
   $("modalFondo")
-    .classList
-    .add(
+    .classList.add(
       "abierto"
     );
 
 }
 
 
-function abrirMapa(
-  indice
+function obtenerCoordenadas(
+  url
 ){
+
+  const texto =
+    String(
+      url || ""
+    );
+
+
+  const patrones = [
+
+    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
+
+    /[?&]query=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/i,
+
+    /[?&]q=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/i,
+
+    /(-?\d{1,3}\.\d+)[,\s]+(-?\d{1,3}\.\d+)/
+
+  ];
+
+
+  for(
+    const patron of patrones
+  ){
+
+    const m =
+      texto.match(
+        patron
+      );
+
+    if(m){
+
+      return {
+        lat:Number(m[1]),
+        lng:Number(m[2])
+      };
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function abrirMapa(indice){
 
   const r =
     filtradosActuales[
@@ -2813,24 +2810,18 @@ function abrirMapa(
   if(!r)
     return;
 
-  const enlace =
-    obtenerPositionLinkSeguro(
+
+  const link =
+    limpio(
       r.position_link
     );
 
-  if(!enlace)
+
+  if(
+    link === "—"
+  )
     return;
 
-  const embed =
-    obtenerUrlMapaEmbebido(
-      enlace
-    );
-
-  const modal =
-    $("modalMapa");
-
-  const vista =
-    $("modalMapaVista");
 
   $("modalMapaMatricula")
     .textContent =
@@ -2838,531 +2829,115 @@ function abrirMapa(
         r.matricula
       );
 
+
   $("modalMapaUbicacion")
     .textContent =
       limpio(
         r.ubicacion_gps
       );
 
+
   $("abrirGoogleMaps")
     .href =
-      enlace;
+      link;
 
-  vista.innerHTML =
-    embed
-      ? "<iframe class='mapa-iframe' title='Mapa de " +
-        esc(
-          r.matricula
-        ) +
-        "' loading='lazy' referrerpolicy='no-referrer-when-downgrade' src='" +
-        esc(
-          embed
-        ) +
-        "'></iframe>"
-      : "<div class='mapa-no-disponible'>El enlace no contiene coordenadas para mostrar la vista previa.</div>";
 
-  modal
-    .classList
-    .add(
-      "abierto"
+  const coordenadas =
+    obtenerCoordenadas(
+      link
     );
 
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-  document.body
-    .classList
-    .add(
-      "modal-mapa-abierto"
-    );
-
-  $("cerrarModalMapa")
-    .focus();
-
-}
-
-
-function cerrarModalMapa(){
-
-  const modal =
-    $("modalMapa");
-
-  modal
-    .classList
-    .remove(
-      "abierto"
-    );
-
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-  document.body
-    .classList
-    .remove(
-      "modal-mapa-abierto"
-    );
-
-  $("modalMapaVista")
-    .innerHTML =
-      "";
-
-}
-
-
-function cerrarModal(){
-
-  $("modalFondo")
-    .classList
-    .remove(
-      "abierto"
-    );
-
-}
-
-
-function esAlertaControl(
-  tipo,
-  r
-){
 
   if(
-    limpio(
-      r.chofer
-    ).toUpperCase() ===
-    "SIN CHOFER"
-  )
-    return false;
-
-  if(
-    tipo ===
-    "capacitacion"
-  )
-    return (
-      limpio(
-        r.capacitacion_upm
-      ).toUpperCase() !==
-      "APROBADO"
-    );
-
-  if(
-    tipo ===
-    "tarjeta"
-  )
-    return (
-      limpio(
-        r.tarjeta_verde_upm
-      ).toUpperCase() !==
-      "VIGENTE"
-    );
-
-  const valor =
-    limpio(
-      r.instructivo
-    ).toUpperCase();
-
-  return (
-    valor === "—" ||
-    valor === "-" ||
-    valor.includes(
-      "FALTA"
-    )
-  );
-
-}
-
-
-function actualizarControl(
-  nombre
-){
-
-  const cantidad =
-    registros.filter(
-      r =>
-        esAlertaControl(
-          nombre,
-          r
-        )
-    ).length;
-
-  const mapa = {
-    capacitacion:[
-      "controlCapacitacion",
-      "cardCapacitacion"
-    ],
-    instructivo:[
-      "controlInstructivo",
-      "cardInstructivo"
-    ],
-    tarjeta:[
-      "controlTarjeta",
-      "cardTarjeta"
-    ]
-  };
-
-  const ids =
-    mapa[nombre];
-
-  $(ids[0])
-    .textContent =
-      cantidad;
-
-  $(ids[1])
-    .className =
-      "card card-control " +
-      (
-        cantidad
-          ? "alerta"
-          : "correcto"
-      );
-
-}
-
-
-function abrirControl(
-  tipo
-){
-
-  const config = {
-    capacitacion:[
-      "Capacitación UPM no aprobada",
-      "capacitacion_upm"
-    ],
-    instructivo:[
-      "Instructivo con - o FALTA",
-      "instructivo"
-    ],
-    tarjeta:[
-      "Tarjeta verde UPM no vigente",
-      "tarjeta_verde_upm"
-    ]
-  }[tipo];
-
-
-  const lista =
-    registros.filter(
-      r =>
-        esAlertaControl(
-          tipo,
-          r
-        )
-    );
-
-
-  $("modalTitulo")
-    .textContent =
-      config[0];
-
-
-  $("modalSubtitulo")
-    .textContent =
-      lista.length +
-      " camiones encontrados";
-
-
-  $("modalDocumentos")
-    .innerHTML =
-      lista.map(
-        r =>
-          "<article class='documento vencida'>" +
-
-          "<b>" +
-          esc(
-            r.chofer
-          ) +
-          "</b><br>" +
-
-          esc(
-            r.matricula
-          ) +
-
-          " · " +
-
-          esc(
-            r[
-              config[1]
-            ]
-          ) +
-
-          "</article>"
-      ).join("");
-
-
-  $("modalFondo")
-    .classList
-    .add(
-      "abierto"
-    );
-
-}
-
-
-function obtenerInfracciones(
-  tipo
-){
-
-  const mapa =
-    new Map();
-
-
-  for(
-    const r of registros
+    coordenadas
   ){
 
-    if(
-      tipo === "conductor" &&
-      limpio(
-        r.chofer
-      ).toUpperCase() ===
-      "SIN CHOFER"
-    )
-      continue;
+    const lat =
+      coordenadas.lat;
+
+    const lng =
+      coordenadas.lng;
+
+    const embed =
+      "https://maps.google.com/maps?q=" +
+      encodeURIComponent(
+        lat + "," + lng
+      ) +
+      "&z=14&output=embed";
 
 
-    let clave = "";
-    let contexto = "";
-    let documentos = [];
+    $("modalMapaVista")
+      .innerHTML =
+        "<iframe " +
+        "class='mapa-iframe' " +
+        "src='" +
+        embed +
+        "' " +
+        "loading='lazy'>" +
+        "</iframe>";
 
+  }
+  else{
 
-    if(
-      tipo === "empresa"
-    ){
-
-      clave =
-        limpio(
-          r.empresa
-        );
-
-      contexto =
-        "Matrícula " +
-        limpio(
-          r.matricula
-        );
-
-      documentos = [
-        ["CERT BPS",r.bps_date],
-        ["CERT DGI",r.dgi_date]
-      ];
-
-    }
-    else if(
-      tipo === "matricula"
-    ){
-
-      clave =
-        limpio(
-          r.matricula
-        );
-
-      contexto =
-        limpio(
-          r.empresa
-        );
-
-      documentos = [
-        ["APPLUS",r.applus_date],
-        ["SOA",r.soa_date]
-      ];
-
-    }
-    else{
-
-      clave =
-        limpio(
-          r.chofer
-        );
-
-      contexto =
-        "Matrícula " +
-        limpio(
-          r.matricula
-        ) +
-        " · " +
-        limpio(
-          r.empresa
-        );
-
-      documentos = [
-        ["Cédula",r.identity_card],
-        ["Libreta de conducir",r.driver_license],
-        ["Carné de salud",r.health_meat],
-        ["Psicotécnico",r.psychotechnician],
-        ["Tarjeta verde",r.green_card],
-        ["CURSO UPM - WEB FAS",r.upm]
-      ];
-
-    }
-
-
-    const vencidos =
-      documentos.filter(
-        ([,valor]) =>
-          claseVencimiento(
-            valor
-          ) === "vencida"
-      );
-
-
-    if(
-      !vencidos.length
-    )
-      continue;
-
-
-    if(
-      !mapa.has(
-        clave
-      )
-    ){
-
-      mapa.set(
-        clave,
-        {
-          titulo:clave,
-          detalles:new Set()
-        }
-      );
-
-    }
-
-
-    vencidos.forEach(
-      ([nombre,valor]) => {
-
-        mapa
-          .get(
-            clave
-          )
-          .detalles
-          .add(
-            nombre +
-            ": " +
-            fechaCorta(
-              valor
-            ) +
-            " · " +
-            contexto
-          );
-
-      }
-    );
+    $("modalMapaVista")
+      .innerHTML =
+        "<div class='mapa-no-disponible'>" +
+        "La ubicación puede abrirse directamente en Google Maps." +
+        "</div>";
 
   }
 
 
-  return [
-    ...mapa.values()
-  ];
-
-}
-
-
-function abrirInfracciones(
-  tipo
-){
-
-  const titulos = {
-
-    empresa:
-      "Empresas con infracciones",
-
-    matricula:
-      "Matrículas con infracciones",
-
-    conductor:
-      "Conductores con infracciones"
-
-  };
-
-
-  const lista =
-    obtenerInfracciones(
-      tipo
-    );
-
-
-  $("modalTitulo")
-    .textContent =
-      titulos[tipo];
-
-
-  $("modalSubtitulo")
-    .textContent =
-      lista.length +
-      " registros";
-
-
-  $("modalDocumentos")
-    .innerHTML =
-      lista.length
-        ? lista.map(
-            item =>
-              "<article class='documento vencida'>" +
-
-              "<b>" +
-              esc(
-                item.titulo
-              ) +
-              "</b><br>" +
-
-              "<small>" +
-              [...item.detalles]
-                .map(
-                  detalle =>
-                    esc(
-                      detalle
-                    )
-                )
-                .join(
-                  "<br>"
-                ) +
-              "</small>" +
-
-              "</article>"
-          ).join("")
-        : "<article class='documento vigente'><b>Sin infracciones</b><br><small>No hay documentos vencidos.</small></article>";
-
-
-  $("modalFondo")
-    .classList
-    .add(
+  $("modalMapa")
+    .classList.add(
       "abierto"
     );
 
 }
 
 
-function actualizarInfracciones(
-  tipo,
-  valorId,
-  cardId
-){
+function cerrarMapa(){
 
-  const cantidad =
-    obtenerInfracciones(
-      tipo
-    ).length;
-
-  $(valorId)
-    .textContent =
-      cantidad;
-
-  $(cardId)
-    .className =
-      "card card-control " +
-      (
-        cantidad
-          ? "alerta"
-          : "correcto"
-      );
+  $("modalMapa")
+    .classList.remove(
+      "abierto"
+    );
 
 }
 
 
-function resumen(){
+function contarControl(
+  campos
+){
+
+  return registros.filter(
+    r => {
+
+      return campos.some(
+        campo => {
+
+          const x =
+            normalizarTexto(
+              r[campo]
+            );
+
+          return (
+            x.includes("NO APROB") ||
+            x.includes("NO VIGENTE") ||
+            x.includes("FALTA") ||
+            x.includes("VENCID")
+          );
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+function actualizarTarjetas(){
 
   $("total")
     .textContent =
@@ -3373,647 +2948,449 @@ function resumen(){
     .textContent =
       registros.filter(
         r =>
-          textoComienzaConZ(
-            r.destino
-          ) ||
-          textoComienzaConZ(
-            r.proximo_destino
-          )
+          r._estadoCalculado ===
+          "PARADO"
       ).length;
 
 
   const sinAcoplado =
-    [
-      ...new Set(
-        registros
-          .filter(
-            r =>
-              limpio(
-                r.acoplados
-              )
-              .toUpperCase()
-              .includes(
-                "FALTA"
-              )
-          )
-          .map(
-            r =>
-              limpio(
-                r.matricula
-              )
-          )
-      )
-    ];
+    registros.filter(
+      r =>
+        obtenerAcoplados(
+          r
+        ) === "—"
+    );
 
 
   $("acopladosFalta")
     .textContent =
+      sinAcoplado.length;
+
+
+  const capacitacion =
+    contarControl(
+      [
+        "capacitacion",
+        "capacitacion_upm",
+        "curso_upm"
+      ]
+    );
+
+
+  const instructivo =
+    contarControl(
+      [
+        "instructivo"
+      ]
+    );
+
+
+  const tarjeta =
+    contarControl(
+      [
+        "tarjeta_verde",
+        "tarjeta"
+      ]
+    );
+
+
+  $("controlCapacitacion")
+    .textContent =
+      capacitacion.length;
+
+
+  $("controlInstructivo")
+    .textContent =
+      instructivo.length;
+
+
+  $("controlTarjeta")
+    .textContent =
+      tarjeta.length;
+
+
+  [
+    [
+      "cardCapacitacion",
+      capacitacion.length
+    ],
+    [
+      "cardInstructivo",
+      instructivo.length
+    ],
+    [
+      "cardTarjeta",
+      tarjeta.length
+    ],
+    [
+      "cardAcoplados",
       sinAcoplado.length
-        ? sinAcoplado.join(
-            " · "
-          )
-        : "NINGUNO";
+    ]
+  ]
+  .forEach(
+    ([id,cantidad]) => {
 
+      const el =
+        $(id);
 
-  $("cardAcoplados")
-    .className =
-      "card " +
-      (
-        sinAcoplado.length
-          ? "alerta"
-          : "correcto"
+      el.classList.toggle(
+        "alerta",
+        cantidad > 0
       );
 
+      el.classList.toggle(
+        "correcto",
+        cantidad === 0
+      );
 
-  actualizarControl(
-    "capacitacion"
-  );
-
-  actualizarControl(
-    "instructivo"
-  );
-
-  actualizarControl(
-    "tarjeta"
+    }
   );
 
 
-  actualizarInfracciones(
-    "empresa",
-    "totalEmpresasInfraccion",
-    "cardEmpresasInfraccion"
+  const empresas =
+    new Set();
+
+  const matriculas =
+    new Set();
+
+  const conductores =
+    new Set();
+
+
+  registros.forEach(
+    r => {
+
+      const infraccion =
+        normalizarTexto(
+          r.infraccion ||
+          r.infracciones ||
+          r.comentarios_infraccion
+        );
+
+      if(
+        infraccion &&
+        infraccion !== "NO" &&
+        infraccion !== "OK"
+      ){
+
+        empresas.add(
+          limpio(
+            r.empresa
+          )
+        );
+
+        matriculas.add(
+          limpio(
+            r.matricula
+          )
+        );
+
+        conductores.add(
+          limpio(
+            r.chofer
+          )
+        );
+
+      }
+
+    }
   );
 
-  actualizarInfracciones(
-    "matricula",
-    "totalMatriculasInfraccion",
-    "cardMatriculasInfraccion"
-  );
 
-  actualizarInfracciones(
-    "conductor",
-    "totalConductoresInfraccion",
-    "cardConductoresInfraccion"
-  );
+  $("totalEmpresasInfraccion")
+    .textContent =
+      empresas.has("—")
+        ? empresas.size - 1
+        : empresas.size;
+
+
+  $("totalMatriculasInfraccion")
+    .textContent =
+      matriculas.has("—")
+        ? matriculas.size - 1
+        : matriculas.size;
+
+
+  $("totalConductoresInfraccion")
+    .textContent =
+      conductores.has("—")
+        ? conductores.size - 1
+        : conductores.size;
 
 }
 
 
-function actualizarEstadosOperativos(){
+function abrirListado(
+  titulo,
+  lista
+){
 
-  const estados =
-    leerEstados();
+  $("modalTitulo")
+    .textContent =
+      titulo;
 
-  const inicializados =
-    localStorage.getItem(
-      ESTADOS_INICIALIZADOS_STORAGE
-    ) === "SI";
+
+  $("modalSubtitulo")
+    .textContent =
+      lista.length +
+      " registro(s)";
+
+
+  $("modalDocumentos")
+    .innerHTML =
+      lista.length
+        ? lista.map(
+            texto =>
+              "<div class='documento'>" +
+              "<p>" +
+              esc(texto) +
+              "</p>" +
+              "</div>"
+          )
+          .join("")
+        : "<div class='documento'><p>Sin registros.</p></div>";
+
+
+  $("modalFondo")
+    .classList.add(
+      "abierto"
+    );
+
+}
+
+
+function abrirControl(tipo){
+
+  let campos = [];
+  let titulo = "";
 
 
   if(
-    !inicializados
+    tipo === "capacitacion"
   ){
 
-    registros =
-      registros.map(
-        r => {
+    titulo =
+      "Capacitación UPM no aprobada";
 
-          const matricula =
-            normalizarTexto(
-              r.matricula
-            );
-
-          const estadoInicial =
-            ESTADOS_INICIALES[
-              matricula
-            ] ||
-            normalizarEstado(
-              r.ubicacion
-            );
-
-          estados[
-            matricula
-          ] =
-            estadoInicial === "PARADO"
-              ? "VACÍO"
-              : estadoInicial;
-
-          return {
-            ...r,
-            _estadoCalculado:
-              estadoInicial
-          };
-
-        }
-      );
-
-    guardarEstados(
-      estados
-    );
-
-    try{
-
-      localStorage.setItem(
-        ESTADOS_INICIALIZADOS_STORAGE,
-        "SI"
-      );
-
-    }
-    catch{}
-
-    return;
+    campos = [
+      "capacitacion",
+      "capacitacion_upm",
+      "curso_upm"
+    ];
 
   }
 
 
-  registros =
-    registros.map(
-      r => ({
-        ...r,
-        _estadoCalculado:
-          calcularEstado(
-            r,
-            estados
+  if(
+    tipo === "instructivo"
+  ){
+
+    titulo =
+      "Instructivo";
+
+    campos = [
+      "instructivo"
+    ];
+
+  }
+
+
+  if(
+    tipo === "tarjeta"
+  ){
+
+    titulo =
+      "Tarjeta verde UPM";
+
+    campos = [
+      "tarjeta_verde",
+      "tarjeta"
+    ];
+
+  }
+
+
+  const lista =
+    registros
+      .filter(
+        r =>
+          campos.some(
+            campo => {
+
+              const x =
+                normalizarTexto(
+                  r[campo]
+                );
+
+              return (
+                x.includes("NO APROB") ||
+                x.includes("NO VIGENTE") ||
+                x.includes("FALTA") ||
+                x.includes("VENCID")
+              );
+
+            }
           )
-      })
-    );
-
-  guardarEstados(
-    estados
-  );
-
-}
-
-
-function render(){
-
-  const listaCompleta =
-    registros.map(
-      r => ({
-        ...r
-      })
-    );
-
-
-  renderResumenDestinos(
-    listaCompleta
-  );
-
-
-  let lista =
-    filtroDestinoGeneral
-      ? listaCompleta.filter(
-          r =>
-            limpio(
-              r.destino
-            ) ===
-            filtroDestinoGeneral
-        )
-      : [
-          ...listaCompleta
-        ];
-
-
-  lista.sort(
-    (a,b) =>
-      compararValores(
-        a[
-          ordenActual.columna
-        ],
-        b[
-          ordenActual.columna
-        ]
-      ) *
-      (
-        ordenActual.direccion ===
-        "asc"
-          ? 1
-          : -1
       )
-  );
-
-
-  filtradosActuales =
-    lista;
-
-
-  $("cuerpo")
-    .innerHTML =
-      lista.map(
-        (r,indice) => {
-
-          const estado =
-            r._estadoCalculado;
-
-          const positionLink =
-            obtenerPositionLinkSeguro(
-              r.position_link
-            );
-
-          const empresaRoja =
-            algunoVencido([
-              r.bps_date,
-              r.dgi_date
-            ]);
-
-          const matriculaRoja =
-            algunoVencido([
-              r.applus_date,
-              r.soa_date
-            ]);
-
-          const choferRojo =
-            algunoVencido([
-              r.health_meat,
-              r.identity_card,
-              r.driver_license,
-              r.psychotechnician,
-              r.upm,
-              r.green_card
-            ]);
-
-          return (
-
-            "<tr>" +
-
-            "<td class='" +
-            (
-              empresaRoja
-                ? "alerta-texto"
-                : ""
-            ) +
-            "'>" +
-
-            "<button class='abrir' onclick='abrirDetalle(" +
-            indice +
-            ",\"empresa\")'>" +
-            esc(
-              r.empresa
-            ) +
-            "</button>" +
-
-            "</td>" +
-
-
-            "<td>" +
-            esc(
-              r.destino
-            ) +
-            "</td>" +
-
-
-            "<td class='matricula centrada " +
-            (
-              matriculaRoja
-                ? "alerta-texto"
-                : ""
-            ) +
-            "'>" +
-
-            "<button class='abrir' onclick='abrirDetalle(" +
-            indice +
-            ",\"matricula\")'>" +
-            esc(
-              r.matricula
-            ) +
-            "</button>" +
-
-            "</td>" +
-
-
-            "<td>" +
-            esc(
-              r.proximo_destino
-            ) +
-            "</td>" +
-
-
-            "<td class='centrada'><span class='" +
-            claseEstado(
-              estado
-            ) +
-            "'>" +
-            esc(
-              estado
-            ) +
-            "</span></td>" +
-
-
-            "<td class='comentario centrada'>" +
-            esc(
-              r.comentarios
-            ) +
-            "</td>" +
-
-
-            "<td class='gps'>" +
-            (
-              positionLink
-                ? "<button class='gps-mapa' onclick='abrirMapa(" +
-                  indice +
-                  ")'>" +
-                  gpsConFlecha(
-                    r.ubicacion_gps
-                  ) +
-                  "</button>"
-                : gpsConFlecha(
-                    r.ubicacion_gps
-                  )
-            ) +
-            "</td>" +
-
-
-            "<td class='" +
-            (
-              choferRojo
-                ? "alerta-texto"
-                : ""
-            ) +
-            "'>" +
-
-            "<button class='abrir' onclick='abrirDetalle(" +
-            indice +
-            ",\"chofer\")'>" +
-            esc(
-              r.chofer
-            ) +
-            "</button>" +
-
-            "</td>" +
-
-
-            "<td class='centrada'>" +
-            esc(
-              r.cedula_identidad
-            ) +
-            "</td>" +
-
-
-            "<td class='matricula centrada'>" +
-            esc(
-              r.acoplados
-            ) +
-            "</td>" +
-
-
-            "</tr>"
-
-          );
-
-        }
-      ).join("");
-
-
-  actualizarIndicadoresOrden();
-
-
-  $("mensaje")
-    .style.display =
-      lista.length
-        ? "none"
-        : "block";
-
-}
-
-
-async function cargar(){
-
-  try{
-
-    const respuesta =
-      await fetch(
-        JSON_URL +
-        "?_=" +
-        Date.now(),
-        {
-          cache:"no-store"
-        }
-      );
-
-
-    if(
-      !respuesta.ok
-    ){
-
-      throw new Error(
-        "HTTP " +
-        respuesta.status
-      );
-
-    }
-
-
-    const datos =
-      await respuesta.json();
-
-
-    registros =
-      Array.isArray(
-        datos.registros
-      )
-        ? datos.registros
-        : [];
-
-
-    $("actualizado")
-      .textContent =
-        "Actualizado: " +
-        fecha(
-          datos.actualizado
-        );
-
-
-    const ultimaExcel =
-      datos.ultima_actualizacion_excel ||
-      (
-        registros[0] &&
-        registros[0]
-          .ultima_actualizacion_excel
-      );
-
-
-    $("actualizacionExcel")
-      .textContent =
-        "Última actualización Excel: " +
-        fecha(
-          ultimaExcel
-        );
-
-
-    actualizarEstadosOperativos();
-
-    resumen();
-
-    render();
-
-  }
-  catch(error){
-
-    $("mensaje")
-      .style.display =
-        "block";
-
-    $("mensaje")
-      .innerHTML =
-        "No fue posible cargar los datos. " +
-        esc(
-          error.message
-        );
-
-  }
-
-}
-
-
-document
-  .querySelectorAll(
-    "th.ordenable"
-  )
-  .forEach(
-    th => {
-
-      th.addEventListener(
-        "click",
-        () =>
-          ordenarPor(
-            th.dataset.columna
+      .map(
+        r =>
+          limpio(
+            r.matricula
+          ) +
+          " · " +
+          limpio(
+            r.chofer
           )
       );
 
-    }
+
+  abrirListado(
+    titulo,
+    lista
   );
 
+}
 
-$("resumenDestinos")
-  .addEventListener(
-    "click",
-    e => {
 
-      const boton =
-        e.target.closest(
-          ".destino-filtro"
+function abrirInfracciones(tipo){
+
+  const mapa = new Map();
+
+
+  registros.forEach(
+    r => {
+
+      const infraccion =
+        limpio(
+          r.infraccion ||
+          r.infracciones ||
+          r.comentarios_infraccion
         );
 
-      if(!boton)
+
+      const normalizada =
+        normalizarTexto(
+          infraccion
+        );
+
+
+      if(
+        !normalizada ||
+        normalizada === "NO" ||
+        normalizada === "OK"
+      )
         return;
 
-      filtroDestinoGeneral =
-        boton.dataset.destino;
 
-      render();
+      let clave = "";
 
-    }
-  );
-
-
-$("quitarFiltroDestino")
-  .addEventListener(
-    "click",
-    () => {
-
-      filtroDestinoGeneral =
-        "";
-
-      render();
-
-    }
-  );
-
-
-$("selectorTipoDestino")
-  .addEventListener(
-    "change",
-    () => {
-
-      filtroDestinoGeneral =
-        "";
-
-      render();
-
-    }
-  );
-
-
-$("modalCerrar")
-  .addEventListener(
-    "click",
-    cerrarModal
-  );
-
-
-$("cerrarModalMapa")
-  .addEventListener(
-    "click",
-    cerrarModalMapa
-  );
-
-
-$("modalMapa")
-  .addEventListener(
-    "click",
-    e => {
 
       if(
-        e.target ===
-        $("modalMapa")
-      ){
+        tipo === "empresa"
+      )
+        clave =
+          limpio(
+            r.empresa
+          );
 
-        cerrarModalMapa();
-
-      }
-
-    }
-  );
-
-
-$("modalFondo")
-  .addEventListener(
-    "click",
-    e => {
 
       if(
-        e.target ===
-        $("modalFondo")
-      ){
+        tipo === "matricula"
+      )
+        clave =
+          limpio(
+            r.matricula
+          );
 
-        cerrarModal();
-
-      }
-
-    }
-  );
-
-
-document
-  .addEventListener(
-    "keydown",
-    e => {
 
       if(
-        e.key ===
-        "Escape"
-      ){
+        tipo === "conductor"
+      )
+        clave =
+          limpio(
+            r.chofer
+          );
 
-        cerrarModal();
-        cerrarModalMapa();
 
-      }
+      if(
+        clave === "—"
+      )
+        return;
+
+
+      if(
+        !mapa.has(
+          clave
+        )
+      )
+        mapa.set(
+          clave,
+          []
+        );
+
+
+      mapa.get(
+        clave
+      ).push(
+        infraccion
+      );
 
     }
   );
 
 
-actualizarIndicadoresOrden();
+  const lista =
+    [...mapa.entries()]
+      .map(
+        ([clave,detalles]) =>
+          clave +
+          " · " +
+          [...new Set(detalles)]
+            .join(" / ")
+      );
 
-cargar();
+
+  const titulo =
+    tipo === "empresa"
+      ? "Empresas con infracciones"
+      : tipo === "matricula"
+        ? "Matrículas con infracciones"
+        : "Conductores con infracciones";
 
 
-setInterval(
-  cargar,
-  300000
-);
+  abrirListado(
+    titulo,
+    lista
+  );
 
-</script>
+}
 
-</body>
-</html>
+
+function formatearFecha(
+  valor
+){
+
+  if(
+    !valor
+  )
+    return "—";
+
+
+  const d =
+    new Date(
+      valor
+    );
+
+
+  if(
+    Number.isNaN(
+      d.getTime()
+    )
+  )
+    return limpio(
+      valor
+    );
+
+
+  return new Intl.DateTimeFormat(
+    "
