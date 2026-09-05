@@ -963,19 +963,21 @@ V14 para no reutilizar estados incorrectos anteriores.
 */
 
 const ESTADOS_STORAGE =
-  "hoy_control_estados_v17";
+  "hoy_control_estados";
 
 const ESTADOS_INICIALIZADOS_STORAGE =
-  "hoy_control_estados_v17_inicializados";
+  "hoy_control_estados_inicializados";
 
 /*
-Memoria adicional:
+Memoria operativa permanente:
 si un camión fue detectado físicamente en MONTE,
-queda registrado hasta que salga de allí.
-Esto hace robusta la transición MONTE -> SALIDO CARGADO.
+queda registrado hasta completar su ciclo operativo.
+
+Estas claves NO llevan versión para evitar que una futura
+modificación visual del HTML borre el estado anterior.
 */
 const MONTE_STORAGE =
-  "hoy_control_monte_v17";
+  "hoy_control_monte";
 
 
 let registros = [];
@@ -1678,15 +1680,11 @@ function calcularEstado(
 
     /*
     Ya salió del monte.
-    Limpiamos la marca para que no vuelva a dispararse.
+
+    Conservamos la marca "estuvoEnMonte" durante todo el
+    trayecto cargado. Se limpiará recién cuando el GPS
+    confirme una zona de DESCARGA.
     */
-    if(matricula){
-
-      delete memoriaMonte[
-        matricula
-      ];
-
-    }
 
   }
 
