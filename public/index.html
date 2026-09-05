@@ -384,6 +384,15 @@
       color:#46544c
     }
 
+    /* SOLO VISUAL: color de UBICACIÓN GPS según velocidad */
+    .gps-velocidad-cero{
+      background:#fff4b8!important;
+    }
+
+    .gps-velocidad-movimiento{
+      background:#dff3e4!important;
+    }
+
     .gps-mapa{
       border:0;
       background:transparent;
@@ -3538,6 +3547,17 @@ function render(){
               r.position_link
             );
 
+          /* SOLO VISUAL: no modifica estados */
+          const velocidadGpsVisual =
+            obtenerVelocidadGps(
+              r.ubicacion_gps
+            );
+
+          const claseGpsVisual =
+            velocidadGpsVisual === 0
+              ? "gps-velocidad-cero"
+              : "gps-velocidad-movimiento";
+
           const empresaRoja =
             algunoVencido([
               r.bps_date,
@@ -3634,7 +3654,9 @@ function render(){
             "</td>" +
 
 
-            "<td class='gps'>" +
+            "<td class='gps " +
+            claseGpsVisual +
+            "'>" +
             (
               positionLink
                 ? "<button class='gps-mapa' onclick='abrirMapa(" +
